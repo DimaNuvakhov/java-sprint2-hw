@@ -3,8 +3,8 @@ import java.util.HashMap;
 public class Manager {
     private HashMap<String, Task> allTasks = new HashMap<>();
 
-    public void setAllTasks(String id, Task someTask) {
-        allTasks.put(id, someTask);
+    public void setOneTask(String id, Task task) {
+        allTasks.put(id, task);
     }
 
     public HashMap<String, Task> getAllTasks() {
@@ -12,15 +12,19 @@ public class Manager {
     }
 
     public void showAllTasks() {
+        System.out.println("== Начало полного списка задач ==");
         for (Task tasks : getAllTasks().values()) {
             System.out.println(tasks);
         }
+        System.out.println("== Окончание полного списка задач ==");
     }
 
     public void showSpecificTask(String id) {
+        System.out.println("== Начало вывода задачи с id = " + id + "  ==");
         if (getAllTasks().containsKey(id)) {
             System.out.println(getAllTasks().get(id));
         }
+        System.out.println("== Окончание вывода задачи с id = " + id + "  ==");
     }
 
     public void taskUpdate(String id, String name, String description, TaskStatus status) {
@@ -34,3 +38,4 @@ public class Manager {
 
 
 }
+
