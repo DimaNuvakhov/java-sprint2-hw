@@ -19,10 +19,11 @@ public class Epic extends Task {
         String detail = "";
         String verticalTableBorder = "|";
         String horizontalTableBorder = "-------------------------------------"
-                + "---------------------------------------------------------";;
-        String table = verticalTableBorder + padLeft("<Название>", 20) + verticalTableBorder +
-                (padLeft("<Описание>", 50) + verticalTableBorder)
-                + (padLeft("<Статус>", 20) + verticalTableBorder);
+                + "---------------------------------------------------------";
+        ;
+        String table = verticalTableBorder + Manager.padLeft("<Название>", 20) + verticalTableBorder +
+                (Manager.padLeft("<Описание>", 50) + verticalTableBorder)
+                + (Manager.padLeft("<Статус>", 20) + verticalTableBorder);
         String title = "Epic{" +
                 "id='" + getId() + '\'' +
                 ", name='" + getName() + '\'' +
@@ -33,19 +34,11 @@ public class Epic extends Task {
 
         for (SubTask tasks : subTasks.values()) {
 
-            detail = detail + "\n" + verticalTableBorder + padLeft(tasks.getName(), 20) + verticalTableBorder
-                    + padLeft(tasks.getDescription(), 50) +  verticalTableBorder
-                    + padLeft(tasks.getStatus().toString(), 20) + verticalTableBorder;
+            detail = detail + "\n" + verticalTableBorder + Manager.padLeft(tasks.getName(), 20) + verticalTableBorder
+                    + Manager.padLeft(tasks.getDescription(), 50) + verticalTableBorder
+                    + Manager.padLeft(tasks.getStatus().toString(), 20) + verticalTableBorder;
         }
         return title + detail + "\n" + horizontalTableBorder;
-    }
-
-    public static String padRight(String s, int n) {
-        return String.format("%-" + n + "s", s);
-    }
-
-    public static String padLeft(String s, int n) {
-        return String.format("%" + n + "s", s);
     }
 }
 

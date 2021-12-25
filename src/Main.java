@@ -1,8 +1,5 @@
 public class Main {
     public static void main(String[] args) throws ClassNotFoundException {
-
-        String id = "";
-
 // 1 Создать менеджера
         Manager manager = new Manager();
 
@@ -11,8 +8,8 @@ public class Main {
         Task secondTask = new Task("Купить хлеб", "Нужен хлеб \"Литовский\" из Гриднева", TaskStatus.DONE);
 
 // 3 Добавить задачу в коллекцию менеджера, сохранить идентификатор
-        fillInTheTable(manager, id, firstTask);
-        manager.setOneTask(secondTask.getId(), secondTask); // так красивее, убери использование fillInTheTable
+        manager.setOneTask(firstTask.getId(), firstTask);
+        manager.setOneTask(secondTask.getId(), secondTask);
 
 // 4 Создаем эпик: Переезд, Собрать все вещи, IN_PROGRESS, сохранить индификатор
         Epic firstEpic = new Epic("Переезд", "Собрать все вещи", TaskStatus.IN_PROGRESS);
@@ -21,11 +18,9 @@ public class Main {
         SubTask firstSubTask = new SubTask("Собрать чемодан", "Положить в чемодан все необходимое", TaskStatus.IN_PROGRESS, firstEpic);
 
 // 6 Добавить эпик в коллекцию менеджера, сохранить индификатор
-        fillInTheTable(manager, id, firstEpic);
-
+        manager.setOneTask(firstEpic.getId(), firstEpic);
 // 7 Добавить подзадачу эпика этого в коллекцию менеджера,сохранить индефекатор
-        fillInTheTable(manager, id, firstSubTask);
-
+        manager.setOneTask(firstSubTask.getId(), firstSubTask);
 // 7.1 Создаю эпик и три подзадачи с разными статусами
         Epic secondEpic = new Epic("Обучение", "Обучение JAVA", TaskStatus.IN_PROGRESS);
         SubTask firstSubTaskSecondEpic =
@@ -72,11 +67,5 @@ public class Main {
 // 16 Удалить всё
 // 17 Вызвать получение, чтобы убедиться, что ни одной задачи нет
 
-    }
-
-    @Deprecated // нужно избавиться от этого метода
-    public static void fillInTheTable(Manager manager, String id, Task someTask) {
-        id = someTask.getId();
-        manager.setOneTask(id, someTask);
     }
 }
