@@ -11,10 +11,12 @@ public class Manager {
         return allTasks;
     }
 
-    public void showAllTasks() {
+    public void showAllTasks() throws ClassNotFoundException {
         System.out.println("== Начало полного списка задач ==");
         for (Task tasks : getAllTasks().values()) {
-            System.out.println(tasks);
+            if (tasks.getClass() != Class.forName("SubTask")) {
+                System.out.println(tasks);
+            }
         }
         System.out.println("== Окончание полного списка задач ==");
     }
