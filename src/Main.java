@@ -1,5 +1,6 @@
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ClassNotFoundException {
+
         String id = "";
 
 // 1 Создать менеджера
@@ -17,7 +18,7 @@ public class Main {
         Epic firstEpic = new Epic("Переезд", "Собрать все вещи", TaskStatus.IN_PROGRESS);
 
 // 5 Создать подзадачу для эпика Переезд: Собрать чемодан, Положить в чемодан все необходимое, IN_PROGRESS
-        SubTask firstSubTask = new SubTask("Собрать чемодан", "Положить в чемодан все необходимое", TaskStatus.IN_PROGRESS);
+        SubTask firstSubTask = new SubTask("Собрать чемодан", "Положить в чемодан все необходимое", TaskStatus.IN_PROGRESS, firstEpic);
 
 // 6 Добавить эпик в коллекцию менеджера, сохранить индификатор
         fillInTheTable(manager, id, firstEpic);
@@ -29,13 +30,17 @@ public class Main {
         Epic secondEpic = new Epic("Обучение", "Обучение JAVA", TaskStatus.IN_PROGRESS);
         SubTask firstSubTaskSecondEpic =
                 new SubTask("Изучить ArrayList", "Научиться добавлять и удалять из ArrayList",
-                        TaskStatus.DONE);
+                        TaskStatus.DONE, secondEpic);
+
         SubTask secondSubTaskSecondEpic =
                 new SubTask("Изучить private", "Понять действие модификатора доступа private",
-                        TaskStatus.IN_PROGRESS);
+                        TaskStatus.IN_PROGRESS, secondEpic);
+
         SubTask thirdSubTaskSecondEpic =
                 new SubTask("Изучить Override", "Научиться переопределять методы",
-                        TaskStatus.NEW);
+                        TaskStatus.NEW, secondEpic);
+
+
         manager.setOneTask(secondEpic.getId(), secondEpic);
         manager.setOneTask(firstSubTaskSecondEpic.getId(), firstSubTaskSecondEpic);
         manager.setOneTask(secondSubTaskSecondEpic.getId(), secondSubTaskSecondEpic);
@@ -47,6 +52,7 @@ public class Main {
         manager.showAllTasks();
 
 // 9 Получение списка всех эпиков: распечатать id,name,status
+
 // 10 Получение списка всех подзадач определённого эпика: id, name, status, подсунуть индефикатор
 
 // 11 Получение задачи любого типа по идентификатору.
@@ -59,10 +65,8 @@ public class Main {
 // 12 Обновление задачи любого типа по идентификатору. Новая версия объекта передаётся в виде параметра (задать вопрос).
 
 
-
-
-
 // 13 После обновления вызвать получение
+
 // 14 Удалить эпик. (не понятно, как удалить эпик)
 // 15 Выввать получение всех задач, чтобы убедиться , что эпик удален и все подзадачи.
 // 16 Удалить всё
