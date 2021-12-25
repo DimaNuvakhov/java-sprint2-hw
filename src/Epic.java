@@ -15,8 +15,7 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        System.out.println();
-        String detail = "";
+        StringBuilder detail = new StringBuilder();
         String verticalTableBorder = "|";
         String horizontalTableBorder = "-------------------------------------"
                 + "---------------------------------------------------------";
@@ -34,9 +33,15 @@ public class Epic extends Task {
 
         for (SubTask tasks : subTasks.values()) {
 
-            detail = detail + "\n" + verticalTableBorder + Manager.padLeft(tasks.getName(), 20) + verticalTableBorder
-                    + Manager.padLeft(tasks.getDescription(), 50) + verticalTableBorder
-                    + Manager.padLeft(tasks.getStatus().toString(), 20) + verticalTableBorder;
+            detail.
+                    append("\n").
+                    append(verticalTableBorder).
+                    append(Manager.padLeft(tasks.getName(), 20)).
+                    append(verticalTableBorder).
+                    append(Manager.padLeft(tasks.getDescription(), 50)).
+                    append(verticalTableBorder).
+                    append(Manager.padLeft(tasks.getStatus().toString(), 20)).
+                    append(verticalTableBorder);
         }
         return title + detail + "\n" + horizontalTableBorder;
     }

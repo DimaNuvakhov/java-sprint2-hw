@@ -4,23 +4,25 @@ public class Main {
         Manager manager = new Manager();
 
 // 2 Создать задачу:  Помыть посуду, Помыть тарелки и вилки, NEW, сохранить индефекатор
-        Task firstTask = new Task("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW);
+        //Task firstTask = new Task("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW);
         Task secondTask = new Task("Купить хлеб", "Нужен хлеб \"Литовский\" из Гриднева", TaskStatus.DONE);
-
+        Task firstTask = manager.createTask("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW);
 // 3 Добавить задачу в коллекцию менеджера, сохранить идентификатор
-        manager.setOneTask(firstTask.getId(), firstTask);
-        manager.setOneTask(secondTask.getId(), secondTask);
+        manager.addOneTaskIntoMap(firstTask.getId(), firstTask);
+        manager.addOneTaskIntoMap(secondTask.getId(), secondTask);
+
 
 // 4 Создаем эпик: Переезд, Собрать все вещи, IN_PROGRESS, сохранить индификатор
-        Epic firstEpic = new Epic("Переезд", "Собрать все вещи", TaskStatus.IN_PROGRESS);
-
+       // Epic firstEpic = new Epic("Переезд", "Собрать все вещи", TaskStatus.IN_PROGRESS);
+        Epic firstEpic = manager.createEpicAndOneSubTask("Переезд", "Собрать все вещи", TaskStatus.IN_PROGRESS,
+                "Собрать чемодан", "Положить в чемодан все необходимое", TaskStatus.IN_PROGRESS);
 // 5 Создать подзадачу для эпика Переезд: Собрать чемодан, Положить в чемодан все необходимое, IN_PROGRESS
-        SubTask firstSubTask = new SubTask("Собрать чемодан", "Положить в чемодан все необходимое", TaskStatus.IN_PROGRESS, firstEpic);
+        //SubTask firstSubTask = new SubTask("Собрать чемодан", "Положить в чемодан все необходимое", TaskStatus.IN_PROGRESS, firstEpic);
 
 // 6 Добавить эпик в коллекцию менеджера, сохранить индификатор
-        manager.setOneTask(firstEpic.getId(), firstEpic);
+        manager.addOneTaskIntoMap(firstEpic.getId(), firstEpic);
 // 7 Добавить подзадачу эпика этого в коллекцию менеджера,сохранить индефекатор
-        manager.setOneTask(firstSubTask.getId(), firstSubTask);
+       // manager.addOneTaskIntoMap(firstSubTask.getId(), firstSubTask);
 // 7.1 Создаю эпик и три подзадачи с разными статусами
         Epic secondEpic = new Epic("Обучение", "Обучение JAVA", TaskStatus.IN_PROGRESS);
         SubTask firstSubTaskSecondEpic =
@@ -36,10 +38,10 @@ public class Main {
                         TaskStatus.NEW, secondEpic);
 
 
-        manager.setOneTask(secondEpic.getId(), secondEpic);
-        manager.setOneTask(firstSubTaskSecondEpic.getId(), firstSubTaskSecondEpic);
-        manager.setOneTask(secondSubTaskSecondEpic.getId(), secondSubTaskSecondEpic);
-        manager.setOneTask(thirdSubTaskSecondEpic.getId(), thirdSubTaskSecondEpic);
+        manager.addOneTaskIntoMap(secondEpic.getId(), secondEpic);
+        manager.addOneTaskIntoMap(firstSubTaskSecondEpic.getId(), firstSubTaskSecondEpic);
+        manager.addOneTaskIntoMap(secondSubTaskSecondEpic.getId(), secondSubTaskSecondEpic);
+        manager.addOneTaskIntoMap(thirdSubTaskSecondEpic.getId(), thirdSubTaskSecondEpic);
 
 
 // 8 Получение списка всех задач: распечатать id,name,status
@@ -47,7 +49,7 @@ public class Main {
         manager.showAllTasks();
 
 // 9 Получение списка всех эпиков: распечатать id,name,status
-
+        manager.showAllEpics();
 // 10 Получение списка всех подзадач определённого эпика: id, name, status, подсунуть индефикатор
 
 // 11 Получение задачи любого типа по идентификатору.
@@ -60,11 +62,14 @@ public class Main {
 // 12 Обновление задачи любого типа по идентификатору. Новая версия объекта передаётся в виде параметра (задать вопрос).
 
 
+
 // 13 После обновления вызвать получение
 
 // 14 Удалить эпик. (не понятно, как удалить эпик)
+
 // 15 Выввать получение всех задач, чтобы убедиться , что эпик удален и все подзадачи.
 // 16 Удалить всё
+
 // 17 Вызвать получение, чтобы убедиться, что ни одной задачи нет
 
     }
