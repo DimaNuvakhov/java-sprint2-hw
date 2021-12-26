@@ -4,13 +4,34 @@ import java.util.HashMap;
 public class Epic extends Task {
     private final HashMap<String, SubTask> subTasks;
 
-    public Epic(String name, String description, TaskStatus status) {
-        super(name, description, status);
+    public HashMap<String, SubTask> getSubTasks() {
+        return subTasks;
+    }
+
+    public Epic(String name, String description, TaskStatus status, Manager manager) {
+        super(name, description, status, manager);
         subTasks = new HashMap<>();
+    }
+
+    public void deleteSubTask(SubTask subTask) {
+        subTasks.remove(subTask.getId());
     }
 
     public void addSubTask(SubTask subTask) {
         subTasks.put(subTask.getId(), subTask);
+    }
+
+    //@Override
+    //public TaskStatus getStatus(SubTask subTask) {
+
+    //}
+
+    @Override
+    public void delete() {
+        for (SubTask tasks : subTasks.values()) {
+            tasks.delete();
+        }
+        System.out.println("Удаляем Epic");
     }
 
     @Override
@@ -19,9 +40,9 @@ public class Epic extends Task {
         String verticalTableBorder = "|";
         String horizontalTableBorder = "-------------------------------------"
                 + "---------------------------------------------------------------------------------------------";
-        ;
-        String table = verticalTableBorder + Manager.padLeft("<id>", 35) + verticalTableBorder + Manager.padLeft("<Название>", 20) + verticalTableBorder +
-                (Manager.padLeft("<Описание>", 50) + verticalTableBorder)
+        String table = verticalTableBorder + Manager.padLeft("<id>", 35) + verticalTableBorder
+                + Manager.padLeft("<Название>", 20)
+                + verticalTableBorder + (Manager.padLeft("<Описание>", 50) + verticalTableBorder)
                 + (Manager.padLeft("<Статус>", 20) + verticalTableBorder);
         String title = "Epic{" +
                 "id='" + getId() + '\'' +

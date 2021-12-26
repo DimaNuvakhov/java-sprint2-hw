@@ -5,12 +5,22 @@ public class Task {
     private String name;
     private String description;
     private TaskStatus status;
+    private Manager manager;
 
-    public Task(String name, String description, TaskStatus status) {
+    public Task(String name, String description, TaskStatus status, Manager manager) {
         this.name = name;
         this.description = description;
         this.status = status;
         this.id = UUID.randomUUID().toString().substring(0, 32);
+        this.manager = manager;
+    }
+
+    public void setManager(Manager manager) {
+        this.manager = manager;
+    }
+
+    public Manager getManager() {
+        return manager;
     }
 
     public void setId(String id) {
@@ -43,6 +53,10 @@ public class Task {
 
     public TaskStatus getStatus() {
         return status;
+    }
+
+    public void delete() {
+        System.out.println("Удаляем Task");
     }
 
     @Override

@@ -3,8 +3,16 @@ import java.util.HashMap;
 public class Manager {
     private final HashMap<String, Task> allTasks = new HashMap<>();
 
+    public void deleteTask(Task task) {
+        allTasks.remove(task.getId());
+    }
+
+    public void deleteSubTask(SubTask subTask) {
+        allTasks.remove(subTask.getId());
+    }
+
     public Task createTask(String name, String description, TaskStatus taskStatus) {
-        Task task = new Task(name, description, taskStatus);
+        Task task = new Task(name, description, taskStatus, this);
         allTasks.put(task.getId(), task);
         return task;
     }
@@ -12,8 +20,8 @@ public class Manager {
     public Epic createEpicAndOneSubTask(String epicName, String epicDescription,
                                         TaskStatus epicStatus, String subTaskName,
                                         String subTaskDescription, TaskStatus subTaskStatus) {
-        Epic epic = new Epic(epicName, epicDescription, epicStatus);
-        SubTask subTask = new SubTask(subTaskName, subTaskDescription, subTaskStatus, epic);
+        Epic epic = new Epic(epicName, epicDescription, epicStatus, this);
+        SubTask subTask = new SubTask(subTaskName, subTaskDescription, subTaskStatus, epic, this);
         allTasks.put(epic.getId(), epic);
         allTasks.put(subTask.getId(), subTask);
         return epic;
@@ -21,7 +29,7 @@ public class Manager {
 
     public SubTask addSubTaskIntoEpic(Epic epic, String subTaskName,
                                       String subTaskDescription, TaskStatus subTaskStatus) {
-        SubTask subTask = new SubTask(subTaskName, subTaskDescription, subTaskStatus, epic);
+        SubTask subTask = new SubTask(subTaskName, subTaskDescription, subTaskStatus, epic, this);
         allTasks.put(subTask.getId(), subTask);
         return subTask;
     }
@@ -44,6 +52,12 @@ public class Manager {
         System.out.println();
     }
 
+    public void removesEntityById(String id) {
+        if (allTasks.containsKey(id)) {
+            allTasks.get(id).delete();
+        }
+    }
+
     public void showAllEpics() {
         System.out.println("== Начало списка Эпиков ==");
         for (Task task : allTasks.values()) {
@@ -54,21 +68,20 @@ public class Manager {
         System.out.println("== Окончание списка Эпиков ==\n");
     }
 
-    /*public void addNewTask(String id, String newTaskName, String newTaskDescription, TaskStatus newTaskStatus)
-            throws ClassNotFoundException {
+    public void printAllSubTasks(String id) {
+        String verticalTableBorder = "|";
+        String horizontalTableBorder = "-------------------------------------"
+                + "---------------------------------------------------------------------------------------------";
+        System.out.println(verticalTableBorder + Manager.padLeft("<id>", 35) + verticalTableBorder
+                + Manager.padLeft("<Название>", 20)
+                + verticalTableBorder + (Manager.padLeft("<Описание>", 50) + verticalTableBorder)
+                + (Manager.padLeft("<Статус>", 20) + verticalTableBorder));
         if (allTasks.containsKey(id)) {
-            if (allTasks.get(id).getClass() != Class.forName("SubTask")) {
-                Task task = new Task(newTaskName, newTaskDescription, newTaskStatus));
-                allTasks.put(id, task);
-            } else {
-                SubTask subTask = new SubTask()
-            }
-            Task updatedTask = new Task();
-            addOneTaskIntoMap();
+           // for (Task task : allTasks.get(id)) { Не понимаю! Мы должны по id найти эпик в мапе, а затем пройтись по
+            // мапе из субтасков и распечатать, но я не могу найти эпик, по какой то причине, я все перепробовал
+            //}
         }
-    }*
-     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-     */
+    }
 
     public static String padRight(String s, int n) {
         return String.format("%-" + n + "s", s);
