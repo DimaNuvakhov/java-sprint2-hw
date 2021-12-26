@@ -25,17 +25,6 @@ public class SubTask extends Task{
                 ", epic=" + getEpic().getName() +
                 '}';
     }
-
-    public String toString2() {
-        return "SubTask{" +
-                "id='" + getId() + '\'' +
-                ", name='" + getName() + '\'' +
-                ", description='" + getDescription() + '\'' +
-                ", status=" + getStatus() + '\'' +
-                ", epic=" + getEpic().getName() +
-                '}';
-    }
-
 }
 
 

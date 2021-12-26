@@ -22,11 +22,11 @@ public class Manager {
     }
 
     public void showSpecificTask(String id) {
-        System.out.println("== Начало вывода задачи с id = " + id + "  ==");
+//        System.out.println("== Начало вывода задачи с id = " + id + "  ==");
         if (getAllTasks().containsKey(id)) {
             System.out.println(getAllTasks().get(id));
         }
-        System.out.println("== Окончание вывода задачи с id = " + id + "  ==");
+//        System.out.println("== Окончание вывода задачи с id = " + id + "  ==");
     }
 
     public void taskUpdate(String id, String name, String description, TaskStatus status) {

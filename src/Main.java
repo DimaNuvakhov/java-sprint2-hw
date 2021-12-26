@@ -55,7 +55,7 @@ public class Main {
         manager.showSpecificTask(firstTask.getId()); // вывод задачи
         manager.showSpecificTask(firstEpic.getId()); // вывод эпика
         manager.showSpecificTask(thirdSubTaskSecondEpic.getId()); // вывод подзадачи
-
+        manager.showSpecificTask(firstSubTask.getId()); // вывод подзадачи
 
 // 12 Обновление задачи любого типа по идентификатору. Новая версия объекта передаётся в виде параметра (задать вопрос).
 
