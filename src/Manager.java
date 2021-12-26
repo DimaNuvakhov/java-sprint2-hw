@@ -1,16 +1,11 @@
 import java.util.HashMap;
-import java.util.Objects;
 
 public class Manager {
-    private HashMap<String, Task> allTasks = new HashMap<>();
-
-    public void addOneTaskIntoMap(String id, Task task) {
-        allTasks.put(id, task);
-    }
+    private final HashMap<String, Task> allTasks = new HashMap<>();
 
     public Task createTask(String name, String description, TaskStatus taskStatus) {
         Task task = new Task(name, description, taskStatus);
-        addOneTaskIntoMap(task.getId(), task);
+        allTasks.put(task.getId(), task);
         return task;
     }
 
@@ -24,27 +19,21 @@ public class Manager {
         return epic;
     }
 
+    public SubTask addSubTaskIntoEpic(Epic epic, String subTaskName,
+                                      String subTaskDescription, TaskStatus subTaskStatus) {
+        SubTask subTask = new SubTask(subTaskName, subTaskDescription, subTaskStatus, epic);
+        allTasks.put(subTask.getId(), subTask);
+        return subTask;
+    }
 
-    /*public SubTask addSubTaskInEpic(String id, String subTaskName,
-                                    String subTaskDescription, TaskStatus subTaskStatus) throws ClassNotFoundException {
-        for (Task specificTask : allTasks.values()) {
-            if (specificTask.getClass() == Class.forName("Epic")) {
-                if (Objects.equals(specificTask.getId(), id)) {
-                    SubTask subTask = new SubTask(subTaskName, subTaskDescription, subTaskStatus, specificTask);
-                }
-            }
-        }
-    }*/
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    public void showAllTasks() throws ClassNotFoundException {
+    public void showAllTasks() {
         System.out.println("== Начало полного списка задач ==");
         for (Task task : allTasks.values()) {
-            if (task.getClass() != Class.forName("SubTask")) {
+            if (!(task.getClass().getName().equals("SubTask"))) {
                 System.out.println(task);
             }
         }
-        System.out.println("== Окончание полного списка задач ==");
+        System.out.println("== Окончание полного списка задач ==\n");
     }
 
     public void showSpecificTask(String id) {
@@ -52,16 +41,17 @@ public class Manager {
         if (allTasks.containsKey(id)) {
             System.out.println(allTasks.get(id));
         }
-        System.out.println("== Окончание вывода задачи с id = " + id + "  ==");
+        System.out.println();
     }
 
-
-    public void showAllEpics() throws ClassNotFoundException {
+    public void showAllEpics() {
+        System.out.println("== Начало списка Эпиков ==");
         for (Task task : allTasks.values()) {
-            if (task.getClass() == Class.forName("Epic")) {
+            if (task.getClass().getName().equals("Epic")) {
                 System.out.println(task);
             }
         }
+        System.out.println("== Окончание списка Эпиков ==\n");
     }
 
     /*public void addNewTask(String id, String newTaskName, String newTaskDescription, TaskStatus newTaskStatus)

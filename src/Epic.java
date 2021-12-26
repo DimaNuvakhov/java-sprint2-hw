@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Epic extends Task {
-    private HashMap<String, SubTask> subTasks;
+    private final HashMap<String, SubTask> subTasks;
 
     public Epic(String name, String description, TaskStatus status) {
         super(name, description, status);

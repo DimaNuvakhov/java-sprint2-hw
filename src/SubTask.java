@@ -7,14 +7,6 @@ public class SubTask extends Task{
         epic.addSubTask(this);
     }
 
-    public void setEpic(Epic epic) {
-        this.epic = epic;
-    }
-
-    public Epic getEpic() {
-        return epic;
-    }
-
     @Override
     public String toString() {
         return "SubTask{" +
@@ -22,20 +14,9 @@ public class SubTask extends Task{
                 ", name='" + getName() + '\'' +
                 ", description='" + getDescription() + '\'' +
                 ", status=" + getStatus() + '\'' +
-                ", epic=" + getEpic().getName() +
+                ", epic=" + epic.getName() +
                 '}';
     }
-
-    public String toString2() {
-        return "SubTask{" +
-                "id='" + getId() + '\'' +
-                ", name='" + getName() + '\'' +
-                ", description='" + getDescription() + '\'' +
-                ", status=" + getStatus() + '\'' +
-                ", epic=" + getEpic().getName() +
-                '}';
-    }
-
 }
 
 
