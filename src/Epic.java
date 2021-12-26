@@ -12,6 +12,13 @@ public class Epic extends Task {
         subTasks.put(subTask.getId(), subTask);
     }
 
+    public SubTask getAnySubTask() {
+        for (SubTask subTask : subTasks.values()) {
+            return subTask;
+        }
+        return null;
+    }
+
     @Override
     public String toString() {
         StringBuilder detail = new StringBuilder();
@@ -30,16 +37,16 @@ public class Epic extends Task {
                 ", subTasks=" + subTasks.size() +
                 '}' + "\n" + horizontalTableBorder + "\n" + table + "\n" + horizontalTableBorder;
 
-        for (SubTask tasks : subTasks.values()) {
+        for (SubTask subTask : subTasks.values()) {
 
             detail.
                     append("\n").
                     append(verticalTableBorder).
-                    append(Manager.padLeft(tasks.getName(), 20)).
+                    append(Manager.padLeft(subTask.getName(), 20)).
                     append(verticalTableBorder).
-                    append(Manager.padLeft(tasks.getDescription(), 50)).
+                    append(Manager.padLeft(subTask.getDescription(), 50)).
                     append(verticalTableBorder).
-                    append(Manager.padLeft(tasks.getStatus().toString(), 20)).
+                    append(Manager.padLeft(subTask.getStatus().toString(), 20)).
                     append(verticalTableBorder);
         }
         return title + detail + "\n" + horizontalTableBorder;

@@ -1,5 +1,5 @@
 public class Main {
-    public static void main(String[] args) throws ClassNotFoundException {
+    public static void main(String[] args) {
 // 1 Создать менеджера
         Manager manager = new Manager();
 
@@ -8,12 +8,12 @@ public class Main {
         Task secondTask = new Task("Купить хлеб", "Нужен хлеб \"Литовский\" из Гриднева", TaskStatus.DONE);
         Task firstTask = manager.createTask("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW);
 // 3 Добавить задачу в коллекцию менеджера, сохранить идентификатор
-        manager.addOneTaskIntoMap(firstTask.getId(), firstTask);
+//        manager.addOneTaskIntoMap(firstTask.getId(), firstTask);
         manager.addOneTaskIntoMap(secondTask.getId(), secondTask);
 
 
 // 4 Создаем эпик: Переезд, Собрать все вещи, IN_PROGRESS, сохранить индификатор
-       // Epic firstEpic = new Epic("Переезд", "Собрать все вещи", TaskStatus.IN_PROGRESS);
+        // Epic firstEpic = new Epic("Переезд", "Собрать все вещи", TaskStatus.IN_PROGRESS);
         Epic firstEpic = manager.createEpicAndOneSubTask("Переезд", "Собрать все вещи", TaskStatus.IN_PROGRESS,
                 "Собрать чемодан", "Положить в чемодан все необходимое", TaskStatus.IN_PROGRESS);
 // 5 Создать подзадачу для эпика Переезд: Собрать чемодан, Положить в чемодан все необходимое, IN_PROGRESS
@@ -22,7 +22,7 @@ public class Main {
 // 6 Добавить эпик в коллекцию менеджера, сохранить индификатор
         manager.addOneTaskIntoMap(firstEpic.getId(), firstEpic);
 // 7 Добавить подзадачу эпика этого в коллекцию менеджера,сохранить индефекатор
-       // manager.addOneTaskIntoMap(firstSubTask.getId(), firstSubTask);
+        // manager.addOneTaskIntoMap(firstSubTask.getId(), firstSubTask);
 // 7.1 Создаю эпик и три подзадачи с разными статусами
         Epic secondEpic = new Epic("Обучение", "Обучение JAVA", TaskStatus.IN_PROGRESS);
         SubTask firstSubTaskSecondEpic =
@@ -56,11 +56,10 @@ public class Main {
         System.out.println("");  // косметика, чтобы отделить блок вывода
         manager.showSpecificTask(firstTask.getId()); // вывод задачи
         manager.showSpecificTask(firstEpic.getId()); // вывод эпика
-        manager.showSpecificTask(thirdSubTaskSecondEpic.getId()); // вывод подзадачи
-        manager.showSpecificTask(firstSubTask.getId()); // вывод подзадачи
+        manager.showSpecificTask(secondEpic.getAnySubTask().getId()); // вывод подзадачи
+        manager.showSpecificTask(firstEpic.getAnySubTask().getId()); // вывод подзадачи
 
 // 12 Обновление задачи любого типа по идентификатору. Новая версия объекта передаётся в виде параметра (задать вопрос).
-
 
 
 // 13 После обновления вызвать получение
