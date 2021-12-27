@@ -48,7 +48,6 @@ public class Epic extends Task {
         }
         for (String id : toRemove) {
             subTasks.get(id).delete();
-            subTasks.remove(id);
         }
         getManager().deleteTask(this);
         System.out.println("Удаляем Epic, id = " + this.getId());

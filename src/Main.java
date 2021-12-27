@@ -34,8 +34,8 @@ public class Main {
 // 9 Получение списка всех эпиков: распечатать id,name,status
         manager.showAllEpics();
 // 10 Получение списка всех подзадач определённого эпика: id, name, status, подсунуть индефикатор
-        manager.showSpecificTask(secondEpic.getId()); // TODO этот вызов удалить, ниже написан другой вариант - showSubTaskListFromEpicById
-        manager.showSubTaskListFromEpicById(secondEpic.getId()); // TODO пример того как было нужно. Тебе задание - это переделать на красивый табличный вывод
+//        manager.showSpecificTask(secondEpic.getId()); // TODO этот вызов удалить, ниже написан другой вариант - showSubTaskListFromEpicById
+        manager.showSubTaskListFromEpicById(secondEpic.getId());
 
 // 11 Получение задачи любого типа по идентификатору.
         manager.showSpecificTask(firstTask.getId()); // вывод задачи
@@ -50,10 +50,25 @@ public class Main {
 // 14 Удалить эпик. (не понятно, как удалить эпик)
         //manager.removesEntityById(firstTask.getId());
 //        manager.removesEntityById(secondEpic.getId());
+
+
+        // Проверка удаления SubTask
+        manager.removesEntityById(secondEpicThirdSubTask.getId());
+        manager.showSpecificTask(secondEpicThirdSubTask.getId());
+        manager.showSpecificTask(secondEpic.getId());
+
+        // Проверка удаления Task
+        manager.showSpecificTask(firstTask.getId());
+        manager.removesEntityById(firstTask.getId());
+        manager.showSpecificTask(firstTask.getId());
+
+        // Проверка удаления Epic
         manager.removesEntityById(secondEpic.getId());
         manager.showSpecificTask(secondEpicSecondSubTask.getId());
         manager.showSpecificTask(secondEpicThirdSubTask.getId());
         manager.showSpecificTask(secondEpic.getId());
+
+
 
 // 15 Выввать получение всех задач, чтобы убедиться , что эпик удален и все подзадачи.
 
