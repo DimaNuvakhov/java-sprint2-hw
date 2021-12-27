@@ -40,10 +40,15 @@ public class Main {
 // 13 После обновления вызвать получение
 
 // 14 Удалить эпик. (не понятно, как удалить эпик)
+        manager.deleteOneEntityById(firstTask.getId()); // удаление задачи
+        manager.deleteOneEntityById(firstEpic.getId()); // удаление эпика
+        manager.deleteOneEntityById(secondEpicThirdSubTask.getId()); // удаление подзадачи
+        manager.deleteOneEntityById(secondEpic.getId()); // удаление эпика
 
 // 15 Выввать получение всех задач, чтобы убедиться , что эпик удален и все подзадачи.
 
 // 16 Удалить всё
+        manager.deleteAll();
 
 // 17 Вызвать получение, чтобы убедиться, что ни одной задачи нет
 

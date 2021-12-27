@@ -8,6 +8,11 @@ public class SubTask extends Task{
     }
 
     @Override
+    public void delete() {
+        System.out.println("== Удаление SubTask id = " + this.getId() + " \n");
+    }
+
+    @Override
     public String toString() {
         return "SubTask{" +
                 "id='" + getId() + '\'' +

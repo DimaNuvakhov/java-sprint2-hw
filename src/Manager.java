@@ -54,21 +54,19 @@ public class Manager {
         System.out.println("== Окончание списка Эпиков ==\n");
     }
 
-    /*public void addNewTask(String id, String newTaskName, String newTaskDescription, TaskStatus newTaskStatus)
-            throws ClassNotFoundException {
+    public void deleteOneEntityById(String id) {
         if (allTasks.containsKey(id)) {
-            if (allTasks.get(id).getClass() != Class.forName("SubTask")) {
-                Task task = new Task(newTaskName, newTaskDescription, newTaskStatus));
-                allTasks.put(id, task);
-            } else {
-                SubTask subTask = new SubTask()
-            }
-            Task updatedTask = new Task();
-            addOneTaskIntoMap();
+            allTasks.get(id).delete();
         }
-    }*
-     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-     */
+    }
+
+    public void deleteAll() {
+        for (Task task : allTasks.values()) {
+            if (!(task.getClass().getName().equals("SubTask"))) {
+                task.delete();
+            }
+        }
+    }
 
     public static String padRight(String s, int n) {
         return String.format("%-" + n + "s", s);

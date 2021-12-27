@@ -14,6 +14,14 @@ public class Epic extends Task {
     }
 
     @Override
+    public void delete() {
+        for (SubTask tasks : subTasks.values()) {
+            tasks.delete();
+        }
+        System.out.println("== Удаление Epic id = " + this.getId() + " \n");
+    }
+
+    @Override
     public String toString() {
         StringBuilder detail = new StringBuilder();
         String verticalTableBorder = "|";

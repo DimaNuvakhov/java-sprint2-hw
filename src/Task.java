@@ -45,6 +45,10 @@ public class Task {
         return status;
     }
 
+    public void delete() {
+        System.out.println("== Удаление Task id = " + this.id + " \n");
+    }
+
     @Override
     public String toString() {
         return "Task{" +
