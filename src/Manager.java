@@ -7,10 +7,6 @@ public class Manager {
         allTasks.remove(task.getId());
     }
 
-    public void deleteSubTask(SubTask subTask) {
-        allTasks.remove(subTask.getId());
-    }
-
     public Task createTask(String name, String description, TaskStatus taskStatus) {
         Task task = new Task(name, description, taskStatus, this);
         allTasks.put(task.getId(), task);
@@ -55,6 +51,8 @@ public class Manager {
         System.out.println("== Начало вывода задачи с id = " + id + "  ==");
         if (allTasks.containsKey(id)) {
             System.out.println(allTasks.get(id));
+        } else {
+            System.out.println("Данных нет");
         }
         System.out.println();
     }
@@ -64,21 +62,18 @@ public class Manager {
         if (allTasks.containsKey(id) && allTasks.get(id).getClass().getName().equals("Epic")) {
             Epic epic = (Epic)allTasks.get(id);
             System.out.println(epic.showSubTaskList());
+        } else {
+            System.out.println("Данных не найдено");
         }
         System.out.println();
     }
 
     public void removesEntityById(String id) {
+        System.out.println("== Удаление сущности, id = " + id);
         if (allTasks.containsKey(id)) {
-            allTasks.get(id).delete();  // TODO идея сама красивая, но там возникают внутренние конфликты. Их нам разбирать рано. Эту строку нужно будет удалить
-                                        // Меняем стратегию - будем удалять вручную.
-
-            // Пока будем решать с помощью проверок на имя класса - ты уже видел как это делается
-            // Если Task - просто удалим из мапы allTasks
-            // Если SubTask - у нее есть эпик, и мы этому эпику скажем чтобы удалил у себя. И потом просто удалим из мапы allTasks
-            // Если Эпик - все SubTask этого эпика в цикле удалим из мапы allTasks, потом сам эпик удалим из мапы allTasks
-
-
+            allTasks.get(id).delete();
+        } else {
+            System.out.println("== Сущность для удаления не найдена, id = " + id + "\n");
         }
     }
 

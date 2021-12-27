@@ -49,8 +49,12 @@ public class Main {
 
 // 14 Удалить эпик. (не понятно, как удалить эпик)
         //manager.removesEntityById(firstTask.getId());
+//        manager.removesEntityById(secondEpic.getId());
         manager.removesEntityById(secondEpic.getId());
-        //manager.removesEntityById(secondEpicThirdSubTask.getId());
+        manager.showSpecificTask(secondEpicSecondSubTask.getId());
+        manager.showSpecificTask(secondEpicThirdSubTask.getId());
+        manager.showSpecificTask(secondEpic.getId());
+
 // 15 Выввать получение всех задач, чтобы убедиться , что эпик удален и все подзадачи.
 
 // 16 Удалить всё

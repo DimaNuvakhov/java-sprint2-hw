@@ -1,4 +1,6 @@
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 public class Epic extends Task {
     private final HashMap<String, SubTask> subTasks;
@@ -40,10 +42,16 @@ public class Epic extends Task {
 
     @Override
     public void delete() {
-        for (SubTask tasks : subTasks.values()) {
-            tasks.delete();
+        ArrayList<String> toRemove = new ArrayList(0);
+        for (SubTask subTask : subTasks.values()) {
+            toRemove.add(subTask.getId());
         }
-        System.out.println("Удаляем Epic");
+        for (String id : toRemove) {
+            subTasks.get(id).delete();
+            subTasks.remove(id);
+        }
+        getManager().deleteTask(this);
+        System.out.println("Удаляем Epic, id = " + this.getId());
     }
 
     public String showSubTaskList() {
