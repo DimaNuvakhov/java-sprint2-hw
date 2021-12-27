@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Epic extends Task {
@@ -9,7 +8,11 @@ public class Epic extends Task {
     }
 
     public Epic(String name, String description, TaskStatus status, Manager manager) {
-        super(name, description, status, manager);
+        super(name,
+                description,
+                status, // TODO здесь мы вынуждены что-то передать, потому что вызываем конструктор родителя. Передаем туда null
+                manager
+        );
         subTasks = new HashMap<>();
     }
 
@@ -27,11 +30,28 @@ public class Epic extends Task {
     //}
 
     @Override
+    public TaskStatus getStatus() { // TODO переопределили метод GEt и в нем будем вычислять значение статуса по алгоритму
+        TaskStatus taskStatus = null;
+        // TODO здесь должен быть код вычисления статуса эпика по статусам подзадач согласно алгоритму
+        // нужно в цикле пройтись по всем подзадачам, подсчитать каких статусов сколько
+        // потом уже после цикла с помощью условий вычислить правильный статус и засунуть его в taskStatus
+        return taskStatus;
+    }
+
+    @Override
     public void delete() {
         for (SubTask tasks : subTasks.values()) {
             tasks.delete();
         }
         System.out.println("Удаляем Epic");
+    }
+
+    public String showSubTaskList() {
+        StringBuilder value = new StringBuilder();
+        for (SubTask subTask : subTasks.values()) {
+            value.append(subTask.toString()).append("\n");
+        }
+        return value.toString();
     }
 
     @Override

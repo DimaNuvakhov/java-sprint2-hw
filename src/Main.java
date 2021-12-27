@@ -11,8 +11,14 @@ public class Main {
 // 5 Создать подзадачу для эпика Переезд: Собрать чемодан, Положить в чемодан все необходимое, IN_PROGRESS
 // 6 Добавить эпик в коллекцию менеджера, сохранить индификатор
 // 7 Добавить подзадачу эпика этого в коллекцию менеджера,сохранить индефекатор
-        Epic firstEpic = manager.createEpicAndOneSubTask("Переезд", "Собрать все вещи", TaskStatus.IN_PROGRESS,
-                "Собрать чемодан", "Положить в чемодан все необходимое", TaskStatus.IN_PROGRESS);
+        Epic firstEpic = manager.createEpicAndOneSubTask(
+                "Переезд",
+                "Собрать все вещи",
+                null,  // TODO Убрать этот параметр вообще, он не нужен, статус эпика мы не записываем никуда.
+                "Собрать чемодан",
+                "Положить в чемодан все необходимое",
+                TaskStatus.IN_PROGRESS
+        );
 
 // 7.1 Создаю эпик и три подзадачи с разными статусами
         Epic secondEpic = manager.createEpicAndOneSubTask("Обучение", "Обучение JAVA",
@@ -28,7 +34,9 @@ public class Main {
 // 9 Получение списка всех эпиков: распечатать id,name,status
         manager.showAllEpics();
 // 10 Получение списка всех подзадач определённого эпика: id, name, status, подсунуть индефикатор
-        manager.showSpecificTask(secondEpic.getId());
+        manager.showSpecificTask(secondEpic.getId()); // TODO этот вызов удалить, ниже написан другой вариант - showSubTaskListFromEpicById
+        manager.showSubTaskListFromEpicById(secondEpic.getId()); // TODO пример того как было нужно. Тебе задание - это переделать на красивый табличный вывод
+
 // 11 Получение задачи любого типа по идентификатору.
         manager.showSpecificTask(firstTask.getId()); // вывод задачи
         manager.showSpecificTask(firstEpic.getId()); // вывод эпика

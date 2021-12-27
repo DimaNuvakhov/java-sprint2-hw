@@ -17,10 +17,17 @@ public class Manager {
         return task;
     }
 
-    public Epic createEpicAndOneSubTask(String epicName, String epicDescription,
-                                        TaskStatus epicStatus, String subTaskName,
-                                        String subTaskDescription, TaskStatus subTaskStatus) {
-        Epic epic = new Epic(epicName, epicDescription, epicStatus, this);
+    public Epic createEpicAndOneSubTask(String epicName,
+                                        String epicDescription,
+                                        TaskStatus epicStatus, // TODO убрать этот параметр
+                                        String subTaskName,
+                                        String subTaskDescription,
+                                        TaskStatus subTaskStatus) {
+        Epic epic = new Epic(epicName,
+                epicDescription,
+                epicStatus, // TODO убрать этот параметр
+                this
+        );
         SubTask subTask = new SubTask(subTaskName, subTaskDescription, subTaskStatus, epic, this);
         allTasks.put(epic.getId(), epic);
         allTasks.put(subTask.getId(), subTask);
@@ -52,9 +59,26 @@ public class Manager {
         System.out.println();
     }
 
+    public void showSubTaskListFromEpicById(String id) {
+        System.out.println("== Вывод списка подзадач для Эпика с id = " + id + "  ==");
+        if (allTasks.containsKey(id) && allTasks.get(id).getClass().getName().equals("Epic")) {
+            Epic epic = (Epic)allTasks.get(id);
+            System.out.println(epic.showSubTaskList());
+        }
+        System.out.println();
+    }
+
     public void removesEntityById(String id) {
         if (allTasks.containsKey(id)) {
-            allTasks.get(id).delete();
+            allTasks.get(id).delete();  // TODO идея сама красивая, но там возникают внутренние конфликты. Их нам разбирать рано. Эту строку нужно будет удалить
+                                        // Меняем стратегию - будем удалять вручную.
+
+            // Пока будем решать с помощью проверок на имя класса - ты уже видел как это делается
+            // Если Task - просто удалим из мапы allTasks
+            // Если SubTask - у нее есть эпик, и мы этому эпику скажем чтобы удалил у себя. И потом просто удалим из мапы allTasks
+            // Если Эпик - все SubTask этого эпика в цикле удалим из мапы allTasks, потом сам эпик удалим из мапы allTasks
+
+
         }
     }
 

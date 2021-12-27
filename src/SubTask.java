@@ -9,8 +9,8 @@ public class SubTask extends Task{
 
     @Override
     public void delete() {
-        epic.deleteSubTask(this);
-        getManager().deleteSubTask(this);
+//        epic.deleteSubTask(this);
+//        getManager().deleteSubTask(this);
         System.out.println("Удаляем SubTask");
     }
 
