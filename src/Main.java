@@ -48,10 +48,7 @@ public class Main {
 // 13 После обновления вызвать получение
 
 // 14 Удалить эпик. (не понятно, как удалить эпик)
-        //manager.removesEntityById(firstTask.getId());
-//        manager.removesEntityById(secondEpic.getId());
-
-
+// 15 Выввать получение всех задач, чтобы убедиться , что эпик удален и все подзадачи.
         // Проверка удаления SubTask
         manager.removesEntityById(secondEpicThirdSubTask.getId());
         manager.showSpecificTask(secondEpicThirdSubTask.getId());
@@ -70,10 +67,9 @@ public class Main {
 
 
 
-// 15 Выввать получение всех задач, чтобы убедиться , что эпик удален и все подзадачи.
 
 // 16 Удалить всё
-
+        // TODO В цикле удалить все Task и Epic - подзадачи удалятся автоматом при удалении эпика
 // 17 Вызвать получение, чтобы убедиться, что ни одной задачи нет
 
     }
