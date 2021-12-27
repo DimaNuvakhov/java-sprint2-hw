@@ -38,9 +38,9 @@ public class Main {
         manager.showSubTaskListFromEpicById(secondEpic.getId());
 
 // 11 Получение задачи любого типа по идентификатору.
-        manager.showSpecificTask(firstTask.getId()); // вывод задачи
-        manager.showSpecificTask(firstEpic.getId()); // вывод эпика
-        manager.showSpecificTask(secondEpicThirdSubTask.getId()); // вывод подзадачи
+        manager.showSpecificEntity(firstTask.getId()); // вывод задачи
+        manager.showSpecificEntity(firstEpic.getId()); // вывод эпика
+        manager.showSpecificEntity(secondEpicThirdSubTask.getId()); // вывод подзадачи
 
 // 12 Обновление задачи любого типа по идентификатору. Новая версия объекта передаётся в виде параметра (задать вопрос).
 
@@ -51,19 +51,19 @@ public class Main {
 // 15 Выввать получение всех задач, чтобы убедиться , что эпик удален и все подзадачи.
         // Проверка удаления SubTask
         manager.removesEntityById(secondEpicThirdSubTask.getId());
-        manager.showSpecificTask(secondEpicThirdSubTask.getId());
-        manager.showSpecificTask(secondEpic.getId());
+        manager.showSpecificEntity(secondEpicThirdSubTask.getId());
+        manager.showSpecificEntity(secondEpic.getId());
 
         // Проверка удаления Task
-        manager.showSpecificTask(firstTask.getId());
-        manager.removesEntityById(firstTask.getId());
-        manager.showSpecificTask(firstTask.getId());
+        manager.showSpecificEntity(secondTask.getId());
+        manager.removesEntityById(secondTask.getId());
+        manager.showSpecificEntity(secondTask.getId());
 
         // Проверка удаления Epic
         manager.removesEntityById(secondEpic.getId());
-        manager.showSpecificTask(secondEpicSecondSubTask.getId());
-        manager.showSpecificTask(secondEpicThirdSubTask.getId());
-        manager.showSpecificTask(secondEpic.getId());
+        manager.showSpecificEntity(secondEpicSecondSubTask.getId());
+        manager.showSpecificEntity(secondEpicThirdSubTask.getId());
+        manager.showSpecificEntity(secondEpic.getId());
 
 
 

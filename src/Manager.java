@@ -47,7 +47,7 @@ public class Manager {
         System.out.println("== Окончание полного списка задач ==\n");
     }
 
-    public void showSpecificTask(String id) {
+    public void showSpecificEntity(String id) {
         System.out.println("== Начало вывода задачи с id = " + id + "  ==");
         if (allTasks.containsKey(id)) {
             System.out.println(allTasks.get(id));
