@@ -47,7 +47,7 @@ public class Manager {
         System.out.println("== Окончание полного списка задач ==\n");
     }
 
-    public void showSpecificEntity(String id) {
+    public void showTaskById(String id) {
         System.out.println("== Начало вывода задачи с id = " + id + "  ==");
         if (allTasks.containsKey(id)) {
             System.out.println(allTasks.get(id));
@@ -68,7 +68,7 @@ public class Manager {
         System.out.println();
     }
 
-    public void removesEntityById(String id) {
+    public void deleteTaskById(String id) {
         System.out.println("== Удаление сущности, id = " + id);
         if (allTasks.containsKey(id)) {
             allTasks.get(id).delete();

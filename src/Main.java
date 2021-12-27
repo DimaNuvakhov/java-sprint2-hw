@@ -38,9 +38,9 @@ public class Main {
         manager.showSubTaskListFromEpicById(secondEpic.getId());
 
 // 11 Получение задачи любого типа по идентификатору.
-        manager.showSpecificEntity(firstTask.getId()); // вывод задачи
-        manager.showSpecificEntity(firstEpic.getId()); // вывод эпика
-        manager.showSpecificEntity(secondEpicThirdSubTask.getId()); // вывод подзадачи
+        manager.showTaskById(firstTask.getId()); // вывод задачи
+        manager.showTaskById(firstEpic.getId()); // вывод эпика
+        manager.showTaskById(secondEpicThirdSubTask.getId()); // вывод подзадачи
 
 // 12 Обновление задачи любого типа по идентификатору. Новая версия объекта передаётся в виде параметра (задать вопрос).
 
@@ -50,20 +50,20 @@ public class Main {
 // 14 Удалить эпик. (не понятно, как удалить эпик)
 // 15 Выввать получение всех задач, чтобы убедиться , что эпик удален и все подзадачи.
         // Проверка удаления SubTask
-        manager.removesEntityById(secondEpicThirdSubTask.getId());
-        manager.showSpecificEntity(secondEpicThirdSubTask.getId());
-        manager.showSpecificEntity(secondEpic.getId());
+        manager.deleteTaskById(secondEpicThirdSubTask.getId());
+        manager.showTaskById(secondEpicThirdSubTask.getId());
+        manager.showTaskById(secondEpic.getId());
 
         // Проверка удаления Task
-        manager.showSpecificEntity(secondTask.getId());
-        manager.removesEntityById(secondTask.getId());
-        manager.showSpecificEntity(secondTask.getId());
+        manager.showTaskById(secondTask.getId());
+        manager.deleteTaskById(secondTask.getId());
+        manager.showTaskById(secondTask.getId());
 
         // Проверка удаления Epic
-        manager.removesEntityById(secondEpic.getId());
-        manager.showSpecificEntity(secondEpicSecondSubTask.getId());
-        manager.showSpecificEntity(secondEpicThirdSubTask.getId());
-        manager.showSpecificEntity(secondEpic.getId());
+        manager.deleteTaskById(secondEpic.getId());
+        manager.showTaskById(secondEpicSecondSubTask.getId());
+        manager.showTaskById(secondEpicThirdSubTask.getId());
+        manager.showTaskById(secondEpic.getId());
 
 
 
