@@ -11,15 +11,21 @@ public class Main {
 // 5 Создать подзадачу для эпика Переезд: Собрать чемодан, Положить в чемодан все необходимое, IN_PROGRESS
 // 6 Добавить эпик в коллекцию менеджера, сохранить индификатор
 // 7 Добавить подзадачу эпика этого в коллекцию менеджера,сохранить индефекатор
-        Epic firstEpic = manager.createEpicAndOneSubTask("Переезд", "Собрать все вещи", TaskStatus.IN_PROGRESS,
-                "Собрать чемодан", "Положить в чемодан все необходимое", TaskStatus.IN_PROGRESS);
+        Epic firstEpic = manager.createEpicAndOneSubTask(
+                "Переезд",
+                "Собрать все вещи",
+                null,  // TODO Убрать этот параметр вообще, он не нужен, статус эпика мы не записываем никуда.
+                "Собрать чемодан",
+                "Положить в чемодан все необходимое",
+                TaskStatus.DONE
+        );
 
 // 7.1 Создаю эпик и три подзадачи с разными статусами
         Epic secondEpic = manager.createEpicAndOneSubTask("Обучение", "Обучение JAVA",
-                TaskStatus.IN_PROGRESS, "Изучить ArrayList",
-                "Научиться добавлять и удалять из ArrayList", TaskStatus.DONE);
+                null, "Изучить ArrayList",
+                "Научиться добавлять и удалять из ArrayList", TaskStatus.NEW);
         SubTask secondEpicSecondSubTask = manager.addSubTaskIntoEpic(secondEpic, "Изучить private",
-                "Понять действие модификатора доступа private", TaskStatus.IN_PROGRESS);
+                "Понять действие модификатора доступа private", TaskStatus.DONE);
         SubTask secondEpicThirdSubTask = manager.addSubTaskIntoEpic(secondEpic, "Изучить Override",
                 "Научиться переопределять методы", TaskStatus.NEW);
 
@@ -28,11 +34,12 @@ public class Main {
 // 9 Получение списка всех эпиков: распечатать id,name,status
         manager.showAllEpics();
 // 10 Получение списка всех подзадач определённого эпика: id, name, status, подсунуть индефикатор
-        manager.showSpecificTask(secondEpic.getId());
+        manager.showSubTaskListFromEpicById(secondEpic.getId());
+
 // 11 Получение задачи любого типа по идентификатору.
-        manager.showSpecificTask(firstTask.getId()); // вывод задачи
-        manager.showSpecificTask(firstEpic.getId()); // вывод эпика
-        manager.showSpecificTask(secondEpicThirdSubTask.getId()); // вывод подзадачи
+        manager.showTaskById(firstTask.getId()); // вывод задачи
+        manager.showTaskById(firstEpic.getId()); // вывод эпика
+        manager.showTaskById(secondEpicThirdSubTask.getId()); // вывод подзадачи
 
 // 12 Обновление задачи любого типа по идентификатору. Новая версия объекта передаётся в виде параметра (задать вопрос).
 
@@ -40,14 +47,27 @@ public class Main {
 // 13 После обновления вызвать получение
 
 // 14 Удалить эпик. (не понятно, как удалить эпик)
-        //manager.removesEntityById(firstTask.getId());
-        manager.removesEntityById(secondEpic.getId());
-        //manager.removesEntityById(secondEpicThirdSubTask.getId());
 // 15 Выввать получение всех задач, чтобы убедиться , что эпик удален и все подзадачи.
+        // Проверка удаления SubTask
+        manager.deleteTaskById(secondEpicThirdSubTask.getId());
+        manager.showTaskById(secondEpicThirdSubTask.getId());
+        manager.showTaskById(secondEpic.getId());
+
+        // Проверка удаления Task
+        manager.showTaskById(secondTask.getId());
+        manager.deleteTaskById(secondTask.getId());
+        manager.showTaskById(secondTask.getId());
+
+        // Проверка удаления Epic
+        manager.deleteTaskById(secondEpic.getId());
+        manager.showTaskById(secondEpicSecondSubTask.getId());
+        manager.showTaskById(secondEpicThirdSubTask.getId());
+        manager.showTaskById(secondEpic.getId());
 
 // 16 Удалить всё
-
+        manager.deleteAllTasks();   // TODO В цикле удалить все Task и Epic - подзадачи удалятся автоматом при удалении эпика
 // 17 Вызвать получение, чтобы убедиться, что ни одной задачи нет
 
     }
 }
+

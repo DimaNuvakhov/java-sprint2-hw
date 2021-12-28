@@ -1,4 +1,4 @@
-public class SubTask extends Task{
+public class SubTask extends Task {
     private Epic epic;
 
     public SubTask(String name, String description, TaskStatus status, Epic epic, Manager manager) {
@@ -10,8 +10,8 @@ public class SubTask extends Task{
     @Override
     public void delete() {
         epic.deleteSubTask(this);
-        getManager().deleteSubTask(this);
-        System.out.println("Удаляем SubTask");
+        getManager().deleteTask(this);
+        System.out.println("Удаляем SubTask, id = " + this.getId());
     }
 
     @Override
@@ -25,5 +25,6 @@ public class SubTask extends Task{
                 '}';
     }
 }
+
 
 

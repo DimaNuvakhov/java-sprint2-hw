@@ -56,7 +56,8 @@ public class Task {
     }
 
     public void delete() {
-        System.out.println("Удаляем Task");
+        getManager().deleteTask(this);
+        System.out.println("Удаляем Task, id = " + this.getId());
     }
 
     @Override
@@ -69,5 +70,6 @@ public class Task {
                 '}';
     }
 }
+
 
 
