@@ -14,18 +14,16 @@ public class Manager {
     }
 
     public void deleteAllTasks() {
-      allTasks.clear(); //
+        allTasks.clear(); //
     }
 
     public Epic createEpicAndOneSubTask(String epicName,
                                         String epicDescription,
-                                        TaskStatus epicStatus, // TODO убрать этот параметр
                                         String subTaskName,
                                         String subTaskDescription,
                                         TaskStatus subTaskStatus) {
         Epic epic = new Epic(epicName,
                 epicDescription,
-                epicStatus, // TODO убрать этот параметр
                 this
         );
         SubTask subTask = new SubTask(subTaskName, subTaskDescription, subTaskStatus, epic, this);
@@ -69,7 +67,6 @@ public class Manager {
         } else {
             System.out.println("Данных не найдено");
         }
-        System.out.println();
     }
 
     public void deleteTaskById(String id) {
@@ -78,6 +75,27 @@ public class Manager {
             allTasks.get(id).delete();
         } else {
             System.out.println("== Сущность для удаления не найдена, id = " + id + "\n");
+        }
+    }
+
+    public void setTaskName(String id, String name) {
+        System.out.println("== Обновление имени сущности, id = " + id);
+        if (allTasks.containsKey(id)) {
+            allTasks.get(id).setName(name);
+        }
+    }
+
+    public void setTaskDescription(String id, String description) {
+        System.out.println("== Обновление описания сущности, id = " + id);
+        if (allTasks.containsKey(id)) {
+            allTasks.get(id).setDescription(description);
+        }
+    }
+
+    public void setTaskStatus(String id, TaskStatus taskStatus) {
+        System.out.println("== Обновление статуса сущности, id = " + id);
+        if (allTasks.containsKey(id)) {
+            allTasks.get(id).setStatus(taskStatus);
         }
     }
 

@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
+
 
 public class Epic extends Task {
     private final HashMap<String, SubTask> subTasks;
@@ -9,10 +9,12 @@ public class Epic extends Task {
         return subTasks;
     }
 
-    public Epic(String name, String description, TaskStatus status, Manager manager) {
+    public Epic(String name,
+                String description,
+                Manager manager) {
         super(name,
                 description,
-                status, // TODO здесь мы вынуждены что-то передать, потому что вызываем конструктор родителя. Передаем туда null
+                null,
                 manager
         );
         subTasks = new HashMap<>();
@@ -24,6 +26,11 @@ public class Epic extends Task {
 
     public void addSubTask(SubTask subTask) {
         subTasks.put(subTask.getId(), subTask);
+    }
+
+    @Override
+    public void setStatus(TaskStatus status) {
+        System.out.println("Делаем вид, что обновляем эпик");
     }
 
     @Override
@@ -52,7 +59,7 @@ public class Epic extends Task {
 
     @Override
     public void delete() {
-        ArrayList<String> toRemove = new ArrayList(0);
+        ArrayList<String> toRemove = new ArrayList();
         for (SubTask subTask : subTasks.values()) {
             toRemove.add(subTask.getId());
         }
@@ -61,6 +68,7 @@ public class Epic extends Task {
         }
         getManager().deleteTask(this);
         System.out.println("Удаляем Epic, id = " + this.getId());
+        System.out.println();
     }
 
     public String showSubTaskList() {
