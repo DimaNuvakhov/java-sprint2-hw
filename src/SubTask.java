@@ -11,6 +11,9 @@ public class SubTask extends Task {
     public void delete() {
         epic.deleteSubTask(this);
         getManager().deleteTask(this);
+        if (epic.getSubTasks().size() == 0 ) {
+            getManager().deleteTask(epic);
+        }
         System.out.println("Удаляем SubTask, id = " + this.getId());
     }
 

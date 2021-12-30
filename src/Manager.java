@@ -109,6 +109,13 @@ public class Manager {
         System.out.println("== Окончание списка Эпиков ==\n");
     }
 
+    public void deleteAllTasksInEpicById(String id) {
+        if (allTasks.containsKey(id) && allTasks.get(id).getClass().getName().equals("Epic")) {
+            Epic epic = (Epic)allTasks.get(id);
+            epic.deleteAllSubtaskInEpic();
+        }
+    }
+
     public static String padRight(String s, int n) {
         return String.format("%-" + n + "s", s);
     }

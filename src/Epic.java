@@ -79,6 +79,16 @@ public class Epic extends Task {
         return value.toString();
     }
 
+    public void deleteAllSubtaskInEpic() {
+        ArrayList<String> toRemove = new ArrayList();
+        for (SubTask subTask : subTasks.values()) {
+            toRemove.add(subTask.getId());
+        }
+        for (String id : toRemove) {
+            subTasks.get(id).delete();
+        }
+    }
+
     @Override
     public String toString() {
         StringBuilder detail = new StringBuilder();

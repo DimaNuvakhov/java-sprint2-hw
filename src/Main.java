@@ -78,6 +78,11 @@ public class Main {
         manager.showTaskById(secondEpicThirdSubTask.getId());
         manager.showTaskById(secondEpic.getId());
 
+        // 7.1.4 Проверка удаления последней подзадачи у Epic
+        manager.showTaskById(firstEpic.getId());
+        manager.deleteAllTasksInEpicById(firstEpic.getId()) ;
+        manager.showTaskById(firstEpic.getId());
+
 // 7.2 Удаление всех ранее добавленных задач
         manager.deleteAllTasks();
     }
