@@ -5,32 +5,13 @@ import java.util.HashMap;
 public class Epic extends Task {
     private final HashMap<String, SubTask> subTasks;
 
-    public HashMap<String, SubTask> getSubTasks() {
-        return subTasks;
-    }
-
-    public Epic(String name,
-                String description,
-                Manager manager) {
-        super(name,
-                description,
-                null,
-                manager
-        );
+    public Epic(String name, String description) {
+        super(name, description, null);
         subTasks = new HashMap<>();
     }
 
-    public void deleteSubTask(SubTask subTask) {
-        subTasks.remove(subTask.getId());
-    }
-
-    public void addSubTask(SubTask subTask) {
-        subTasks.put(subTask.getId(), subTask);
-    }
-
-    @Override
-    public void setStatus(TaskStatus status) {
-        System.out.println("Делаем вид, что обновляем эпик");
+    public HashMap<String, SubTask> getSubTasks() {
+        return subTasks;
     }
 
     @Override
@@ -55,28 +36,6 @@ public class Epic extends Task {
         } else {
             return TaskStatus.IN_PROGRESS;
         }
-    }
-
-    @Override
-    public void delete() {
-        ArrayList<String> toRemove = new ArrayList();
-        for (SubTask subTask : subTasks.values()) {
-            toRemove.add(subTask.getId());
-        }
-        for (String id : toRemove) {
-            subTasks.get(id).delete();
-        }
-        getManager().deleteTask(this);
-        System.out.println("Удаляем Epic, id = " + this.getId());
-        System.out.println();
-    }
-
-    public String showSubTaskList() {
-        StringBuilder value = new StringBuilder();
-        for (SubTask subTask : subTasks.values()) {
-            value.append(subTask.toString()).append("\n");
-        }
-        return value.toString();
     }
 
     @Override

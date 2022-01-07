@@ -1,17 +1,14 @@
 public class SubTask extends Task {
     private Epic epic;
 
-    public SubTask(String name, String description, TaskStatus status, Epic epic, Manager manager) {
-        super(name, description, status, manager);
+    public SubTask(String name, String description, TaskStatus status, Epic epic) {
+        super(name, description, status);
         this.epic = epic;
-        epic.addSubTask(this);
+        epic.getSubTasks().put(this.getId(), this);
     }
 
-    @Override
-    public void delete() {
-        epic.deleteSubTask(this);
-        getManager().deleteTask(this);
-        System.out.println("Удаляем SubTask, id = " + this.getId());
+    public Epic getEpic() {
+        return epic;
     }
 
     @Override
