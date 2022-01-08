@@ -119,9 +119,6 @@ public class Manager {
             allTasks.remove(id);
         }
         deleteTask(epic);
-
-        System.out.println("Удаляем Epic, id = " + epic.getId());
-        System.out.println();
     }
 
     // Удаление подзадачи из эпика
@@ -144,9 +141,10 @@ public class Manager {
                 epic.getSubTasks().put(task.getId(), newSubTask);
                 allTasks.put(newSubTask.getId(), newSubTask);
             } else if ((allTasks.get(oldId).getClass().getName().equals("Epic"))) {
-                allTasks.remove(oldId);
-                task.setId(oldId);
+                Epic oldEpic = (Epic) allTasks.get(oldId);
                 Epic newEpic = (Epic) task;
+                deleteEpic(oldEpic);
+                newEpic.setId(oldId);
                 allTasks.put(newEpic.getId(), newEpic);
             } else {
                 allTasks.remove(oldId);
