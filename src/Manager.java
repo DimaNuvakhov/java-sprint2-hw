@@ -25,24 +25,27 @@ public class Manager {
 
     // Получение списка всех задач
     public void showAllTasks() {
-        System.out.println("== Начало полного списка задач ==");
+//        System.out.println("== Начало полного списка задач ==");
         for (Task task : allTasks.values()) {
             if (!(task.getClass().getName().equals("SubTask"))) {
                 System.out.println(task);
             }
         }
-        System.out.println("== Окончание полного списка задач ==\n");
+        if (allTasks.size() == 0) {
+            System.out.println("Данных нет.\n");
+        }
+//        System.out.println("== Окончание полного списка задач ==\n");
     }
 
     // Получение всех эпиков
     public void showAllEpics() {
-        System.out.println("== Начало списка Эпиков ==");
+//        System.out.println("== Начало списка Эпиков ==");
         for (Task task : allTasks.values()) {
             if (task.getClass().getName().equals("Epic")) {
                 System.out.println(task);
             }
         }
-        System.out.println("== Окончание списка Эпиков ==\n");
+//        System.out.println("== Окончание списка Эпиков ==\n");
     }
 
     // Получение определенной задачи по id
@@ -73,12 +76,15 @@ public class Manager {
         for (SubTask subTask : epic.getSubTasks().values()) {
             value.append(subTask.toString()).append("\n");
         }
+        if (value.toString().equals("")) {
+            return "Список подзадач пуст\n";
+        }
         return value.toString();
     }
 
     // Удаление всех задач
     public void deleteAllTasks() {
-        System.out.println("Удаляем все сущности");
+//        System.out.println("Удаляем все сущности");
         allTasks.clear(); //
     }
 
