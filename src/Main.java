@@ -1,3 +1,9 @@
+import epic.Epic;
+import manager.Manager;
+import subtask.SubTask;
+import task.Task;
+import taskstatus.TaskStatus;
+
 public class Main {
     public static void main(String[] args) {
         Manager manager = new Manager();
@@ -71,7 +77,7 @@ public class Main {
         manager.showTaskById(secondEpic.getId());
 
         // 6.2 Обновление задачи
-        Task testTask = new Task("Помыть машину", "Записаться на автомойку \"Мой - ка\" ",
+        Task testTask = new Task("Помыть машину", "Записаться на автомойку \"Мой - ка\"",
                 TaskStatus.NEW);
         printTest("Проверка обновления задачи - вывод задачи до обновления");
         manager.showTaskById(secondTask.getId());

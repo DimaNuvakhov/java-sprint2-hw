@@ -1,3 +1,9 @@
+package epic;
+
+import manager.Manager;
+import subtask.SubTask;
+import task.Task;
+
 import java.util.HashMap;
 
 public class Epic extends Task {

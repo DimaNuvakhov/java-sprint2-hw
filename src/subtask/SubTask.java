@@ -1,3 +1,8 @@
+package subtask;
+
+import task.Task;
+import taskstatus.TaskStatus;
+
 public class SubTask extends Task {
     private final String epicId;
 

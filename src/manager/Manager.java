@@ -1,3 +1,10 @@
+package manager;
+
+import epic.Epic;
+import subtask.SubTask;
+import task.Task;
+import taskstatus.TaskStatus;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -29,7 +36,7 @@ public class Manager {
     public void showAllTasks() {
         System.out.println("== Начало полного списка задач ==");
         for (Task task : allTasks.values()) {
-            if (!(task.getClass().getName().equals("SubTask"))) {
+            if (!(task.getClass().getName().equals("subtask.SubTask"))) {
                 System.out.println(task);
             }
         }
@@ -40,7 +47,7 @@ public class Manager {
     public void showAllEpics() {
         System.out.println("== Начало списка Эпиков ==");
         for (Task task : allTasks.values()) {
-            if (task.getClass().getName().equals("Epic")) {
+            if (task.getClass().getName().equals("epic.Epic")) {
                 System.out.println(task);
             }
         }
@@ -61,7 +68,7 @@ public class Manager {
     // Получение всех подзадач определенного эпика
     public void showSubTaskListFromEpicById(String id) {
         System.out.println("== Вывод списка подзадач для Эпика с id = " + id + "  ==");
-        if (allTasks.containsKey(id) && allTasks.get(id).getClass().getName().equals("Epic")) {
+        if (allTasks.containsKey(id) && allTasks.get(id).getClass().getName().equals("epic.Epic")) {
             Epic epic = (Epic) allTasks.get(id);
             System.out.println(showSubTaskList(epic));
         } else {
@@ -88,9 +95,9 @@ public class Manager {
     public void deleteTaskById(String id) {
         System.out.println("== Удаление сущности, id = " + id);
         if (allTasks.containsKey(id)) {
-            if (allTasks.get(id).getClass().getName().equals("Task")) {
+            if (allTasks.get(id).getClass().getName().equals("task.Task")) {
                 deleteTask(allTasks.get(id));
-            } else if (allTasks.get(id).getClass().getName().equals("Epic")) {
+            } else if (allTasks.get(id).getClass().getName().equals("epic.Epic")) {
                 Epic epic = (Epic) allTasks.get(id);
                 deleteEpic(epic);
             } else {
@@ -134,7 +141,7 @@ public class Manager {
 
     public void renewTaskById(String oldId, Task task) {
         if (allTasks.containsKey(oldId)) {
-            if (allTasks.get(oldId).getClass().getName().equals("SubTask")) {
+            if (allTasks.get(oldId).getClass().getName().equals("subtask.SubTask")) {
                 SubTask subTask = (SubTask) allTasks.get(oldId);
                 Epic epic = (Epic) allTasks.get(subTask.getEpicId());
                 epic.getSubTasks().remove(oldId);
@@ -144,7 +151,7 @@ public class Manager {
                 epic.getSubTasks().put(task.getId(), newSubTask);
                 allTasks.put(newSubTask.getId(), newSubTask);
                 epic.setStatus(calcStatus(epic));
-            } else if ((allTasks.get(oldId).getClass().getName().equals("Epic"))) {
+            } else if ((allTasks.get(oldId).getClass().getName().equals("epic.Epic"))) {
                 Epic oldEpic = (Epic) allTasks.get(oldId);
                 Epic newEpic = (Epic) task;
                 deleteEpic(oldEpic);

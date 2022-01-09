@@ -1,3 +1,7 @@
+package task;
+
+import taskstatus.TaskStatus;
+
 import java.util.UUID;
 
 public class Task {
