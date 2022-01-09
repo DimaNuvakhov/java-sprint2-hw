@@ -12,6 +12,7 @@ public class Manager {
     // Добавление эпика
     public void addEpic(Epic epic) {
         allTasks.put(epic.getId(), epic);
+        epic.setStatus(calcStatus(epic));
     }
 
     // Добавление подзадачи к определенному эпику
@@ -20,6 +21,7 @@ public class Manager {
             Epic epic = (Epic) allTasks.get(subTask.getEpicId());
             epic.getSubTasks().put(subTask.getId(), subTask);
             allTasks.put(subTask.getId(), subTask);
+            epic.setStatus(calcStatus(epic));
         }
     }
 
@@ -126,6 +128,7 @@ public class Manager {
         if (allTasks.containsKey(subTask.getEpicId())) {
             Epic epic = (Epic) allTasks.get(subTask.getEpicId());
             epic.getSubTasks().remove(subTask.getId());
+            epic.setStatus(calcStatus(epic));
         }
     }
 
@@ -140,12 +143,14 @@ public class Manager {
                 SubTask newSubTask = (SubTask) task;
                 epic.getSubTasks().put(task.getId(), newSubTask);
                 allTasks.put(newSubTask.getId(), newSubTask);
+                epic.setStatus(calcStatus(epic));
             } else if ((allTasks.get(oldId).getClass().getName().equals("Epic"))) {
                 Epic oldEpic = (Epic) allTasks.get(oldId);
                 Epic newEpic = (Epic) task;
                 deleteEpic(oldEpic);
                 newEpic.setId(oldId);
                 allTasks.put(newEpic.getId(), newEpic);
+                newEpic.setStatus(calcStatus(newEpic));
             } else {
                 allTasks.remove(oldId);
                 task.setId(oldId);
@@ -155,24 +160,25 @@ public class Manager {
         }
     }
 
-    public void setTaskName(String id, String name) {
-        System.out.println("== Обновление имени сущности, id = " + id);
-        if (allTasks.containsKey(id)) {
-            allTasks.get(id).setName(name);
+    public TaskStatus calcStatus(Epic epic) {
+        int newStatusNumber = 0;
+        int inProgressStatusNumber = 0;
+        int doneStatusNumber = 0;
+        for (SubTask subTask : epic.getSubTasks().values()) {
+            if (subTask.getStatus().toString().equals("NEW")) {
+                newStatusNumber = newStatusNumber + 1;
+            } else if (subTask.getStatus().toString().equals("IN_PROGRESS")) {
+                inProgressStatusNumber = inProgressStatusNumber + 1;
+            } else if (subTask.getStatus().toString().equals("DONE")) {
+                doneStatusNumber = doneStatusNumber + 1;
+            }
         }
-    }
-
-    public void setTaskDescription(String id, String description) {
-        System.out.println("== Обновление описания сущности, id = " + id);
-        if (allTasks.containsKey(id)) {
-            allTasks.get(id).setDescription(description);
-        }
-    }
-
-    public void setTaskStatus(String id, TaskStatus taskStatus) {
-        System.out.println("== Обновление статуса сущности, id = " + id);
-        if (allTasks.containsKey(id)) {
-            allTasks.get(id).setStatus(taskStatus);
+        if (epic.getSubTasks().size() == 0 || epic.getSubTasks().size() == newStatusNumber) {
+            return TaskStatus.NEW;
+        } else if (epic.getSubTasks().size() == doneStatusNumber) {
+            return TaskStatus.DONE;
+        } else {
+            return TaskStatus.IN_PROGRESS;
         }
     }
 

@@ -13,30 +13,6 @@ public class Epic extends Task {
     }
 
     @Override
-    public TaskStatus getStatus() {
-        TaskStatus taskStatus = null;
-        int newStatusNumber = 0;
-        int inProgressStatusNumber = 0;
-        int doneStatusNumber = 0;
-        for (SubTask subTask : subTasks.values()) {
-            if (subTask.getStatus().toString().equals("NEW")) {
-                newStatusNumber = newStatusNumber + 1;
-            } else if (subTask.getStatus().toString().equals("IN_PROGRESS")) {
-                inProgressStatusNumber = inProgressStatusNumber + 1;
-            } else if (subTask.getStatus().toString().equals("DONE")) {
-                doneStatusNumber = doneStatusNumber + 1;
-            }
-        }
-        if (subTasks.size() == 0 || subTasks.size() == newStatusNumber) {
-            return TaskStatus.NEW;
-        } else if (subTasks.size() == doneStatusNumber) {
-            return TaskStatus.DONE;
-        } else {
-            return TaskStatus.IN_PROGRESS;
-        }
-    }
-
-    @Override
     public String toString() {
         StringBuilder detail = new StringBuilder();
         String verticalTableBorder = "|";
