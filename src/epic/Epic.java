@@ -1,6 +1,6 @@
 package epic;
 
-import manager.Manager;
+import inmemorymanager.InMemoryManager;
 import subtask.SubTask;
 import task.Task;
 
@@ -24,10 +24,10 @@ public class Epic extends Task {
         String verticalTableBorder = "|";
         String horizontalTableBorder = "-------------------------------------"
                 + "---------------------------------------------------------------------------------------------";
-        String table = verticalTableBorder + Manager.padLeft("<id>", 35) + verticalTableBorder
-                + Manager.padLeft("<Название>", 20)
-                + verticalTableBorder + (Manager.padLeft("<Описание>", 50) + verticalTableBorder)
-                + (Manager.padLeft("<Статус>", 20) + verticalTableBorder);
+        String table = verticalTableBorder + InMemoryManager.padLeft("<id>", 35) + verticalTableBorder
+                + InMemoryManager.padLeft("<Название>", 20)
+                + verticalTableBorder + (InMemoryManager.padLeft("<Описание>", 50) + verticalTableBorder)
+                + (InMemoryManager.padLeft("<Статус>", 20) + verticalTableBorder);
         String title = "Epic{" +
                 "id='" + getId() + '\'' +
                 ", name='" + getName() + '\'' +
@@ -40,13 +40,13 @@ public class Epic extends Task {
             detail.
                     append("\n").
                     append(verticalTableBorder).
-                    append(Manager.padLeft(tasks.getId(), 35)).
+                    append(InMemoryManager.padLeft(tasks.getId(), 35)).
                     append(verticalTableBorder).
-                    append(Manager.padLeft(tasks.getName(), 20)).
+                    append(InMemoryManager.padLeft(tasks.getName(), 20)).
                     append(verticalTableBorder).
-                    append(Manager.padLeft(tasks.getDescription(), 50)).
+                    append(InMemoryManager.padLeft(tasks.getDescription(), 50)).
                     append(verticalTableBorder).
-                    append(Manager.padLeft(tasks.getStatus().toString(), 20)).
+                    append(InMemoryManager.padLeft(tasks.getStatus().toString(), 20)).
                     append(verticalTableBorder);
         }
         return title + detail + "\n" + horizontalTableBorder;
