@@ -67,6 +67,10 @@ public class InMemoryManager implements Manager {
         System.out.println("== Начало вывода задачи с id = " + id + "  ==");
         if (allTasks.containsKey(id)) {
             System.out.println(allTasks.get(id));
+            lastTenTasks.add(allTasks.get(id));
+            if (lastTenTasks.size() == 11) {
+                lastTenTasks.remove(0);
+            }
         } else {
             System.out.println("Данных нет");
         }
@@ -208,45 +212,57 @@ public class InMemoryManager implements Manager {
 
     @Override
     public ArrayList<Task> history() {
-        if (lastTenTasks.size() == 11) {
-            lastTenTasks.remove(0);
-        }
         return lastTenTasks;
     }
 
-    @Override
-    public void getTask(String id) {
-        if (allTasks.containsKey(id) && allTasks.get(id).getClass().getName().equals("task.Task")) {
-            lastTenTasks.add(allTasks.get(id));
-            System.out.println(history());
-        } else {
-            System.out.println("id не найден");
+    public String printHistory() {
+        StringBuilder value = new StringBuilder();
+        Integer num = 0;
+        String verticalTableBorder = "|";
+        String horizontalTableBorder = "-------------------------------------"
+                + "---------------------------------------------------------"
+                + "--------------------------------------------------";
+        String table = horizontalTableBorder + "\n" + verticalTableBorder + InMemoryManager.padLeft("<№>", 4)
+                + verticalTableBorder
+                + InMemoryManager.padLeft("<Тип задачи>", 13) + verticalTableBorder
+                + InMemoryManager.padLeft("<id>", 35) + verticalTableBorder
+                + InMemoryManager.padLeft("<Название>", 20)
+                + verticalTableBorder + (InMemoryManager.padLeft("<Описание>", 50) + verticalTableBorder)
+                + (InMemoryManager.padLeft("<Статус>", 15) + verticalTableBorder)
+                + "\n" + horizontalTableBorder;
+
+        for (Task tasks : lastTenTasks) {
+            num++;
+            value.
+                    append("\n").
+                    append(verticalTableBorder).
+                    append(InMemoryManager.padLeft(num.toString(), 4)).
+                    append(verticalTableBorder).
+                    append(InMemoryManager.padLeft(className(tasks), 13)).
+                    append(verticalTableBorder).
+                    append(InMemoryManager.padLeft(tasks.getId(), 35)).
+                    append(verticalTableBorder).
+                    append(InMemoryManager.padLeft(tasks.getName(), 20)).
+                    append(verticalTableBorder).
+                    append(InMemoryManager.padLeft(tasks.getDescription(), 50)).
+                    append(verticalTableBorder).
+                    append(InMemoryManager.padLeft(tasks.getStatus().toString(), 15)).
+                    append(verticalTableBorder);
         }
+        return table + value + "\n" + horizontalTableBorder;
     }
 
-    @Override
-    public void getEpic(String id) {
-        if (allTasks.containsKey(id) && allTasks.get(id).getClass().getName().equals("epic.Epic")) {
-            Epic epic = (Epic) allTasks.get(id);
-            lastTenTasks.add(epic);
-            System.out.println(history());
-        } else {
-            System.out.println("id не найден");
+    public String className(Task task) {
+        switch (task.getClass().getName()) {
+            case "subtask.SubTask":
+                return "SubTask";
+            case "epic.Epic":
+                return "Epic";
+            case "task.Task":
+                return "Task";
         }
+        return null;
     }
-
-
-    @Override
-    public void getSubTask(String id) {
-        if (allTasks.containsKey(id) && allTasks.get(id).getClass().getName().equals("subtask.SubTask")) {
-            SubTask subTask = (SubTask) allTasks.get(id);
-            lastTenTasks.add(subTask);
-            System.out.println(history());
-        } else {
-            System.out.println("id не найден");
-        }
-    }
-
 
     public static String padRight(String s, int n) {
         return String.format("%-" + n + "s", s);

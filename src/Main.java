@@ -10,7 +10,7 @@ public class Main {
         // 1 Добавление новой задачи, эпика и подзадачи.
         // 1.1 Создаем задачу и добавляем в трекер задач.
         Task firstTask = new Task("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW);
-        Task secondTask = new Task("!!!!Купить хлеб", "Нужен хлеб \"Литовский\" из Гриднева",
+        Task secondTask = new Task("Купить хлеб", "Нужен хлеб \"Литовский\" из Гриднева",
                 TaskStatus.DONE);
         inMemoryManager.addTask(firstTask);
         inMemoryManager.addTask(secondTask);
@@ -29,7 +29,13 @@ public class Main {
         SubTask firstEpicFirstSubTask = new SubTask("Собрать чемодан",
                 "Положить в чемодан все необходимое",
                 TaskStatus.DONE, firstEpic.getId());
+        SubTask firstEpicSecondSubTask = new SubTask("Забрать сноуборд",
+                "Забрать свой сноуборд из кладовки", TaskStatus.DONE, firstEpic.getId());
+        SubTask firstEpicThirdSubTask = new SubTask("Убрать в доме", "Убрать в доме перед отъездом",
+                TaskStatus.DONE, firstEpic.getId());
         inMemoryManager.addSubTaskIntoEpic(firstEpicFirstSubTask); // Добавляем субтаск в первый епик
+        inMemoryManager.addSubTaskIntoEpic(firstEpicSecondSubTask);
+        inMemoryManager.addSubTaskIntoEpic(firstEpicThirdSubTask);
 
         SubTask secondEpicFirstSubTask = new SubTask("Изучить ArrayList",
                 "Научиться добавлять и удалять из ArrayList", TaskStatus.NEW, secondEpic.getId());
@@ -40,23 +46,6 @@ public class Main {
         inMemoryManager.addSubTaskIntoEpic(secondEpicFirstSubTask);
         inMemoryManager.addSubTaskIntoEpic(secondEpicSecondSubTask);
         inMemoryManager.addSubTaskIntoEpic(secondEpicThirdSubTask);
-
-        // 2 История просмотров задач.
-        printTest("Отображение истории просмотров задач:");
-        inMemoryManager.getTask(firstTask.getId());
-        inMemoryManager.getTask(firstTask.getId());
-        inMemoryManager.getTask(firstTask.getId());
-        inMemoryManager.getTask(firstTask.getId());
-        inMemoryManager.getTask(firstTask.getId());
-        inMemoryManager.getTask(firstTask.getId());
-        inMemoryManager.getTask(firstTask.getId());
-        inMemoryManager.getTask(firstTask.getId());
-        inMemoryManager.getTask(firstTask.getId());
-        inMemoryManager.getTask(secondTask.getId());
-        inMemoryManager.getTask(secondTask.getId());
-        inMemoryManager.getTask(secondTask.getId());
-        inMemoryManager.getTask(secondTask.getId());
-        inMemoryManager.getTask("11");
 
         // 3 Получение списка всех задач.
         printTest("Проверка получения списка всех задач");
@@ -81,9 +70,22 @@ public class Main {
         inMemoryManager.showTaskById(firstEpic.getId()); // эпик
         printTest("Проверка получения по идентификатору SubTask");
         inMemoryManager.showTaskById(firstEpicFirstSubTask.getId()); // подзадача
+        printTest("Вызов задач для проверки истории:");
+        inMemoryManager.showTaskById(secondEpicFirstSubTask.getId());
+        inMemoryManager.showTaskById(secondEpicSecondSubTask.getId());
+        inMemoryManager.showTaskById(secondEpicThirdSubTask.getId());
+        inMemoryManager.showTaskById(secondTask.getId());
+        inMemoryManager.showTaskById(firstEpicFirstSubTask.getId());
+        inMemoryManager.showTaskById(firstEpicSecondSubTask.getId());
+        inMemoryManager.showTaskById(firstEpicThirdSubTask.getId());
+        inMemoryManager.showTaskById(secondEpic.getId());
 
-        // 7 Обновление задачи любого типа по идентификатору.
-        // 7.1 Обновление подзадачи определенного эпика.
+        // 7 История просмотров задач.
+        printTest("История просмотров задач:");
+        System.out.println(inMemoryManager.printHistory());
+
+        // 8 Обновление задачи любого типа по идентификатору.
+        // 8.1 Обновление подзадачи определенного эпика.
         SubTask testSubtask = new SubTask("Изучить дженерики", "Изучить случаи применения дженериков",
                 TaskStatus.DONE, secondEpic.getId());
         printTest("Проверка обновления подзадачи у эпика - вывод эпика до обновления");
@@ -93,7 +95,7 @@ public class Main {
         printTest("Проверка обновления подзадачи у эпика - вывод эпика после обновления");
         inMemoryManager.showTaskById(secondEpic.getId());
 
-        // 7.2 Обновление задачи.
+        // 8.2 Обновление задачи.
         Task testTask = new Task("Помыть машину", "Записаться на автомойку \"Мой - ка\"",
                 TaskStatus.NEW);
         printTest("Проверка обновления задачи - вывод задачи до обновления");
@@ -103,7 +105,7 @@ public class Main {
         printTest("Проверка обновления задачи - вывод задачи после обновления");
         inMemoryManager.showTaskById(secondTask.getId());
 
-        // 7.3 Обновление эпика
+        // 8.3 Обновление эпика
         Epic testEpic = new Epic("Сходить в спортзал", "Потренировать две группы мышц");
         printTest("Проверка обновления эпика - вывод эпика до обновления");
         inMemoryManager.showTaskById(firstEpic.getId());
@@ -112,27 +114,27 @@ public class Main {
         printTest("Проверка обновления эпика - вывод эпика после обновления");
         inMemoryManager.showTaskById(firstEpic.getId());
 
-        // 8 Удаление ранее добавленных задач — всех и по идентификатору.
-        // 8.1 Удаление ранее добавленных задач по идентификатору.
-        // 8.1.1 Проверка удаления Task.
+        // 9 Удаление ранее добавленных задач — всех и по идентификатору.
+        // 9.1 Удаление ранее добавленных задач по идентификатору.
+        // 9.1.1 Проверка удаления Task.
         printTest("Проверка удаления по идентификатору Task");
         inMemoryManager.showTaskById(firstTask.getId());
         inMemoryManager.deleteTaskById(firstTask.getId());
         inMemoryManager.showTaskById(firstTask.getId());
 
-        // 8.1.3 Проверка удаления SubTask.
+        // 9.1.2 Проверка удаления SubTask.
         printTest("Проверка удаления по идентификатору SubTask");
         inMemoryManager.showTaskById(secondEpicFirstSubTask.getId());
         inMemoryManager.deleteTaskById(secondEpicFirstSubTask.getId());
         inMemoryManager.showTaskById(secondEpicFirstSubTask.getId());
 
-        // 8.1.2 Проверка удаления Epic.
+        // 9.1.3 Проверка удаления Epic.
         printTest("Проверка удаления по идентификатору Epic");
         inMemoryManager.showTaskById(secondEpic.getId());
         inMemoryManager.deleteTaskById(secondEpic.getId());
         inMemoryManager.showTaskById(secondEpic.getId());
 
-        // 8.2 Удаление всех ранее добавленных задач.
+        // 9.2 Удаление всех ранее добавленных задач.
         printTest("Проверка удаления всех сущностей - вывод полного списка");
         inMemoryManager.showAllTasks();
         printTest("Проверка удаления всех сущностей - удаление сущностей");

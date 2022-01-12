@@ -50,12 +50,7 @@ public interface Manager {
 
     TaskStatus calcStatus(Epic epic);
 
-    ArrayList<Task> history();
+    ArrayList<Task > history();
 
-    void getTask(String id);
-
-    void getEpic(String id);
-
-    void getSubTask(String id);
 }
 
