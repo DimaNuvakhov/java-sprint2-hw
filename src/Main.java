@@ -64,12 +64,27 @@ public class Main {
         inMemoryManager.showSubTaskListFromEpicById(emptyEpic.getId());
 
         // 6 Получение задачи любого типа по идентификатору.
+        printTest("История просмотров задач: пустая история");
+        System.out.println(inMemoryManager.printHistory());
+
         printTest("Проверка получения по идентификатору Task");
         inMemoryManager.showTaskById(firstTask.getId()); // задача
+
+        printTest("История просмотров задач: один элемент в истории");
+        System.out.println(inMemoryManager.printHistory());
+
         printTest("Проверка получения по идентификатору Epic");
         inMemoryManager.showTaskById(firstEpic.getId()); // эпик
+
+        printTest("История просмотров задач: два элемента в истории");
+        System.out.println(inMemoryManager.printHistory());
+
         printTest("Проверка получения по идентификатору SubTask");
         inMemoryManager.showTaskById(firstEpicFirstSubTask.getId()); // подзадача
+
+        printTest("История просмотров задач: три элемента в истории");
+        System.out.println(inMemoryManager.printHistory());
+
         printTest("Вызов задач для проверки истории:");
         inMemoryManager.showTaskById(secondEpicFirstSubTask.getId());
         inMemoryManager.showTaskById(secondEpicSecondSubTask.getId());
@@ -78,11 +93,18 @@ public class Main {
         inMemoryManager.showTaskById(firstEpicFirstSubTask.getId());
         inMemoryManager.showTaskById(firstEpicSecondSubTask.getId());
         inMemoryManager.showTaskById(firstEpicThirdSubTask.getId());
+
+        printTest("История просмотров задач: десять элементов в истории");
+        System.out.println(inMemoryManager.printHistory());
+
         inMemoryManager.showTaskById(secondEpic.getId());
 
-        // 7 История просмотров задач.
-        printTest("История просмотров задач:");
+        printTest("История просмотров задач: добавление одиннадцатого элемента и вытеснение первого");
         System.out.println(inMemoryManager.printHistory());
+
+//        // 7 История просмотров задач.
+//        printTest("История просмотров задач:");
+//        System.out.println(inMemoryManager.printHistory());
 
         // 8 Обновление задачи любого типа по идентификатору.
         // 8.1 Обновление подзадачи определенного эпика.
@@ -141,6 +163,11 @@ public class Main {
         inMemoryManager.deleteAllTasks();
         printTest("Проверка удаления всех сущностей - вывод полного списка после удаления");
         inMemoryManager.showAllTasks();
+        printTest("История просмотров задач: проверка удаления из истории");
+        System.out.println(inMemoryManager.printHistory());
+
+
+
     }
 
     public static void printTest(String value) {
