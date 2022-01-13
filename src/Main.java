@@ -64,12 +64,20 @@ public class Main {
         inMemoryManager.showSubTaskListFromEpicById(emptyEpic.getId());
 
         // 6 Получение задачи любого типа по идентификатору.
+        printTest("История просмотров задач: пустая история");
+        System.out.println(inMemoryManager.printHistory());
         printTest("Проверка получения по идентификатору Task");
         inMemoryManager.showTaskById(firstTask.getId()); // задача
+        printTest("История просмотров задач: один элемент в истории");
+        System.out.println(inMemoryManager.printHistory());
         printTest("Проверка получения по идентификатору Epic");
         inMemoryManager.showTaskById(firstEpic.getId()); // эпик
+        printTest("История просмотров задач: два элемента в истории");
+        System.out.println(inMemoryManager.printHistory());
         printTest("Проверка получения по идентификатору SubTask");
         inMemoryManager.showTaskById(firstEpicFirstSubTask.getId()); // подзадача
+        printTest("История просмотров задач: три элемента в истории");
+        System.out.println(inMemoryManager.printHistory());
         printTest("Вызов задач для проверки истории:");
         inMemoryManager.showTaskById(secondEpicFirstSubTask.getId());
         inMemoryManager.showTaskById(secondEpicSecondSubTask.getId());
