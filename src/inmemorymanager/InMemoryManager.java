@@ -215,6 +215,7 @@ public class InMemoryManager implements Manager {
         return lastTenTasks;
     }
 
+    @Override
     public String printHistory() {
         StringBuilder value = new StringBuilder();
         Integer num = 0;
@@ -249,7 +250,7 @@ public class InMemoryManager implements Manager {
                     append(InMemoryManager.padLeft(tasks.getStatus().toString(), 15)).
                     append(verticalTableBorder);
         }
-        return table + value + "\n" + horizontalTableBorder;
+        return table + value + "\n" + horizontalTableBorder + "\n";
     }
 
     public String className(Task task) {
