@@ -1,6 +1,7 @@
-package inmemorymanager;
+package inmemoryhistorymanager;
 
 import epic.Epic;
+import historymanager.HistoryManager;
 import manager.Manager;
 import subtask.SubTask;
 import task.Task;
@@ -8,10 +9,70 @@ import taskstatus.TaskStatus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
-public class InMemoryManager implements Manager {
+public class InMemoryHistoryManager implements Manager, HistoryManager {
     private final HashMap<String, Task> allTasks = new HashMap<>();
     private final ArrayList<Task> lastTenTasks = new ArrayList<>();
+    private final HashMap<String, Node> nodes = new HashMap<>();
+
+    // Класс Node для LinkedList
+    private static class Node<E extends Task> {
+        public E data;
+        public Node<E> next;
+        public Node<E> prev;
+
+        public Node(Node<E> prev, E data, Node<E> next) {
+            this.data = data;
+            this.next = next;
+            this.prev = prev;
+        }
+    }
+
+    // Поля LinkedList
+    private Node<Task> head;
+    private Node<Task> tail;
+    private int size = 0;
+
+    // Добавление последнего элемента в LinkedList
+    public void addLast(Task element) {
+        final Node<Task> oldTail = tail;
+        final Node<Task> newNode = new Node<>(oldTail, element, null);
+        tail = newNode;
+        if (oldTail == null) {
+            head = newNode;
+        } else {
+            oldTail.next = newNode;
+        }
+        size++;
+    }
+
+    // Добавление задачи в LinkedList
+    @Override
+    public void add(Task task) {
+        addLast(task);
+        if (nodes.containsKey(task.getId())) {
+            remove(task.getId());
+            nodes.put(task.getId(), tail);
+        } else {
+            nodes.put(task.getId(), tail);
+        }
+    }
+
+    @Override
+    public void remove(String id) {
+
+    }
+
+    @Override
+    public List<Task> getHistory() {
+        Node x = head;
+        for (int i = 0; i < 10; i++) {
+            lastTenTasks.add(x.data);
+            x = x.next;
+        }
+        return lastTenTasks;
+    }
 
     // Добавление задачи
     @Override
@@ -67,10 +128,7 @@ public class InMemoryManager implements Manager {
         System.out.println("== Начало вывода задачи с id = " + id + "  ==");
         if (allTasks.containsKey(id)) {
             System.out.println(allTasks.get(id));
-            lastTenTasks.add(allTasks.get(id));
-            if (lastTenTasks.size() == 11) {
-                lastTenTasks.remove(0);
-            }
+            add(allTasks.get(id));
         } else {
             System.out.println("Данных нет");
         }
@@ -211,25 +269,21 @@ public class InMemoryManager implements Manager {
     }
 
     @Override
-    public ArrayList<Task> history() {
-        return lastTenTasks;
-    }
-
-    @Override
     public String printHistory() {
+        getHistory();
         StringBuilder value = new StringBuilder();
         Integer num = 0;
         String verticalTableBorder = "|";
         String horizontalTableBorder = "-------------------------------------"
                 + "---------------------------------------------------------"
                 + "--------------------------------------------------";
-        String table = horizontalTableBorder + "\n" + verticalTableBorder + InMemoryManager.padLeft("<№>", 4)
+        String table = horizontalTableBorder + "\n" + verticalTableBorder + InMemoryHistoryManager.padLeft("<№>", 4)
                 + verticalTableBorder
-                + InMemoryManager.padLeft("<Тип задачи>", 13) + verticalTableBorder
-                + InMemoryManager.padLeft("<id>", 35) + verticalTableBorder
-                + InMemoryManager.padLeft("<Название>", 20)
-                + verticalTableBorder + (InMemoryManager.padLeft("<Описание>", 50) + verticalTableBorder)
-                + (InMemoryManager.padLeft("<Статус>", 15) + verticalTableBorder)
+                + InMemoryHistoryManager.padLeft("<Тип задачи>", 13) + verticalTableBorder
+                + InMemoryHistoryManager.padLeft("<id>", 35) + verticalTableBorder
+                + InMemoryHistoryManager.padLeft("<Название>", 20)
+                + verticalTableBorder + (InMemoryHistoryManager.padLeft("<Описание>", 50) + verticalTableBorder)
+                + (InMemoryHistoryManager.padLeft("<Статус>", 15) + verticalTableBorder)
                 + "\n" + horizontalTableBorder;
 
         for (Task tasks : lastTenTasks) {
@@ -237,17 +291,17 @@ public class InMemoryManager implements Manager {
             value.
                     append("\n").
                     append(verticalTableBorder).
-                    append(InMemoryManager.padLeft(num.toString(), 4)).
+                    append(InMemoryHistoryManager.padLeft(num.toString(), 4)).
                     append(verticalTableBorder).
-                    append(InMemoryManager.padLeft(className(tasks), 13)).
+                    append(InMemoryHistoryManager.padLeft(className(tasks), 13)).
                     append(verticalTableBorder).
-                    append(InMemoryManager.padLeft(tasks.getId(), 35)).
+                    append(InMemoryHistoryManager.padLeft(tasks.getId(), 35)).
                     append(verticalTableBorder).
-                    append(InMemoryManager.padLeft(tasks.getName(), 20)).
+                    append(InMemoryHistoryManager.padLeft(tasks.getName(), 20)).
                     append(verticalTableBorder).
-                    append(InMemoryManager.padLeft(tasks.getDescription(), 50)).
+                    append(InMemoryHistoryManager.padLeft(tasks.getDescription(), 50)).
                     append(verticalTableBorder).
-                    append(InMemoryManager.padLeft(tasks.getStatus().toString(), 15)).
+                    append(InMemoryHistoryManager.padLeft(tasks.getStatus().toString(), 15)).
                     append(verticalTableBorder);
         }
         return table + value + "\n" + horizontalTableBorder + "\n";
