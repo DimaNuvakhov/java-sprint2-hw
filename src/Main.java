@@ -30,8 +30,19 @@ public class Main {
         inMemoryHistoryManager.addSubTaskIntoEpic(firstEpicThirdSubTask);
 
         // Добавление в историю просмотра первой задачи и просмотр истории
+        inMemoryHistoryManager.showTaskById(firstEpicFirstSubTask.getId());
         inMemoryHistoryManager.showTaskById(firstTask.getId());
         inMemoryHistoryManager.showTaskById(secondTask.getId());
+        inMemoryHistoryManager.showTaskById(firstTask.getId());
+        inMemoryHistoryManager.showTaskById(secondTask.getId());
+        inMemoryHistoryManager.showTaskById(firstTask.getId());
+        inMemoryHistoryManager.showTaskById(secondTask.getId());
+        inMemoryHistoryManager.showTaskById(firstTask.getId());
+        inMemoryHistoryManager.showTaskById(secondTask.getId());
+        inMemoryHistoryManager.showTaskById(firstTask.getId());
+        inMemoryHistoryManager.showTaskById(secondTask.getId());
+        System.out.println(inMemoryHistoryManager.printHistory());
+        inMemoryHistoryManager.showTaskById(firstEpicSecondSubTask.getId());
         System.out.println(inMemoryHistoryManager.printHistory());
 
 
