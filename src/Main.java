@@ -11,6 +11,9 @@ public class Main {
         //1 Добавление новой задачи
         Task firstTask = new Task("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW);
         Task secondTask = new Task("Купить хлеб", "Нужен хлеб \"Литовский\" из Гриднева", TaskStatus.DONE);
+        Task thirdTask = new Task("Купить яблоки", "Нужно 20 яблок", TaskStatus.NEW);
+        Task fourthTask = new Task("Купить арбузы", "Нужно 2 арбуза", TaskStatus.NEW);
+        Task fifthTask = new Task("Купить абрикосы", "Нужно 1 кг. абрикосов", TaskStatus.NEW);
         Epic firstEpic = new Epic("Переезд", "Собрать все вещи");
         Epic secondEpic = new Epic("Обучение", "Обучение JAVA");
         SubTask firstEpicFirstSubTask = new SubTask("Собрать чемодан",
@@ -23,26 +26,28 @@ public class Main {
 
         inMemoryHistoryManager.addTask(firstTask);
         inMemoryHistoryManager.addTask(secondTask);
+        inMemoryHistoryManager.addTask(thirdTask);
+        inMemoryHistoryManager.addTask(fourthTask);
+        inMemoryHistoryManager.addTask(fifthTask);
         inMemoryHistoryManager.addEpic(firstEpic);
         inMemoryHistoryManager.addEpic(secondEpic);
-        inMemoryHistoryManager.addSubTaskIntoEpic(firstEpicFirstSubTask); // Добавляем субтаск в первый епик
+        inMemoryHistoryManager.addSubTaskIntoEpic(firstEpicFirstSubTask);
         inMemoryHistoryManager.addSubTaskIntoEpic(firstEpicSecondSubTask);
         inMemoryHistoryManager.addSubTaskIntoEpic(firstEpicThirdSubTask);
 
-        // Добавление в историю просмотра первой задачи и просмотр истории
+        inMemoryHistoryManager.showTaskById(firstTask.getId());
+        inMemoryHistoryManager.showTaskById(secondTask.getId());
+        inMemoryHistoryManager.showTaskById(thirdTask.getId());
+        inMemoryHistoryManager.showTaskById(fourthTask.getId());
+        inMemoryHistoryManager.showTaskById(fifthTask.getId());
+        inMemoryHistoryManager.showTaskById(firstEpic.getId());
+        inMemoryHistoryManager.showTaskById(secondEpic.getId());
         inMemoryHistoryManager.showTaskById(firstEpicFirstSubTask.getId());
-        inMemoryHistoryManager.showTaskById(firstTask.getId());
-        inMemoryHistoryManager.showTaskById(secondTask.getId());
-        inMemoryHistoryManager.showTaskById(firstTask.getId());
-        inMemoryHistoryManager.showTaskById(secondTask.getId());
-        inMemoryHistoryManager.showTaskById(firstTask.getId());
-        inMemoryHistoryManager.showTaskById(secondTask.getId());
-        inMemoryHistoryManager.showTaskById(firstTask.getId());
-        inMemoryHistoryManager.showTaskById(secondTask.getId());
-        inMemoryHistoryManager.showTaskById(firstTask.getId());
-        inMemoryHistoryManager.showTaskById(secondTask.getId());
-        System.out.println(inMemoryHistoryManager.printHistory());
         inMemoryHistoryManager.showTaskById(firstEpicSecondSubTask.getId());
+        inMemoryHistoryManager.showTaskById(firstEpicThirdSubTask.getId());
+
+        System.out.println(inMemoryHistoryManager.printHistory());
+        inMemoryHistoryManager.showTaskById(fifthTask.getId());
         System.out.println(inMemoryHistoryManager.printHistory());
 
 

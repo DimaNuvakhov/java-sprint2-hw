@@ -68,12 +68,14 @@ public class InMemoryHistoryManager implements Manager, HistoryManager {
     public List<Task> getHistory() {
         Node x = tail;
         for (int i = size; x != null && i != size - 10; i--) {
-           if (lastTenTasks.size() <= 10) {
-               lastTenTasks.remove(1);
+           if (lastTenTasks.size() >= 10) {
+               lastTenTasks.remove(0);
                lastTenTasks.add(x.data);
+               x = x.prev;
+           } else {
+               lastTenTasks.add(x.data);
+               x = x.prev;
            }
-
-            x = x.prev;
         }
         return lastTenTasks;
     }
@@ -132,6 +134,7 @@ public class InMemoryHistoryManager implements Manager, HistoryManager {
         System.out.println("== Начало вывода задачи с id = " + id + "  ==");
         if (allTasks.containsKey(id)) {
             System.out.println(allTasks.get(id));
+            lastTenTasks.clear();
             add(allTasks.get(id));
         } else {
             System.out.println("Данных нет");
