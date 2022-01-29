@@ -68,7 +68,11 @@ public class InMemoryHistoryManager implements Manager, HistoryManager {
     public List<Task> getHistory() {
         Node x = tail;
         for (int i = size; x != null && i != size - 10; i--) {
-            lastTenTasks.add(x.data);
+           if (lastTenTasks.size() <= 10) {
+               lastTenTasks.remove(1);
+               lastTenTasks.add(x.data);
+           }
+
             x = x.prev;
         }
         return lastTenTasks;
