@@ -66,10 +66,10 @@ public class InMemoryHistoryManager implements Manager, HistoryManager {
 
     @Override
     public List<Task> getHistory() {
-        Node x = head;
-        for (int i = 0; i < 10; i++) {
+        Node x = tail;
+        for (int i = size; x != null && i != size - 10; i--) {
             lastTenTasks.add(x.data);
-            x = x.next;
+            x = x.prev;
         }
         return lastTenTasks;
     }

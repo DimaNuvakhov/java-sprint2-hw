@@ -29,7 +29,10 @@ public class Main {
         inMemoryHistoryManager.addSubTaskIntoEpic(firstEpicSecondSubTask);
         inMemoryHistoryManager.addSubTaskIntoEpic(firstEpicThirdSubTask);
 
+// Добавление в историю просмотра первой задачи и просмотр истории
         inMemoryHistoryManager.showTaskById(firstTask.getId());
+
+
         inMemoryHistoryManager.showTaskById(secondTask.getId());
         inMemoryHistoryManager.showTaskById(firstEpic.getId());
         inMemoryHistoryManager.showTaskById(secondEpic.getId());
@@ -39,8 +42,10 @@ public class Main {
         inMemoryHistoryManager.showTaskById(firstTask.getId());
         inMemoryHistoryManager.showTaskById(secondTask.getId());
         inMemoryHistoryManager.showTaskById(firstEpicThirdSubTask.getId());
+        inMemoryHistoryManager.showTaskById(secondTask.getId());
 
         System.out.println(inMemoryHistoryManager.printHistory());
+
 
 
 
