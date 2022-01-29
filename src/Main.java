@@ -31,19 +31,19 @@ public class Main {
 
         // Добавление в историю просмотра первой задачи и просмотр истории
         inMemoryHistoryManager.showTaskById(firstTask.getId());
+
+
+        inMemoryHistoryManager.showTaskById(secondTask.getId());
+        inMemoryHistoryManager.showTaskById(firstEpic.getId());
+        inMemoryHistoryManager.showTaskById(secondEpic.getId());
+        inMemoryHistoryManager.showTaskById(firstEpicFirstSubTask.getId());
+        inMemoryHistoryManager.showTaskById(firstEpicSecondSubTask.getId());
+        inMemoryHistoryManager.showTaskById(firstEpicThirdSubTask.getId());
+        inMemoryHistoryManager.showTaskById(firstTask.getId());
+        inMemoryHistoryManager.showTaskById(secondTask.getId());
+        inMemoryHistoryManager.showTaskById(firstEpicThirdSubTask.getId());
+
         System.out.println(inMemoryHistoryManager.printHistory());
-
-//        inMemoryHistoryManager.showTaskById(secondTask.getId());
-//        inMemoryHistoryManager.showTaskById(firstEpic.getId());
-//        inMemoryHistoryManager.showTaskById(secondEpic.getId());
-//        inMemoryHistoryManager.showTaskById(firstEpicFirstSubTask.getId());
-//        inMemoryHistoryManager.showTaskById(firstEpicSecondSubTask.getId());
-//        inMemoryHistoryManager.showTaskById(firstEpicThirdSubTask.getId());
-//        inMemoryHistoryManager.showTaskById(firstTask.getId());
-//        inMemoryHistoryManager.showTaskById(secondTask.getId());
-//        inMemoryHistoryManager.showTaskById(firstEpicThirdSubTask.getId());
-
-
 
 
 //        // 1 Добавление новой задачи, эпика и подзадачи.
