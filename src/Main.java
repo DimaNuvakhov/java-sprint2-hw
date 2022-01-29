@@ -8,7 +8,7 @@ import taskstatus.TaskStatus;
 public class Main {
     public static void main(String[] args) {
         Manager inMemoryHistoryManager = Managers.getDefault();
-        //1 Добавление новой задачи
+        // Создание Task, SubTask и Epic
         Task firstTask = new Task("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW);
         Task secondTask = new Task("Купить хлеб", "Нужен хлеб \"Литовский\" из Гриднева", TaskStatus.DONE);
         Task thirdTask = new Task("Купить яблоки", "Нужно 20 яблок", TaskStatus.NEW);
@@ -17,13 +17,12 @@ public class Main {
         Epic firstEpic = new Epic("Переезд", "Собрать все вещи");
         Epic secondEpic = new Epic("Обучение", "Обучение JAVA");
         SubTask firstEpicFirstSubTask = new SubTask("Собрать чемодан",
-                "Положить в чемодан все необходимое",
-                TaskStatus.DONE, firstEpic.getId());
+                "Положить в чемодан все необходимое", TaskStatus.DONE, firstEpic.getId());
         SubTask firstEpicSecondSubTask = new SubTask("Забрать сноуборд",
                 "Забрать свой сноуборд из кладовки", TaskStatus.DONE, firstEpic.getId());
         SubTask firstEpicThirdSubTask = new SubTask("Убрать в доме", "Убрать в доме перед отъездом",
                 TaskStatus.DONE, firstEpic.getId());
-
+        // Добавление Task, SubTas и Epic
         inMemoryHistoryManager.addTask(firstTask);
         inMemoryHistoryManager.addTask(secondTask);
         inMemoryHistoryManager.addTask(thirdTask);
@@ -35,8 +34,22 @@ public class Main {
         inMemoryHistoryManager.addSubTaskIntoEpic(firstEpicSecondSubTask);
         inMemoryHistoryManager.addSubTaskIntoEpic(firstEpicThirdSubTask);
 
+        // Вывод пустой истории
+        printTest("Вывод пустой истории");
+        System.out.println(inMemoryHistoryManager.printHistory());
+
+        // Вывод одной задачи в истории
+        printTest("Вывод одной задачи в истории");
         inMemoryHistoryManager.showTaskById(firstTask.getId());
+        System.out.println(inMemoryHistoryManager.printHistory());
+
+        // Вывод двух задач в истории
+        printTest("Вывод двух задач в истории");
         inMemoryHistoryManager.showTaskById(secondTask.getId());
+        System.out.println(inMemoryHistoryManager.printHistory());
+
+        // Вывод десяти задач в истории
+        printTest("Вывод десяти задач в истории");
         inMemoryHistoryManager.showTaskById(thirdTask.getId());
         inMemoryHistoryManager.showTaskById(fourthTask.getId());
         inMemoryHistoryManager.showTaskById(fifthTask.getId());
@@ -45,13 +58,12 @@ public class Main {
         inMemoryHistoryManager.showTaskById(firstEpicFirstSubTask.getId());
         inMemoryHistoryManager.showTaskById(firstEpicSecondSubTask.getId());
         inMemoryHistoryManager.showTaskById(firstEpicThirdSubTask.getId());
-
         System.out.println(inMemoryHistoryManager.printHistory());
+
+        // Вывод десяти задач в истории, добавление новой задачи
+        printTest("Вывод десяти задач в истории, добавление новой задачи");
         inMemoryHistoryManager.showTaskById(fifthTask.getId());
         System.out.println(inMemoryHistoryManager.printHistory());
-
-
-
 
 //        // 1 Добавление новой задачи, эпика и подзадачи.
 //        // 1.1 Создаем задачу и добавляем в трекер задач.
@@ -198,10 +210,11 @@ public class Main {
 //        inMemoryHistoryManager.showAllTasks();
 //    }
 //
-//    public static void printTest(String value) {
-//        System.out.println();
-//        System.out.println("LOGGER [INFO]: " + value + " : ");
-//        System.out.println("---");
-//    }
+
+    }
+    public static void printTest (String value) {
+        System.out.println();
+        System.out.println("LOGGER [INFO]: " + value + " : ");
+        System.out.println("---");
     }
 }

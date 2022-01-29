@@ -13,7 +13,6 @@ import java.util.List;
 
 public class InMemoryHistoryManager implements Manager, HistoryManager {
     private final HashMap<String, Task> allTasks = new HashMap<>();
-    private final ArrayList<Task> lastTenTasks = new ArrayList<>();
     private final HashMap<String, Node> nodes = new HashMap<>();
 
     // Класс Node для LinkedList
@@ -66,16 +65,11 @@ public class InMemoryHistoryManager implements Manager, HistoryManager {
 
     @Override
     public List<Task> getHistory() {
+        ArrayList<Task> lastTenTasks = new ArrayList<>();
         Node x = tail;
         for (int i = size; x != null && i != size - 10; i--) {
-           if (lastTenTasks.size() >= 10) {
-               lastTenTasks.remove(0);
                lastTenTasks.add(x.data);
                x = x.prev;
-           } else {
-               lastTenTasks.add(x.data);
-               x = x.prev;
-           }
         }
         return lastTenTasks;
     }
@@ -131,15 +125,14 @@ public class InMemoryHistoryManager implements Manager, HistoryManager {
     // Получение определенной задачи по id
     @Override
     public void showTaskById(String id) {
-        System.out.println("== Начало вывода задачи с id = " + id + "  ==");
+        //System.out.println("== Начало вывода задачи с id = " + id + "  ==");
         if (allTasks.containsKey(id)) {
-            System.out.println(allTasks.get(id));
-            lastTenTasks.clear();
+        //    System.out.println(allTasks.get(id));
             add(allTasks.get(id));
         } else {
             System.out.println("Данных нет");
         }
-        System.out.println();
+        //System.out.println();
     }
 
     // Получение всех подзадач определенного эпика
@@ -277,7 +270,7 @@ public class InMemoryHistoryManager implements Manager, HistoryManager {
 
     @Override
     public String printHistory() {
-        getHistory();
+        List<Task> lastTenTasks = getHistory();
         StringBuilder value = new StringBuilder();
         Integer num = 0;
         String verticalTableBorder = "|";
