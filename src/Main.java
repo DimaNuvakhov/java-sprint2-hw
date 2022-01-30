@@ -62,7 +62,7 @@ public class Main {
 
         // Вывод десяти задач в истории, добавление новой задачи
         printTest("Вывод десяти задач в истории, добавление новой задачи");
-        inMemoryHistoryManager.showTaskById(fifthTask.getId());
+        inMemoryHistoryManager.showTaskById(firstEpicThirdSubTask.getId());
         System.out.println(inMemoryHistoryManager.printHistory());
 
 //        // 1 Добавление новой задачи, эпика и подзадачи.

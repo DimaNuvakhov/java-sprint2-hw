@@ -49,6 +49,9 @@ public class InMemoryHistoryManager implements Manager, HistoryManager {
     // Добавление задачи в LinkedList
     @Override
     public void add(Task task) {
+        if (tail != null && task.equals(tail.data)) {
+            return;
+        }
         addLast(task);
         if (nodes.containsKey(task.getId())) {
             remove(task.getId());
@@ -60,7 +63,30 @@ public class InMemoryHistoryManager implements Manager, HistoryManager {
 
     @Override
     public void remove(String id) {
+        removeNode(nodes.get(id));
+    }
 
+    public void removeNode(Node node) {
+        final Task element = node.data;
+        final Node next = node.next;
+        final Node prev = node.prev;
+
+        if (prev == null) {
+            head = next;
+        } else {
+            prev.next = next;
+            node.prev = null;
+        }
+
+        if (next == null) {
+            tail = prev;
+        } else {
+            next.prev = prev;
+            node.next = null;
+        }
+
+        node.data = null;
+        size--;
     }
 
     @Override
@@ -68,8 +94,8 @@ public class InMemoryHistoryManager implements Manager, HistoryManager {
         ArrayList<Task> lastTenTasks = new ArrayList<>();
         Node x = tail;
         for (int i = size; x != null && i != size - 10; i--) {
-               lastTenTasks.add(x.data);
-               x = x.prev;
+            lastTenTasks.add(x.data);
+            x = x.prev;
         }
         return lastTenTasks;
     }
@@ -127,7 +153,7 @@ public class InMemoryHistoryManager implements Manager, HistoryManager {
     public void showTaskById(String id) {
         //System.out.println("== Начало вывода задачи с id = " + id + "  ==");
         if (allTasks.containsKey(id)) {
-        //    System.out.println(allTasks.get(id));
+            //    System.out.println(allTasks.get(id));
             add(allTasks.get(id));
         } else {
             System.out.println("Данных нет");
