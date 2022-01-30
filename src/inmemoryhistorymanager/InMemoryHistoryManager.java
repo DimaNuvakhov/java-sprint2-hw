@@ -13,7 +13,7 @@ import java.util.List;
 
 public class InMemoryHistoryManager implements Manager, HistoryManager {
     private final HashMap<String, Task> allTasks = new HashMap<>();
-    private final HashMap<String, Node> nodes = new HashMap<>();
+    private final HashMap<String, Node<Task>> nodes = new HashMap<>(); // J5: добавил тип для Node
 
     // Класс Node для LinkedList
     private static class Node<E extends Task> {
@@ -52,22 +52,20 @@ public class InMemoryHistoryManager implements Manager, HistoryManager {
         addLast(task);
         if (nodes.containsKey(task.getId())) {
             remove(task.getId());
-            nodes.put(task.getId(), tail);
-        } else {
-            nodes.put(task.getId(), tail);
         }
+        nodes.put(task.getId(), tail);  // J5: косметика - избавился от else
     }
 
     @Override
     public void remove(String id) {
-
+        // TODO
     }
 
     @Override
     public List<Task> getHistory() {
-        ArrayList<Task> lastTenTasks = new ArrayList<>();
-        Node x = tail;
-        for (int i = size; x != null && i != size - 10; i--) {
+        ArrayList<Task> lastTenTasks = new ArrayList<>(10); // J5: устанавливаем размер
+        Node<Task> x = tail;
+        for (int i = size; x != null && i > size - 10; i--) { // J5: уточнил условие
                lastTenTasks.add(x.data);
                x = x.prev;
         }
@@ -272,7 +270,7 @@ public class InMemoryHistoryManager implements Manager, HistoryManager {
     public String printHistory() {
         List<Task> lastTenTasks = getHistory();
         StringBuilder value = new StringBuilder();
-        Integer num = 0;
+        int num = 0;
         String verticalTableBorder = "|";
         String horizontalTableBorder = "-------------------------------------"
                 + "---------------------------------------------------------"
@@ -291,7 +289,7 @@ public class InMemoryHistoryManager implements Manager, HistoryManager {
             value.
                     append("\n").
                     append(verticalTableBorder).
-                    append(InMemoryHistoryManager.padLeft(num.toString(), 4)).
+                    append(InMemoryHistoryManager.padLeft(Integer.toString(num), 4)).
                     append(verticalTableBorder).
                     append(InMemoryHistoryManager.padLeft(className(tasks), 13)).
                     append(verticalTableBorder).
