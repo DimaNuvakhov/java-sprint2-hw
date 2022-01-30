@@ -8,6 +8,7 @@ import taskstatus.TaskStatus;
 public class Main {
     public static void main(String[] args) {
         Manager inMemoryHistoryManager = Managers.getDefault();
+
         // Создание Task, SubTask и Epic
         Task firstTask = new Task("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW);
         Task secondTask = new Task("Купить хлеб", "Нужен хлеб \"Литовский\" из Гриднева", TaskStatus.DONE);
@@ -22,6 +23,8 @@ public class Main {
                 "Забрать свой сноуборд из кладовки", TaskStatus.DONE, firstEpic.getId());
         SubTask firstEpicThirdSubTask = new SubTask("Убрать в доме", "Убрать в доме перед отъездом",
                 TaskStatus.DONE, firstEpic.getId());
+        Task newTask = new Task("Заправиться с утра", "Заехать на заправку", TaskStatus.NEW);
+
         // Добавление Task, SubTas и Epic
         inMemoryHistoryManager.addTask(firstTask);
         inMemoryHistoryManager.addTask(secondTask);
@@ -33,6 +36,7 @@ public class Main {
         inMemoryHistoryManager.addSubTaskIntoEpic(firstEpicFirstSubTask);
         inMemoryHistoryManager.addSubTaskIntoEpic(firstEpicSecondSubTask);
         inMemoryHistoryManager.addSubTaskIntoEpic(firstEpicThirdSubTask);
+        inMemoryHistoryManager.addTask(newTask);
 
         // Вывод пустой истории
         printTest("Вывод пустой истории");
@@ -60,10 +64,27 @@ public class Main {
         inMemoryHistoryManager.showTaskById(firstEpicThirdSubTask.getId());
         System.out.println(inMemoryHistoryManager.printHistory());
 
-        // Вывод десяти задач в истории, добавление новой задачи
-        printTest("Вывод десяти задач в истории, добавление новой задачи");
-        inMemoryHistoryManager.showTaskById(firstEpicThirdSubTask.getId());
+        // Вывод десяти задач в истории, дублирование задачи из середины истории
+        printTest("Вывод десяти задач в истории, дублирование задачи из середины истории");
+        inMemoryHistoryManager.showTaskById(fifthTask.getId());
         System.out.println(inMemoryHistoryManager.printHistory());
+
+        // Вывод десяти задач в истории, дублирование задачи из налача истории
+        printTest("Вывод десяти задач в истории, дублирование задачи из начала истории");
+        inMemoryHistoryManager.showTaskById(firstTask.getId());
+        System.out.println(inMemoryHistoryManager.printHistory());
+
+        // Вывод десяти задач в истории, дублирование задачи из конца истории
+        printTest("Вывод десяти задач в истории, дублирование задачи из конца истории");
+        inMemoryHistoryManager.showTaskById(firstTask.getId());
+        System.out.println(inMemoryHistoryManager.printHistory());
+
+        // Вывод десяти задач в истории, добавление новой задачи в историю
+        printTest("Вывод десяти задач в истории, добавление новой задачи в историю");
+        inMemoryHistoryManager.showTaskById(newTask.getId());
+        System.out.println(inMemoryHistoryManager.printHistory());
+
+
 
 //        // 1 Добавление новой задачи, эпика и подзадачи.
 //        // 1.1 Создаем задачу и добавляем в трекер задач.
