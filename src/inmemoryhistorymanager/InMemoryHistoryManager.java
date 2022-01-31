@@ -56,7 +56,7 @@ public class InMemoryHistoryManager implements Manager, HistoryManager {
         if (nodes.containsKey(task.getId())) {
             remove(task.getId());
         }
-            nodes.put(task.getId(), tail);
+        nodes.put(task.getId(), tail);
     }
 
     @Override
@@ -65,7 +65,7 @@ public class InMemoryHistoryManager implements Manager, HistoryManager {
     }
 
     public void removeNode(Node<Task> node) {
-        final Task element = node.data;
+//        final Task element = node.data;
         final Node<Task> next = node.next;
         final Node<Task> prev = node.prev;
 
