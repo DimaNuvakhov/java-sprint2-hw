@@ -47,9 +47,29 @@ public class Main {
         inMemoryHistoryManager.showTaskById(firstTask.getId());
         System.out.println(inMemoryHistoryManager.printHistory());
 
+        // Вывод той же самой  задачи в истории
+        printTest("Вывод той же самой задачи в истории");
+        inMemoryHistoryManager.showTaskById(firstTask.getId());
+        System.out.println(inMemoryHistoryManager.printHistory());
+
         // Вывод двух задач в истории
         printTest("Вывод двух задач в истории");
         inMemoryHistoryManager.showTaskById(secondTask.getId());
+        System.out.println(inMemoryHistoryManager.printHistory());
+
+        // Вызов повторно первой задачи
+        printTest("Вывод повторно первой задачи");
+        inMemoryHistoryManager.showTaskById(firstTask.getId());
+        System.out.println(inMemoryHistoryManager.printHistory());
+
+        // Вывод трех задач в истории
+        printTest("Вывод трех задач в истории");
+        inMemoryHistoryManager.showTaskById(thirdTask.getId());
+        System.out.println(inMemoryHistoryManager.printHistory());
+
+        // Вызов повторно первой задачи
+        printTest("Вывод повторно первой задачи");
+        inMemoryHistoryManager.showTaskById(firstTask.getId());
         System.out.println(inMemoryHistoryManager.printHistory());
 
         // Вывод десяти задач в истории
@@ -83,6 +103,7 @@ public class Main {
         printTest("Вывод десяти задач в истории, добавление новой задачи в историю");
         inMemoryHistoryManager.showTaskById(newTask.getId());
         System.out.println(inMemoryHistoryManager.printHistory());
+
 
 
 
