@@ -1,11 +1,11 @@
 package managers;
 
-import inmemoryhistorymanager.InMemoryHistoryManager;
+import inmemorymanager.InMemoryManager;
 import manager.Manager;
 
 public class Managers {
 
     public static Manager getDefault() {
-        return new InMemoryHistoryManager();
+        return new InMemoryManager();
     }
 }

@@ -50,7 +50,6 @@ public interface Manager {
 
     TaskStatus calcStatus(Epic epic);
 
-    public String printHistory();
-
+    String printHistory();
 }
 
