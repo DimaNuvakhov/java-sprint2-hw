@@ -6,6 +6,8 @@ import tasks.Task;
 import tasks.TaskStatus;
 
 public interface Manager {
+
+    // Добавление задачи
     void addTask(Task task);
 
     // Добавление эпика
@@ -44,10 +46,13 @@ public interface Manager {
     // Удаление подзадачи из эпика
     void deleteSubTaskFromEpic(SubTask subTask);
 
+    // Обновление задачи по id
     void renewTaskById(String oldId, Task task);
 
+    // Вычисление статуса эпика
     TaskStatus calcStatus(Epic epic);
 
+    // Печать истории просмотра задач
     String printHistory();
 }
 
