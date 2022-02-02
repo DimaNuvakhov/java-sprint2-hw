@@ -1,9 +1,9 @@
-import epic.Epic;
-import manager.Manager;
-import managers.Managers;
-import subtask.SubTask;
-import task.Task;
-import taskstatus.TaskStatus;
+import tasks.Epic;
+import managers.Manager;
+import inmemorymanagers.Managers;
+import tasks.SubTask;
+import tasks.Task;
+import tasks.TaskStatus;
 
 public class Main {
     public static void main(String[] args) {

@@ -1,6 +1,4 @@
-package task;
-
-import taskstatus.TaskStatus;
+package tasks;
 
 import java.util.UUID;
 

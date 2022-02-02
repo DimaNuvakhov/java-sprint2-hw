@@ -1,11 +1,10 @@
-package inmemorymanager;
+package inmemorymanagers;
 
-import epic.Epic;
-import inmemoryhistorymanager.InMemoryHistoryManager;
-import manager.Manager;
-import subtask.SubTask;
-import task.Task;
-import taskstatus.TaskStatus;
+import tasks.Epic;
+import managers.Manager;
+import tasks.SubTask;
+import tasks.Task;
+import tasks.TaskStatus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,7 +43,7 @@ public class InMemoryManager implements Manager {
     public void showAllTasks() {
         System.out.println("== Начало полного списка задач ==");
         for (Task task : allTasks.values()) {
-            if (!(task.getClass().getName().equals("subtask.SubTask"))) {
+            if (!(task.getClass().getName().equals("tasks.SubTask"))) {
                 System.out.println(task);
             }
         }
@@ -56,7 +55,7 @@ public class InMemoryManager implements Manager {
     public void showAllEpics() {
         System.out.println("== Начало списка Эпиков ==");
         for (Task task : allTasks.values()) {
-            if (task.getClass().getName().equals("epic.Epic")) {
+            if (task.getClass().getName().equals("tasks.Epic")) {
                 System.out.println(task);
             }
         }
@@ -80,7 +79,7 @@ public class InMemoryManager implements Manager {
     @Override
     public void showSubTaskListFromEpicById(String id) {
         System.out.println("== Вывод списка подзадач для Эпика с id = " + id + "  ==");
-        if (allTasks.containsKey(id) && allTasks.get(id).getClass().getName().equals("epic.Epic")) {
+        if (allTasks.containsKey(id) && allTasks.get(id).getClass().getName().equals("tasks.Epic")) {
             Epic epic = (Epic) allTasks.get(id);
             System.out.println(showSubTaskList(epic));
         } else {
@@ -110,9 +109,9 @@ public class InMemoryManager implements Manager {
     public void deleteTaskById(String id) {
         System.out.println("== Удаление сущности, id = " + id);
         if (allTasks.containsKey(id)) {
-            if (allTasks.get(id).getClass().getName().equals("task.Task")) {
+            if (allTasks.get(id).getClass().getName().equals("tasks.Task")) {
                 deleteTask(allTasks.get(id));
-            } else if (allTasks.get(id).getClass().getName().equals("epic.Epic")) {
+            } else if (allTasks.get(id).getClass().getName().equals("tasks.Epic")) {
                 Epic epic = (Epic) allTasks.get(id);
                 deleteEpic(epic);
             } else {
@@ -161,7 +160,7 @@ public class InMemoryManager implements Manager {
     @Override
     public void renewTaskById(String oldId, Task task) {
         if (allTasks.containsKey(oldId)) {
-            if (allTasks.get(oldId).getClass().getName().equals("subtask.SubTask")) {
+            if (allTasks.get(oldId).getClass().getName().equals("tasks.SubTask")) {
                 SubTask subTask = (SubTask) allTasks.get(oldId);
                 Epic epic = (Epic) allTasks.get(subTask.getEpicId());
                 epic.getSubTasks().remove(oldId);
@@ -171,7 +170,7 @@ public class InMemoryManager implements Manager {
                 epic.getSubTasks().put(task.getId(), newSubTask);
                 allTasks.put(newSubTask.getId(), newSubTask);
                 epic.setStatus(calcStatus(epic));
-            } else if ((allTasks.get(oldId).getClass().getName().equals("epic.Epic"))) {
+            } else if ((allTasks.get(oldId).getClass().getName().equals("tasks.Epic"))) {
                 Epic oldEpic = (Epic) allTasks.get(oldId);
                 Epic newEpic = (Epic) task;
                 deleteEpic(oldEpic);
@@ -253,11 +252,11 @@ public class InMemoryManager implements Manager {
 
     public String className(Task task) {
         switch (task.getClass().getName()) {
-            case "subtask.SubTask":
+            case "tasks.SubTask":
                 return "SubTask";
-            case "epic.Epic":
+            case "tasks.Epic":
                 return "Epic";
-            case "task.Task":
+            case "tasks.Task":
                 return "Task";
         }
         return null;

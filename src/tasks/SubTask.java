@@ -1,7 +1,4 @@
-package subtask;
-
-import task.Task;
-import taskstatus.TaskStatus;
+package tasks;
 
 public class SubTask extends Task {
     private final String epicId;

@@ -1,8 +1,6 @@
-package epic;
+package tasks;
 
-import inmemorymanager.InMemoryManager;
-import subtask.SubTask;
-import task.Task;
+import inmemorymanagers.InMemoryManager;
 
 import java.util.HashMap;
 

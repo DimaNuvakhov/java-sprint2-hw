@@ -1,7 +1,7 @@
-package inmemoryhistorymanager;
+package inmemorymanagers;
 
-import historymanager.HistoryManager;
-import task.Task;
+import managers.HistoryManager;
+import tasks.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;

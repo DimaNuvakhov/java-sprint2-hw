@@ -1,11 +1,9 @@
-package manager;
+package managers;
 
-import epic.Epic;
-import subtask.SubTask;
-import task.Task;
-import taskstatus.TaskStatus;
-
-import java.util.ArrayList;
+import tasks.Epic;
+import tasks.SubTask;
+import tasks.Task;
+import tasks.TaskStatus;
 
 public interface Manager {
     void addTask(Task task);

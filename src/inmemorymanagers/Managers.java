@@ -1,7 +1,6 @@
-package managers;
+package inmemorymanagers;
 
-import inmemorymanager.InMemoryManager;
-import manager.Manager;
+import managers.Manager;
 
 public class Managers {
 
