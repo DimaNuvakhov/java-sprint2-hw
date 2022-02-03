@@ -5,6 +5,10 @@ import tasks.SubTask;
 import tasks.Task;
 import tasks.TaskStatus;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 public interface Manager {
 
     // Добавление задачи
@@ -16,20 +20,23 @@ public interface Manager {
     // Добавление подзадачи к определенному эпику
     void addSubTaskIntoEpic(SubTask subTask);
 
-    // Получение списка всех задач
-    void showAllTasks();
+    // Получение списка всех сущностей
+    HashMap<String, Task> getAllItems();
 
-    // Получение всех эпиков
-    void showAllEpics();
+    // Получение списка всех задач
+    ArrayList<Task> getAllTasks();
+
+    // Получение списка всех эпиков
+    ArrayList<Epic> getAllEpics();
+
+    // Получение всех подзадач
+    ArrayList<SubTask> getAllSubtasks();
 
     // Получение определенной задачи по id
-    void showTaskById(String id);
+    void getTaskById(String id);
 
     // Получение всех подзадач определенного эпика
-    void showSubTaskListFromEpicById(String id);
-
-    // Получение всех подзадач определенного эпика
-    String showSubTaskList(Epic epic);
+    ArrayList<SubTask> getSubTaskListFromEpicById(String id);
 
     // Удаление всех задач
     void deleteAllTasks();
@@ -52,7 +59,8 @@ public interface Manager {
     // Вычисление статуса эпика
     TaskStatus calcStatus(Epic epic);
 
-    // Печать истории просмотра задач
-    String printHistory();
+    // История просмотра задач
+    List<Task> history();
+
 }
 

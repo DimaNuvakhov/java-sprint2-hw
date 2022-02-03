@@ -38,63 +38,69 @@ public class InMemoryManager implements Manager {
         }
     }
 
+    // Я не знаю, нужен ли этот метод, возвращающий все задачи, но сделал его
+    @Override
+    public HashMap<String, Task> getAllItems() {
+        return allTasks;
+    }
+
     // Получение списка всех задач
     @Override
-    public void showAllTasks() {
-        System.out.println("== Начало полного списка задач ==");
+    public ArrayList<Task> getAllTasks() {
+        ArrayList<Task> tasks = new ArrayList<>();
         for (Task task : allTasks.values()) {
-            if (!(task.getClass().getName().equals("tasks.SubTask"))) {
-                System.out.println(task);
+            if (task.getClass().getName().equals("tasks.Task")) {
+                tasks.add(task);
             }
         }
-        System.out.println("== Окончание полного списка задач ==\n");
+        return tasks;
     }
 
-    // Получение всех эпиков
+    // Получение списка всех эпиков
     @Override
-    public void showAllEpics() {
-        System.out.println("== Начало списка Эпиков ==");
+    public ArrayList<Epic> getAllEpics() {
+        ArrayList<Epic> epics = new ArrayList<>();
         for (Task task : allTasks.values()) {
             if (task.getClass().getName().equals("tasks.Epic")) {
-                System.out.println(task);
+                Epic epic = (Epic) task;
+                epics.add(epic);
             }
         }
-        System.out.println("== Окончание списка Эпиков ==\n");
+        return epics;
     }
 
-    // Получение определенной задачи по id
+    // Получение списка всех подзадач
     @Override
-    public void showTaskById(String id) {
-        //System.out.println("== Начало вывода задачи с id = " + id + "  ==");
-        if (allTasks.containsKey(id)) {
-            //    System.out.println(allTasks.get(id));
-            inMemoryHistoryManager.add(allTasks.get(id));
-        } else {
-            System.out.println("Данных нет");
+    public ArrayList<SubTask> getAllSubtasks() {
+        ArrayList<SubTask> subTasks = new ArrayList<>();
+        for (Task task : allTasks.values()) {
+            if (task.getClass().getName().equals("tasks.SubTask")) {
+                SubTask subTask = (SubTask) task;
+                subTasks.add(subTask);
+            }
         }
-        //System.out.println();
+        return subTasks;
     }
 
-    // Получение всех подзадач определенного эпика
+    // Добавление определенной задачи в историю просмотра
     @Override
-    public void showSubTaskListFromEpicById(String id) {
-        System.out.println("== Вывод списка подзадач для Эпика с id = " + id + "  ==");
+    public void getTaskById(String id) {
+        if (allTasks.containsKey(id)) {
+            inMemoryHistoryManager.add(allTasks.get(id));
+        }
+    }
+
+    // Получение списка всех подзадач определенного эпика
+    @Override
+    public ArrayList<SubTask> getSubTaskListFromEpicById(String id) {
+        ArrayList<SubTask> subTaskListFromEpic = new ArrayList<>();
         if (allTasks.containsKey(id) && allTasks.get(id).getClass().getName().equals("tasks.Epic")) {
             Epic epic = (Epic) allTasks.get(id);
-            System.out.println(showSubTaskList(epic));
-        } else {
-            System.out.println("Данных не найдено");
+            for (SubTask subTask : epic.getSubTasks().values()) {
+                subTaskListFromEpic.add(subTask);
+            }
         }
-    }
-
-    // Получение всех подзадач определенного эпика
-    @Override
-    public String showSubTaskList(Epic epic) {
-        StringBuilder value = new StringBuilder();
-        for (SubTask subTask : epic.getSubTasks().values()) {
-            value.append(subTask.toString()).append("\n");
-        }
-        return value.toString();
+        return subTaskListFromEpic;
     }
 
     // Удаление всех задач
@@ -210,56 +216,10 @@ public class InMemoryManager implements Manager {
         }
     }
 
-    // Печать истории просмотра задач
+    // История просмотра задач
     @Override
-    public String printHistory() {
-        List<Task> lastTasks = inMemoryHistoryManager.getHistory();
-        StringBuilder value = new StringBuilder();
-        Integer num = 0;
-        String verticalTableBorder = "|";
-        String horizontalTableBorder = "-------------------------------------"
-                + "---------------------------------------------------------"
-                + "--------------------------------------------------";
-        String table = horizontalTableBorder + "\n" + verticalTableBorder + padLeft("<№>", 4)
-                + verticalTableBorder
-                + padLeft("<Тип задачи>", 13) + verticalTableBorder
-                + padLeft("<id>", 35) + verticalTableBorder
-                + padLeft("<Название>", 20)
-                + verticalTableBorder + (padLeft("<Описание>", 50) + verticalTableBorder)
-                + (padLeft("<Статус>", 15) + verticalTableBorder)
-                + "\n" + horizontalTableBorder;
-
-        for (Task tasks : lastTasks) {
-            num++;
-            value.
-                    append("\n").
-                    append(verticalTableBorder).
-                    append(padLeft(num.toString(), 4)).
-                    append(verticalTableBorder).
-                    append(padLeft(className(tasks), 13)).
-                    append(verticalTableBorder).
-                    append(padLeft(tasks.getId(), 35)).
-                    append(verticalTableBorder).
-                    append(padLeft(tasks.getName(), 20)).
-                    append(verticalTableBorder).
-                    append(padLeft(tasks.getDescription(), 50)).
-                    append(verticalTableBorder).
-                    append(padLeft(tasks.getStatus().toString(), 15)).
-                    append(verticalTableBorder);
-        }
-        return table + value + "\n" + horizontalTableBorder + "\n";
-    }
-
-    public String className(Task task) {
-        switch (task.getClass().getName()) {
-            case "tasks.SubTask":
-                return "SubTask";
-            case "tasks.Epic":
-                return "Epic";
-            case "tasks.Task":
-                return "Task";
-        }
-        return null;
+    public List<Task> history() {
+        return inMemoryHistoryManager.getHistory();
     }
 
     public static String padRight(String s, int n) {
