@@ -42,7 +42,7 @@ public interface Manager {
     void deleteAllTasks();
 
     // Удаление задачи, эпика и подзадачи по id
-    void deleteTaskById(String id);
+    Boolean deleteTaskById(String id);
 
     // Удаление задачи
     void deleteTask(Task task);

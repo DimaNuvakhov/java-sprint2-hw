@@ -111,19 +111,21 @@ public class InMemoryManager implements Manager {
 
     // Удаление задачи, эпика и подзадачи по id
     @Override
-    public void deleteTaskById(String id) {
-        if (allTasks.containsKey(id)) {
-            if (allTasks.get(id).getClass().getName().equals("tasks.Task")) {
-                deleteTask(allTasks.get(id));
-            } else if (allTasks.get(id).getClass().getName().equals("tasks.Epic")) {
-                Epic epic = (Epic) allTasks.get(id);
-                deleteEpic(epic);
-            } else {
-                SubTask subTask = (SubTask) allTasks.get(id);
-                deleteSubTaskFromEpic(subTask);
-                allTasks.remove(subTask.getId());
-            }
+    public Boolean deleteTaskById(String id) {
+        if (!allTasks.containsKey(id)) {
+            return false;
         }
+        if (allTasks.get(id).getClass().getName().equals("tasks.Task")) {
+            deleteTask(allTasks.get(id));
+        } else if (allTasks.get(id).getClass().getName().equals("tasks.Epic")) {
+            Epic epic = (Epic) allTasks.get(id);
+            deleteEpic(epic);
+        } else {
+            SubTask subTask = (SubTask) allTasks.get(id);
+            deleteSubTaskFromEpic(subTask);
+            allTasks.remove(subTask.getId());
+        }
+        return true;
     }
 
     // Удаление задачи

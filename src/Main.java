@@ -290,8 +290,8 @@ public class Main {
 
     public static void deleteTaskById(String id) {
         System.out.println("== Удаление сущности, id = " + id);
-        if (inMemoryManager.getAllItems().containsKey(id)) {
-            inMemoryManager.deleteTaskById(id);
+        if (inMemoryManager.deleteTaskById(id))  {
+            System.out.println("== Сущность с id = " + id + " удалена");
         } else {
             System.out.println("== Сущность для удаления не найдена, id = " + id + "\n");
         }
