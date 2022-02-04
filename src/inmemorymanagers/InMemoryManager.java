@@ -106,14 +106,12 @@ public class InMemoryManager implements Manager {
     // Удаление всех задач
     @Override
     public void deleteAllTasks() {
-        System.out.println("Удаляем все сущности");
-        allTasks.clear(); //
+        allTasks.clear();
     }
 
     // Удаление задачи, эпика и подзадачи по id
     @Override
     public void deleteTaskById(String id) {
-        System.out.println("== Удаление сущности, id = " + id);
         if (allTasks.containsKey(id)) {
             if (allTasks.get(id).getClass().getName().equals("tasks.Task")) {
                 deleteTask(allTasks.get(id));
@@ -125,8 +123,6 @@ public class InMemoryManager implements Manager {
                 deleteSubTaskFromEpic(subTask);
                 allTasks.remove(subTask.getId());
             }
-        } else {
-            System.out.println("== Сущность для удаления не найдена, id = " + id + "\n");
         }
     }
 

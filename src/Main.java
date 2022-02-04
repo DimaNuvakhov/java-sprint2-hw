@@ -150,24 +150,24 @@ public class Main {
         // 8.1.1 Проверка удаления Task.
         printTest("Проверка удаления по идентификатору Task");
         showTaskById(firstTask.getId());
-        inMemoryManager.deleteTaskById(firstTask.getId());
+        deleteTaskById(firstTask.getId());
         showTaskById(firstTask.getId());
         // 8.1.2 Проверка удаления SubTask.
         printTest("Проверка удаления по идентификатору SubTask");
         showTaskById(secondEpicFirstSubTask.getId());
-        inMemoryManager.deleteTaskById(secondEpicFirstSubTask.getId());
+        deleteTaskById(secondEpicFirstSubTask.getId());
         showTaskById(secondEpicFirstSubTask.getId());
         // 8.1.3 Проверка удаления Epic.
         printTest("Проверка удаления по идентификатору Epic");
         showTaskById(secondEpic.getId());
-        inMemoryManager.deleteTaskById(secondEpic.getId());
+        deleteTaskById(secondEpic.getId());
         showTaskById(secondEpic.getId());
 
         // 8.2 Удаление всех ранее добавленных задач.
         printTest("Проверка удаления всех сущностей - вывод полного списка");
         showAllItems();
         printTest("Проверка удаления всех сущностей - удаление сущностей");
-        inMemoryManager.deleteAllTasks();
+        deleteAllTasks();
         printTest("Проверка удаления всех сущностей - вывод полного списка после удаления");
         showAllItems();
     }
@@ -281,6 +281,20 @@ public class Main {
                 return "Task";
         }
         return null;
+    }
+
+    public static void deleteAllTasks() {
+        System.out.println("Удаляем все сущности");
+        inMemoryManager.deleteAllTasks();
+    }
+
+    public static void deleteTaskById(String id) {
+        System.out.println("== Удаление сущности, id = " + id);
+        if (inMemoryManager.getAllItems().containsKey(id)) {
+            inMemoryManager.deleteTaskById(id);
+        } else {
+            System.out.println("== Сущность для удаления не найдена, id = " + id + "\n");
+        }
     }
 
     public static String padRight(String s, int n) {
