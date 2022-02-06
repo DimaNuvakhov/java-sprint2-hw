@@ -49,7 +49,7 @@ public class InMemoryManager implements Manager {
     public ArrayList<Task> getAllTasks() {
         ArrayList<Task> tasks = new ArrayList<>();
         for (Task task : allTasks.values()) {
-            if (task.getClass().getName().equals("tasks.Task")) {
+            if (task.getClass().getName().equals(TASK_NAME)) {
                 tasks.add(task);
             }
         }
@@ -61,7 +61,7 @@ public class InMemoryManager implements Manager {
     public ArrayList<Epic> getAllEpics() {
         ArrayList<Epic> epics = new ArrayList<>();
         for (Task task : allTasks.values()) {
-            if (task.getClass().getName().equals("tasks.Epic")) {
+            if (task.getClass().getName().equals(EPIC_NAME)) {
                 Epic epic = (Epic) task;
                 epics.add(epic);
             }
@@ -74,7 +74,7 @@ public class InMemoryManager implements Manager {
     public ArrayList<SubTask> getAllSubtasks() {
         ArrayList<SubTask> subTasks = new ArrayList<>();
         for (Task task : allTasks.values()) {
-            if (task.getClass().getName().equals("tasks.SubTask")) {
+            if (task.getClass().getName().equals(SUBTASK_NAME)) {
                 SubTask subTask = (SubTask) task;
                 subTasks.add(subTask);
             }
@@ -94,7 +94,7 @@ public class InMemoryManager implements Manager {
     @Override
     public ArrayList<SubTask> getSubTaskListFromEpicById(String id) {
         ArrayList<SubTask> subTaskListFromEpic = new ArrayList<>();
-        if (allTasks.containsKey(id) && allTasks.get(id).getClass().getName().equals("tasks.Epic")) {
+        if (allTasks.containsKey(id) && allTasks.get(id).getClass().getName().equals(EPIC_NAME)) {
             Epic epic = (Epic) allTasks.get(id);
             for (SubTask subTask : epic.getSubTasks().values()) {
                 subTaskListFromEpic.add(subTask);
@@ -115,9 +115,9 @@ public class InMemoryManager implements Manager {
         if (!allTasks.containsKey(id)) {
             return false;
         }
-        if (allTasks.get(id).getClass().getName().equals("tasks.Task")) {
+        if (allTasks.get(id).getClass().getName().equals(TASK_NAME)) {
             deleteTask(allTasks.get(id));
-        } else if (allTasks.get(id).getClass().getName().equals("tasks.Epic")) {
+        } else if (allTasks.get(id).getClass().getName().equals(EPIC_NAME)) {
             Epic epic = (Epic) allTasks.get(id);
             deleteEpic(epic);
         } else {
@@ -164,7 +164,7 @@ public class InMemoryManager implements Manager {
     @Override
     public void renewTaskById(String oldId, Task task) {
         if (allTasks.containsKey(oldId)) {
-            if (allTasks.get(oldId).getClass().getName().equals("tasks.SubTask")) {
+            if (allTasks.get(oldId).getClass().getName().equals(SUBTASK_NAME)) {
                 SubTask subTask = (SubTask) allTasks.get(oldId);
                 Epic epic = (Epic) allTasks.get(subTask.getEpicId());
                 epic.getSubTasks().remove(oldId);
@@ -174,7 +174,7 @@ public class InMemoryManager implements Manager {
                 epic.getSubTasks().put(task.getId(), newSubTask);
                 allTasks.put(newSubTask.getId(), newSubTask);
                 epic.setStatus(calcStatus(epic));
-            } else if ((allTasks.get(oldId).getClass().getName().equals("tasks.Epic"))) {
+            } else if ((allTasks.get(oldId).getClass().getName().equals(EPIC_NAME))) {
                 Epic oldEpic = (Epic) allTasks.get(oldId);
                 Epic newEpic = (Epic) task;
                 deleteEpic(oldEpic);

@@ -11,6 +11,12 @@ import java.util.List;
 
 public interface Manager {
 
+    String TASK_NAME = "tasks.Task";
+
+    String EPIC_NAME = "tasks.Epic";
+
+    String SUBTASK_NAME = "tasks.SubTask";
+
     // Добавление задачи
     void addTask(Task task);
 
