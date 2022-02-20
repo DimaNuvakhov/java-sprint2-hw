@@ -20,6 +20,10 @@ public class Main {
         inMemoryManager.addSubTaskIntoEpic(firstEpicFirstSubTask);
 
 
+        Manager inMemoryManager1 = Managers.getDefault();
+
+
+
 
 
 

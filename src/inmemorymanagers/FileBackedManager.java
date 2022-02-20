@@ -17,6 +17,7 @@ public class FileBackedManager extends InMemoryManager {
 
     public FileBackedManager(File file) {
         this.file = file;
+        loadFromFile(file);
     }
 
     @Override
@@ -52,6 +53,10 @@ public class FileBackedManager extends InMemoryManager {
         }
     }
 
+    public static void loadFromFile(File file) {
+        fromString(load(file));
+    }
+
     public static String load(File file) {
         try {
             return Files.readString(Path.of(file.getPath()));
@@ -77,23 +82,29 @@ public class FileBackedManager extends InMemoryManager {
         return stringTask.toString();
     }
 
-    public Task fromString(String value) {
-        String[] stringTask = value.split(",");
-        for (int i = 0; i < stringTask.length; i++) {
-            if (stringTask[1].equals(TASK_NAME)) {
-                return new Task(stringTask[0], stringTask[2], stringTask[4],
-                        statusFromString(stringTask[3]));
-            } else if (stringTask[1].equals(EPIC_NAME)) {
-                return new Epic(stringTask[0], stringTask[2], stringTask[4]);
-            } else if (stringTask[1].equals(SUBTASK_NAME)) {
-                return new SubTask(stringTask[0], stringTask[2], stringTask[4],
-                        statusFromString(stringTask[3]), stringTask[5]);
+    public static Task fromString(String value) {
+        String[] stringTask = value.split("\n");
+        for (int i = 1; i < stringTask.length; i++) {
+            String[] lines = stringTask[i].split(",");
+            for (int j = 0; j < lines.length; j++) {
+                if (lines[1].equals(TASK_NAME)) {
+                     Task newTask = new Task(lines[0], lines[2], lines[4],
+                            statusFromString(stringTask[3]));
+                     return newTask;
+                } else if (lines[1].equals(EPIC_NAME)) {
+                     Task newEpic = new Epic(lines[0], lines[2], lines[4]);
+                    return newEpic;
+                } else if (lines[1].equals(SUBTASK_NAME)) {
+                     SubTask newSubTask = new SubTask(lines[0], lines[2], lines[4],
+                            statusFromString(lines[3]), lines[5]);
+                     return newSubTask;
+                }
             }
         }
         return null;
     }
 
-    public TaskStatus statusFromString(String status) {
+    public static TaskStatus statusFromString(String status) {
         if (status.equals("NEW")) {
             return TaskStatus.NEW;
         } else if (status.equals("DONE")) {
