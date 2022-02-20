@@ -8,11 +8,11 @@ public class Task {
     private String description;
     private TaskStatus status;
 
-    public Task(String name, String description, TaskStatus status) {
+    public Task(String id, String name, String description, TaskStatus status) {
         this.name = name;
         this.description = description;
         this.status = status;
-        this.id = UUID.randomUUID().toString().substring(0, 32);
+        this.id = id;
     }
 
     public void setId(String id) {
