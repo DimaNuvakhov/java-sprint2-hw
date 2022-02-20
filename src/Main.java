@@ -5,28 +5,32 @@ import tasks.SubTask;
 import tasks.Task;
 import tasks.TaskStatus;
 
-import java.util.List;
 
 public class Main {
-    static Manager inMemoryManager = Managers.getDefault();
+    static Manager fileBackedManager = Managers.getDefault();
 
     public static void main(String[] args) {
+
         Task firstTask = Managers.createTask("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW);
         Epic firstEpic = Managers.createEpic("Переезд", "Собрать все вещи");
         SubTask firstEpicFirstSubTask = Managers.createSubTask("Собрать чемодан",
                 "Положить в чемодан все необходимое", TaskStatus.DONE, firstEpic.getId());
-        inMemoryManager.addTask(firstTask);
-        inMemoryManager.addEpic(firstEpic);
-        inMemoryManager.addSubTaskIntoEpic(firstEpicFirstSubTask);
+        SubTask firstEpicSecondSubTask = Managers.createSubTask("Забрать сноуборд",
+                "Забрать свой сноуборд из кладовки", TaskStatus.NEW, firstEpic.getId());
+        SubTask firstEpicThirdSubTask = Managers.createSubTask("Убрать в доме",
+                "Убрать в доме перед отъездом", TaskStatus.DONE, firstEpic.getId());
+        fileBackedManager.addTask(firstTask);
+        fileBackedManager.addEpic(firstEpic);
+        fileBackedManager.addSubTaskIntoEpic(firstEpicFirstSubTask);
+        fileBackedManager.addSubTaskIntoEpic(firstEpicSecondSubTask);
+        fileBackedManager.addSubTaskIntoEpic(firstEpicThirdSubTask);
 
+        //showAllItems(fileBackedManager);
 
-        Manager inMemoryManager1 = Managers.getDefault();
-
-
-
-
-
-
+//        Manager fileBackedManager1 = Managers.getDefault();
+//
+//        showAllItems(fileBackedManager1);
+    }
 
 
 
@@ -200,15 +204,16 @@ public class Main {
 //        System.out.println("---");
 //    }
 //
-//    public static void showAllItems() {
-//        System.out.println("== Начало полного списка сущностей ==");
-//        for (Task task : inMemoryManager.getAllItems().values()) {
-//            if (!(task.getClass().getName().equals("tasks.SubTask"))) {
-//                System.out.println(task);
-//            }
-//        }
-//        System.out.println("== Окончание полного списка сущностей ==\n");
-//    }
+    public static void showAllItems(Manager manager) {
+        System.out.println("== Начало полного списка сущностей ==");
+        for (Task task : manager.getAllItems().values()) {
+            if (!(task.getClass().getName().equals("tasks.SubTask"))) {
+                System.out.println(task);
+            }
+        }
+        System.out.println("== Окончание полного списка сущностей ==\n");
+    }
+
 //
 //    public static void showAllTasks() {
 //        System.out.println("== Начало списка всех задач ==");
@@ -325,5 +330,5 @@ public class Main {
 //    public static String padLeft(String s, int n) {
 //        return String.format("%" + n + "s", s);
 //    }
-    }
+
 }
