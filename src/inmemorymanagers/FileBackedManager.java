@@ -15,6 +15,7 @@ import java.nio.file.Path;
 
 public class FileBackedManager extends InMemoryManager {
     File file;
+    static boolean managerStatus = true;
 
     public FileBackedManager(File file) {
         this.file = file;
@@ -23,19 +24,25 @@ public class FileBackedManager extends InMemoryManager {
     @Override
     public void addTask(Task task) {
         super.addTask(task);
-        save();
+        if (managerStatus) {
+            save();
+        }
     }
 
     @Override
     public void addEpic(Epic epic) {
         super.addEpic(epic);
-        save();
+        if (managerStatus) {
+            save();
+        }
     }
 
     @Override
     public void addSubTaskIntoEpic(SubTask subTask) {
         super.addSubTaskIntoEpic(subTask);
-        save();
+        if (managerStatus) {
+            save();
+        }
     }
 
     //сохраняем информацию в файл
@@ -53,11 +60,6 @@ public class FileBackedManager extends InMemoryManager {
         }
     }
 
-//    public static void loadFromFile(File file) {
-//        if (file.exists()) {
-//            fromString(load(file));
-//        }
-//    }
 
     public static String load(File file) {
         try {
@@ -69,9 +71,9 @@ public class FileBackedManager extends InMemoryManager {
 
     public static FileBackedManager loadFromFile(File file) {
         FileBackedManager fileBackedManager = new FileBackedManager(file);
-            if (file.exists()) {
-                fromString(load(file), fileBackedManager);
-            }
+        if (file.exists()) {
+            fromString(load(file), fileBackedManager);
+        }
         return fileBackedManager;
     }
 
@@ -92,6 +94,7 @@ public class FileBackedManager extends InMemoryManager {
     }
 
     public static void fromString(String value, FileBackedManager fileBackedManager) {
+        managerStatus = false;
         String[] stringTask = value.split("\n");
         for (int i = 1; i < stringTask.length; i++) {
             String[] lines = stringTask[i].split(",");
@@ -110,12 +113,14 @@ public class FileBackedManager extends InMemoryManager {
     }
 
     public static TaskStatus statusFromString(String status) {
-        if (status.equals("NEW")) {
-            return TaskStatus.NEW;
-        } else if (status.equals("DONE")) {
-            return TaskStatus.DONE;
-        } else {
-            return TaskStatus.IN_PROGRESS;
+        switch (status) {
+            case "NEW":
+                return TaskStatus.NEW;
+            case "DONE":
+                return TaskStatus.DONE;
+            case "IN_PROGRESS":
+                return TaskStatus.IN_PROGRESS;
         }
+        return null;
     }
 }
