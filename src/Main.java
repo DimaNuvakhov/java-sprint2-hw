@@ -15,6 +15,7 @@ public class Main {
 
     public static void main(String[] args) {
         File file = new File("Data.csv");
+        //File file = Files.createFile("Data.csv");
         Manager fileBackedManager = FileBackedManager.loadFromFile(file);
 
         Task firstTask = Managers.createTask("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW);
