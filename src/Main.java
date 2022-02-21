@@ -7,7 +7,6 @@ import tasks.Task;
 import tasks.TaskStatus;
 
 import java.io.File;
-import java.nio.file.Files;
 
 
 public class Main {
@@ -15,7 +14,6 @@ public class Main {
 
     public static void main(String[] args) {
         File file = new File("Data.csv");
-        //File file = Files.createFile("Data.csv");
         Manager fileBackedManager = FileBackedManager.loadFromFile(file);
 
         Task firstTask = Managers.createTask("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW);
@@ -35,8 +33,11 @@ public class Main {
         showAllItems(fileBackedManager);
 
         Manager fileBackedManager1 = FileBackedManager.loadFromFile(file);
-//
+
         showAllItems(fileBackedManager1);
+
+        boolean isDelete = file.delete();
+        System.out.println(isDelete);
     }
 
 

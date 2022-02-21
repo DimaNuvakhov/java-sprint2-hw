@@ -1,17 +1,19 @@
 package inmemorymanagers;
 
 import exception.ManagerSaveException;
+import managers.HistoryManager;
 import tasks.Epic;
 import tasks.SubTask;
 import tasks.Task;
 import tasks.TaskStatus;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FileBackedManager extends InMemoryManager {
     File file;
@@ -52,7 +54,15 @@ public class FileBackedManager extends InMemoryManager {
             Writer fileWriter = new FileWriter(file);
             fileWriter.write(header);
             for (Task task : getAllItems().values()) {
-                fileWriter.write(toString(task));
+                if (task.getClass().getName().equals(TASK_NAME)) {
+                    fileWriter.write(toString(task));
+                } else if (task.getClass().getName().equals(EPIC_NAME)) {
+                    Epic epic = (Epic) task;
+                    fileWriter.write(toString(epic));
+                    for (SubTask subTask : epic.getSubTasks().values()) {
+                        fileWriter.write(toString(subTask));
+                    }
+                }
             }
             fileWriter.close();
         } catch (IOException exception) {
@@ -93,13 +103,31 @@ public class FileBackedManager extends InMemoryManager {
         return stringTask.toString();
     }
 
+    static String toString(HistoryManager manager) {
+        String comma = ",";
+        StringBuilder stringHistory = new StringBuilder();
+        for (Task task : manager.getHistory()) {
+           stringHistory.append(task.getId()).append(comma);
+        }
+        return stringHistory.toString();
+    }
+
+    static List<String> fromString(String value) {
+        List<String> ids = new ArrayList<>();
+        String[] stringHistory = value.split(",");
+        for (String id : stringHistory) {
+            ids.add(id);
+        }
+        return ids;
+    }
+
     public static void fromString(String value, FileBackedManager fileBackedManager) {
         managerStatus = false;
         String[] stringTask = value.split("\n");
         for (int i = 1; i < stringTask.length; i++) {
             String[] lines = stringTask[i].split(",");
             if (lines[1].equals(TASK_NAME)) {
-                Task newTask = new Task(lines[0], lines[2], lines[4], statusFromString(stringTask[3]));
+                Task newTask = new Task(lines[0], lines[2], lines[4], statusFromString(lines[3]));
                 fileBackedManager.addTask(newTask);
             } else if (lines[1].equals(EPIC_NAME)) {
                 Epic newEpic = new Epic(lines[0], lines[2], lines[4]);
