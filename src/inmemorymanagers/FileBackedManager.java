@@ -6,6 +6,7 @@ import tasks.Epic;
 import tasks.SubTask;
 import tasks.Task;
 import tasks.TaskStatus;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -47,7 +48,7 @@ public class FileBackedManager extends InMemoryManager {
         }
     }
 
-    //сохраняем информацию в файл
+    // Сохраняем информацию в файл
     public void save() {
         try {
             String header = "id,type,name,status,description,epicId" + "\n";
@@ -70,7 +71,7 @@ public class FileBackedManager extends InMemoryManager {
         }
     }
 
-
+    // Считываю файл из директории
     public static String load(File file) {
         try {
             return Files.readString(Path.of(file.getPath()));
@@ -79,14 +80,29 @@ public class FileBackedManager extends InMemoryManager {
         }
     }
 
+    // Заполняю трекер задач задачами, подзадачами и эпкиами, которые я считал из файла
     public static FileBackedManager loadFromFile(File file) {
         FileBackedManager fileBackedManager = new FileBackedManager(file);
         if (file.exists()) {
-            fromString(load(file), fileBackedManager);
+            managerStatus = false;
+            String[] stringTask = load(file).split("\n");
+            for (int i = 1; i < stringTask.length; i++) {
+                if (fromString(stringTask[i]).getClass().getName().equals(TASK_NAME)) {
+                    Task task = (Task) fromString(stringTask[i]);
+                    fileBackedManager.addTask(task);
+                } else if (fromString(stringTask[i]).getClass().getName().equals(EPIC_NAME)) {
+                    Epic epic = (Epic) fromString(stringTask[i]);
+                    fileBackedManager.addEpic(epic);
+                } else if (fromString(stringTask[i]).getClass().getName().equals(SUBTASK_NAME)) {
+                    SubTask subTask = (SubTask) fromString(stringTask[i]);
+                    fileBackedManager.addSubTaskIntoEpic(subTask);
+                }
+            }
         }
         return fileBackedManager;
     }
 
+    // Делаю из задачи строку
     public String toString(Task task) {
         String comma = ",";
         String header = "id,type,name,status,description,epicId";
@@ -103,16 +119,18 @@ public class FileBackedManager extends InMemoryManager {
         return stringTask.toString();
     }
 
+    // Сохраняю идентификаторы изистории задач в строку
     static String toString(HistoryManager manager) {
         String comma = ",";
         StringBuilder stringHistory = new StringBuilder();
         for (Task task : manager.getHistory()) {
-           stringHistory.append(task.getId()).append(comma);
+            stringHistory.append(task.getId()).append(comma);
         }
         return stringHistory.toString();
     }
 
-    static List<String> fromString(String value) {
+    // Возвращаю лист из идентификаторов
+    static List<String> fromString1(String value) {
         List<String> ids = new ArrayList<>();
         String[] stringHistory = value.split(",");
         for (String id : stringHistory) {
@@ -121,23 +139,18 @@ public class FileBackedManager extends InMemoryManager {
         return ids;
     }
 
-    public static void fromString(String value, FileBackedManager fileBackedManager) {
-        managerStatus = false;
-        String[] stringTask = value.split("\n");
-        for (int i = 1; i < stringTask.length; i++) {
-            String[] lines = stringTask[i].split(",");
-            if (lines[1].equals(TASK_NAME)) {
-                Task newTask = new Task(lines[0], lines[2], lines[4], statusFromString(lines[3]));
-                fileBackedManager.addTask(newTask);
-            } else if (lines[1].equals(EPIC_NAME)) {
-                Epic newEpic = new Epic(lines[0], lines[2], lines[4]);
-                fileBackedManager.addEpic(newEpic);
-            } else if (lines[1].equals(SUBTASK_NAME)) {
-                SubTask newSubTask = new SubTask(lines[0], lines[2], lines[4],
-                        statusFromString(lines[3]), lines[5]);
-                fileBackedManager.addSubTaskIntoEpic(newSubTask);
-            }
+    // Делаю задачу, эпик или подзадачу из строки
+    public static Task fromString(String value) {
+        String[] lines = value.split(",");
+        if (lines[1].equals(TASK_NAME)) {
+            return new Task(lines[0], lines[2], lines[4], statusFromString(lines[3]));
+        } else if (lines[1].equals(EPIC_NAME)) {
+            return new Epic(lines[0], lines[2], lines[4]);
+        } else if (lines[1].equals(SUBTASK_NAME)) {
+            return new SubTask(lines[0], lines[2], lines[4],
+                    statusFromString(lines[3]), lines[5]);
         }
+        return null;
     }
 
     public static TaskStatus statusFromString(String status) {
