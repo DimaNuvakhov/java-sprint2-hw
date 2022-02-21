@@ -1,3 +1,4 @@
+import inmemorymanagers.FileBackedManager;
 import tasks.Epic;
 import managers.Manager;
 import inmemorymanagers.Managers;
@@ -5,11 +6,16 @@ import tasks.SubTask;
 import tasks.Task;
 import tasks.TaskStatus;
 
+import java.io.File;
+import java.nio.file.Files;
+
 
 public class Main {
-    static Manager fileBackedManager = Managers.getDefault();
+
 
     public static void main(String[] args) {
+        File file = new File("Data.csv");
+        Manager fileBackedManager = FileBackedManager.loadFromFile(file);
 
         Task firstTask = Managers.createTask("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW);
         Epic firstEpic = Managers.createEpic("Переезд", "Собрать все вещи");
@@ -25,11 +31,11 @@ public class Main {
         fileBackedManager.addSubTaskIntoEpic(firstEpicSecondSubTask);
         fileBackedManager.addSubTaskIntoEpic(firstEpicThirdSubTask);
 
-        //showAllItems(fileBackedManager);
+        showAllItems(fileBackedManager);
 
-//        Manager fileBackedManager1 = Managers.getDefault();
+        Manager fileBackedManager1 = FileBackedManager.loadFromFile(file);
 //
-//        showAllItems(fileBackedManager1);
+        showAllItems(fileBackedManager1);
     }
 
 

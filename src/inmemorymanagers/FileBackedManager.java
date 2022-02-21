@@ -18,7 +18,6 @@ public class FileBackedManager extends InMemoryManager {
 
     public FileBackedManager(File file) {
         this.file = file;
-//        loadFromFile(file);
     }
 
     @Override
@@ -54,11 +53,11 @@ public class FileBackedManager extends InMemoryManager {
         }
     }
 
-    public void loadFromFile(File file) {
-        if (file.exists()) {
-            fromString(load(file));
-        }
-    }
+//    public static void loadFromFile(File file) {
+//        if (file.exists()) {
+//            fromString(load(file));
+//        }
+//    }
 
     public static String load(File file) {
         try {
@@ -66,6 +65,14 @@ public class FileBackedManager extends InMemoryManager {
         } catch (IOException exception) {
             throw new ManagerSaveException("Ошибка, возможно файл не находится в данной директории");
         }
+    }
+
+    public static FileBackedManager loadFromFile(File file) {
+        FileBackedManager fileBackedManager = new FileBackedManager(file);
+            if (file.exists()) {
+                fromString(load(file), fileBackedManager);
+            }
+        return fileBackedManager;
     }
 
     public String toString(Task task) {
@@ -84,20 +91,20 @@ public class FileBackedManager extends InMemoryManager {
         return stringTask.toString();
     }
 
-    public void fromString(String value) {
+    public static void fromString(String value, FileBackedManager fileBackedManager) {
         String[] stringTask = value.split("\n");
         for (int i = 1; i < stringTask.length; i++) {
             String[] lines = stringTask[i].split(",");
             if (lines[1].equals(TASK_NAME)) {
                 Task newTask = new Task(lines[0], lines[2], lines[4], statusFromString(stringTask[3]));
-                addTask(newTask);
+                fileBackedManager.addTask(newTask);
             } else if (lines[1].equals(EPIC_NAME)) {
                 Epic newEpic = new Epic(lines[0], lines[2], lines[4]);
-                addEpic(newEpic);
+                fileBackedManager.addEpic(newEpic);
             } else if (lines[1].equals(SUBTASK_NAME)) {
                 SubTask newSubTask = new SubTask(lines[0], lines[2], lines[4],
                         statusFromString(lines[3]), lines[5]);
-                addSubTaskIntoEpic(newSubTask);
+                fileBackedManager.addSubTaskIntoEpic(newSubTask);
             }
         }
     }
@@ -107,9 +114,8 @@ public class FileBackedManager extends InMemoryManager {
             return TaskStatus.NEW;
         } else if (status.equals("DONE")) {
             return TaskStatus.DONE;
-        } else if (status.equals("IN_PROGRESS")) {
+        } else {
             return TaskStatus.IN_PROGRESS;
         }
-        return null;
     }
 }
