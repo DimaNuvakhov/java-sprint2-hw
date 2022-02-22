@@ -7,15 +7,17 @@ import tasks.Task;
 import tasks.TaskStatus;
 
 import java.io.File;
+import java.util.List;
 
 
 public class Main {
 
-
     public static void main(String[] args) {
+        // Создаю файл
         File file = new File("Data.csv");
+        // Создаю менеджера
         Manager fileBackedManager = FileBackedManager.loadFromFile(file);
-
+        // Создали задачу, эпик и подзадачу
         Task firstTask = Managers.createTask("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW);
         Epic firstEpic = Managers.createEpic("Переезд", "Собрать все вещи");
         SubTask firstEpicFirstSubTask = Managers.createSubTask("Собрать чемодан",
@@ -24,18 +26,44 @@ public class Main {
                 "Забрать свой сноуборд из кладовки", TaskStatus.NEW, firstEpic.getId());
         SubTask firstEpicThirdSubTask = Managers.createSubTask("Убрать в доме",
                 "Убрать в доме перед отъездом", TaskStatus.DONE, firstEpic.getId());
+        Epic secondEpic = Managers.createEpic("Обучение", "Обучение JAVA");
+        SubTask secondEpicFirstSubTask = Managers.createSubTask("Изучить ArrayList",
+                "Научиться добавлять и удалять из ArrayList", TaskStatus.NEW, secondEpic.getId());
+        SubTask secondEpicSecondSubTask = Managers.createSubTask("Изучить private",
+                "Понять действие модификатора доступа private", TaskStatus.NEW, secondEpic.getId());
+        SubTask secondEpicThirdSubTask = Managers.createSubTask("Изучить Override",
+                "Научиться переопределять методы", TaskStatus.NEW, secondEpic.getId());
+        // Добавляем все вышесозданное в трекер задач
         fileBackedManager.addTask(firstTask);
         fileBackedManager.addEpic(firstEpic);
         fileBackedManager.addSubTaskIntoEpic(firstEpicFirstSubTask);
         fileBackedManager.addSubTaskIntoEpic(firstEpicSecondSubTask);
         fileBackedManager.addSubTaskIntoEpic(firstEpicThirdSubTask);
-
+        fileBackedManager.addEpic(secondEpic);
+        fileBackedManager.addSubTaskIntoEpic(secondEpicFirstSubTask);
+        fileBackedManager.addSubTaskIntoEpic(secondEpicSecondSubTask);
+        fileBackedManager.addSubTaskIntoEpic(secondEpicThirdSubTask);
+        // Вызываю историю
+        fileBackedManager.getTaskById(firstTask.getId());
+        fileBackedManager.getTaskById(firstEpicFirstSubTask.getId());
+        fileBackedManager.getTaskById(firstEpic.getId());
+        fileBackedManager.getTaskById(secondEpicSecondSubTask.getId());
+        fileBackedManager.getTaskById(secondEpic.getId());
+        // Просмотр всех задач
+        printTest("Получение списка всех сущностей первого менеджера");
         showAllItems(fileBackedManager);
-
+        // Просмотр истории
+        printTest("История просмотров задач первого менеджера");
+        System.out.println(printHistory(fileBackedManager));
+        // Создание второго менеджера, который должен считать все из файла
         Manager fileBackedManager1 = FileBackedManager.loadFromFile(file);
-
+        // Просмотр всех задач второго менеджера
+        printTest("Получение списка всех сущностей второго менеджера");
         showAllItems(fileBackedManager1);
-
+        // Просмотр истории второго менеджера
+        printTest("История просмотров задач второго менеджера");
+        System.out.println(printHistory(fileBackedManager1));
+        // Удаление файла и проверка удаления
         boolean isDelete = file.delete();
         System.out.println(isDelete);
     }
@@ -206,12 +234,12 @@ public class Main {
 //    }
 //
 //    // Методы для проверки
-//    public static void printTest(String value) {
-//        System.out.println();
-//        System.out.println("LOGGER [INFO]: " + value + " : ");
-//        System.out.println("---");
-//    }
-//
+    public static void printTest(String value) {
+        System.out.println();
+        System.out.println("LOGGER [INFO]: " + value + " : ");
+        System.out.println("---");
+    }
+
     public static void showAllItems(Manager manager) {
         System.out.println("== Начало полного списка сущностей ==");
         for (Task task : manager.getAllItems().values()) {
@@ -267,55 +295,55 @@ public class Main {
 //        }
 //    }
 //
-//    public static String printHistory() {
-//        List<Task> lastTasks = inMemoryManager.history();
-//        StringBuilder value = new StringBuilder();
-//        Integer num = 0;
-//        String verticalTableBorder = "|";
-//        String horizontalTableBorder = "-------------------------------------"
-//                + "---------------------------------------------------------"
-//                + "--------------------------------------------------";
-//        String table = horizontalTableBorder + "\n" + verticalTableBorder + padLeft("<№>", 4)
-//                + verticalTableBorder
-//                + padLeft("<Тип задачи>", 13) + verticalTableBorder
-//                + padLeft("<id>", 35) + verticalTableBorder
-//                + padLeft("<Название>", 20)
-//                + verticalTableBorder + (padLeft("<Описание>", 50) + verticalTableBorder)
-//                + (padLeft("<Статус>", 15) + verticalTableBorder)
-//                + "\n" + horizontalTableBorder;
-//
-//        for (Task tasks : lastTasks) {
-//            num++;
-//            value.
-//                    append("\n").
-//                    append(verticalTableBorder).
-//                    append(padLeft(num.toString(), 4)).
-//                    append(verticalTableBorder).
-//                    append(padLeft(className(tasks), 13)).
-//                    append(verticalTableBorder).
-//                    append(padLeft(tasks.getId(), 35)).
-//                    append(verticalTableBorder).
-//                    append(padLeft(tasks.getName(), 20)).
-//                    append(verticalTableBorder).
-//                    append(padLeft(tasks.getDescription(), 50)).
-//                    append(verticalTableBorder).
-//                    append(padLeft(tasks.getStatus().toString(), 15)).
-//                    append(verticalTableBorder);
-//        }
-//        return table + value + "\n" + horizontalTableBorder + "\n";
-//    }
-//
-//    public static String className(Task task) {
-//        switch (task.getClass().getName()) {
-//            case "tasks.SubTask":
-//                return "SubTask";
-//            case "tasks.Epic":
-//                return "Epic";
-//            case "tasks.Task":
-//                return "Task";
-//        }
-//        return null;
-//    }
+    public static String printHistory(Manager manager) {
+        List<Task> lastTasks = manager.history();
+        StringBuilder value = new StringBuilder();
+        Integer num = 0;
+        String verticalTableBorder = "|";
+        String horizontalTableBorder = "-------------------------------------"
+                + "---------------------------------------------------------"
+                + "--------------------------------------------------";
+        String table = horizontalTableBorder + "\n" + verticalTableBorder + padLeft("<№>", 4)
+                + verticalTableBorder
+                + padLeft("<Тип задачи>", 13) + verticalTableBorder
+                + padLeft("<id>", 35) + verticalTableBorder
+                + padLeft("<Название>", 20)
+                + verticalTableBorder + (padLeft("<Описание>", 50) + verticalTableBorder)
+                + (padLeft("<Статус>", 15) + verticalTableBorder)
+                + "\n" + horizontalTableBorder;
+
+        for (Task tasks : lastTasks) {
+            num++;
+            value.
+                    append("\n").
+                    append(verticalTableBorder).
+                    append(padLeft(num.toString(), 4)).
+                    append(verticalTableBorder).
+                    append(padLeft(className(tasks), 13)).
+                    append(verticalTableBorder).
+                    append(padLeft(tasks.getId(), 35)).
+                    append(verticalTableBorder).
+                    append(padLeft(tasks.getName(), 20)).
+                    append(verticalTableBorder).
+                    append(padLeft(tasks.getDescription(), 50)).
+                    append(verticalTableBorder).
+                    append(padLeft(tasks.getStatus().toString(), 15)).
+                    append(verticalTableBorder);
+        }
+        return table + value + "\n" + horizontalTableBorder + "\n";
+    }
+
+    public static String className(Task task) {
+        switch (task.getClass().getName()) {
+            case "tasks.SubTask":
+                return "SubTask";
+            case "tasks.Epic":
+                return "Epic";
+            case "tasks.Task":
+                return "Task";
+        }
+        return null;
+    }
 //
 //    public static void deleteAllTasks() {
 //        System.out.println("Удаляем все сущности");
@@ -331,12 +359,12 @@ public class Main {
 //        }
 //    }
 //
-//    public static String padRight(String s, int n) {
-//        return String.format("%-" + n + "s", s);
-//    }
-//
-//    public static String padLeft(String s, int n) {
-//        return String.format("%" + n + "s", s);
-//    }
+    public static String padRight(String s, int n) {
+        return String.format("%-" + n + "s", s);
+    }
+
+    public static String padLeft(String s, int n) {
+        return String.format("%" + n + "s", s);
+    }
 
 }

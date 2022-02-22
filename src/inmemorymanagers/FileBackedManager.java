@@ -2,6 +2,7 @@ package inmemorymanagers;
 
 import exception.ManagerSaveException;
 import managers.HistoryManager;
+import managers.Manager;
 import tasks.Epic;
 import tasks.SubTask;
 import tasks.Task;
@@ -27,6 +28,14 @@ public class FileBackedManager extends InMemoryManager {
     @Override
     public void addTask(Task task) {
         super.addTask(task);
+        if (managerStatus) {
+            save();
+        }
+    }
+
+    @Override
+    public void getTaskById(String id) {
+        super.getTaskById(id);
         if (managerStatus) {
             save();
         }
@@ -65,6 +74,7 @@ public class FileBackedManager extends InMemoryManager {
                     }
                 }
             }
+            fileWriter.write(toString(inMemoryHistoryManager));
             fileWriter.close();
         } catch (IOException exception) {
             throw new ManagerSaveException("Ошибка, возможно файл не находится в данной директории");
@@ -86,9 +96,20 @@ public class FileBackedManager extends InMemoryManager {
         if (file.exists()) {
             managerStatus = false;
             String[] stringTask = load(file).split("\n");
-            for (int i = 1; i < stringTask.length; i++) {
-                if (fromString(stringTask[i]).getClass().getName().equals(TASK_NAME)) {
-                    Task task = (Task) fromString(stringTask[i]);
+            makeManager(stringTask, fileBackedManager);
+        }
+        return fileBackedManager;
+    }
+
+    public static void makeManager(String[] stringTask, FileBackedManager fileBackedManager) {
+        for (int i = 1; i < stringTask.length; i++) {
+            if (!stringTask[i].isEmpty()) {
+                if (i == stringTask.length - 1) {
+                    for (String id : historyFromString(stringTask[i])) {
+                        fileBackedManager.getTaskById(id);
+                    }
+                } else if (fromString(stringTask[i]).getClass().getName().equals(TASK_NAME)) {
+                    Task task = fromString(stringTask[i]);
                     fileBackedManager.addTask(task);
                 } else if (fromString(stringTask[i]).getClass().getName().equals(EPIC_NAME)) {
                     Epic epic = (Epic) fromString(stringTask[i]);
@@ -99,13 +120,11 @@ public class FileBackedManager extends InMemoryManager {
                 }
             }
         }
-        return fileBackedManager;
     }
 
     // Делаю из задачи строку
     public String toString(Task task) {
         String comma = ",";
-        String header = "id,type,name,status,description,epicId";
         StringBuilder stringTask = new StringBuilder();
         if (!task.getClass().getName().equals(SUBTASK_NAME)) {
             stringTask.append(task.getId()).append(comma).append(task.getClass().getName()).append(comma).
@@ -119,22 +138,22 @@ public class FileBackedManager extends InMemoryManager {
         return stringTask.toString();
     }
 
-    // Сохраняю идентификаторы изистории задач в строку
-    static String toString(HistoryManager manager) {
+    // Сохраняю идентификаторы истории задач в строку
+    public static String toString(HistoryManager manager) {
         String comma = ",";
         StringBuilder stringHistory = new StringBuilder();
         for (Task task : manager.getHistory()) {
             stringHistory.append(task.getId()).append(comma);
         }
-        return stringHistory.toString();
+        return "\n" + stringHistory;
     }
 
     // Возвращаю лист из идентификаторов
-    static List<String> fromString1(String value) {
+    public static List<String> historyFromString(String value) {
         List<String> ids = new ArrayList<>();
         String[] stringHistory = value.split(",");
-        for (String id : stringHistory) {
-            ids.add(id);
+        for (int i = stringHistory.length - 1; i >= 0; i--) {
+            ids.add(stringHistory[i]);
         }
         return ids;
     }
