@@ -39,16 +39,10 @@ public class Main {
         fileBackedManager.addSubTaskIntoEpic(firstEpicFirstSubTask);
         fileBackedManager.addSubTaskIntoEpic(firstEpicSecondSubTask);
         fileBackedManager.addSubTaskIntoEpic(firstEpicThirdSubTask);
-        fileBackedManager.addEpic(secondEpic);
-        fileBackedManager.addSubTaskIntoEpic(secondEpicFirstSubTask);
-        fileBackedManager.addSubTaskIntoEpic(secondEpicSecondSubTask);
-        fileBackedManager.addSubTaskIntoEpic(secondEpicThirdSubTask);
         // Вызываю историю
         fileBackedManager.getTaskById(firstTask.getId());
         fileBackedManager.getTaskById(firstEpicFirstSubTask.getId());
         fileBackedManager.getTaskById(firstEpic.getId());
-        fileBackedManager.getTaskById(secondEpicSecondSubTask.getId());
-        fileBackedManager.getTaskById(secondEpic.getId());
         // Просмотр всех задач
         printTest("Получение списка всех сущностей первого менеджера");
         showAllItems(fileBackedManager);

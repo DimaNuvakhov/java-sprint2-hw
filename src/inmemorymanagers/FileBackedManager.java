@@ -3,10 +3,7 @@ package inmemorymanagers;
 import exception.ManagerSaveException;
 import managers.HistoryManager;
 import managers.Manager;
-import tasks.Epic;
-import tasks.SubTask;
-import tasks.Task;
-import tasks.TaskStatus;
+import tasks.*;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -126,12 +123,16 @@ public class FileBackedManager extends InMemoryManager {
     public String toString(Task task) {
         String comma = ",";
         StringBuilder stringTask = new StringBuilder();
-        if (!task.getClass().getName().equals(SUBTASK_NAME)) {
-            stringTask.append(task.getId()).append(comma).append(task.getClass().getName()).append(comma).
+        if (task.getClass().getName().equals(TASK_NAME)) {
+            stringTask.append(task.getId()).append(comma).append(TaskType.TASK).append(comma).
                     append(task.getName()).append(comma).append(task.getStatus()).append(comma).
                     append(task.getDescription()).append(comma).append("null").append("\n");
-        } else {
-            stringTask.append(task.getId()).append(comma).append(task.getClass().getName()).append(comma).
+        } else if (task.getClass().getName().equals(EPIC_NAME)) {
+            stringTask.append(task.getId()).append(comma).append(TaskType.EPIC).append(comma).
+                    append(task.getName()).append(comma).append(task.getStatus()).append(comma).
+                    append(task.getDescription()).append(comma).append("null").append("\n");
+        } else if (task.getClass().getName().equals(SUBTASK_NAME)) {
+            stringTask.append(task.getId()).append(comma).append(TaskType.SUBTASK).append(comma).
                     append(task.getName()).append(comma).append(task.getStatus()).append(comma).
                     append(task.getDescription()).append(comma).append(((SubTask) task).getEpicId()).append("\n");
         }
@@ -161,11 +162,11 @@ public class FileBackedManager extends InMemoryManager {
     // Делаю задачу, эпик или подзадачу из строки
     public static Task fromString(String value) {
         String[] lines = value.split(",");
-        if (lines[1].equals(TASK_NAME)) {
+        if (lines[1].equals(TaskType.TASK.toString())) {
             return new Task(lines[0], lines[2], lines[4], statusFromString(lines[3]));
-        } else if (lines[1].equals(EPIC_NAME)) {
+        } else if (lines[1].equals(TaskType.EPIC.toString())) {
             return new Epic(lines[0], lines[2], lines[4]);
-        } else if (lines[1].equals(SUBTASK_NAME)) {
+        } else if (lines[1].equals(TaskType.SUBTASK.toString())) {
             return new SubTask(lines[0], lines[2], lines[4],
                     statusFromString(lines[3]), lines[5]);
         }
