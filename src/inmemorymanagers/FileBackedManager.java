@@ -2,7 +2,6 @@ package inmemorymanagers;
 
 import exception.ManagerSaveException;
 import managers.HistoryManager;
-import managers.Manager;
 import tasks.*;
 
 import java.io.File;
@@ -94,10 +93,12 @@ public class FileBackedManager extends InMemoryManager {
             managerStatus = false;
             String[] stringTask = load(file).split("\n");
             makeManager(stringTask, fileBackedManager);
+            managerStatus = true;
         }
         return fileBackedManager;
     }
 
+    // Создаю менеджер из информации, которая была считана из файла
     public static void makeManager(String[] stringTask, FileBackedManager fileBackedManager) {
         for (int i = 1; i < stringTask.length; i++) {
             if (!stringTask[i].isEmpty()) {
@@ -141,10 +142,11 @@ public class FileBackedManager extends InMemoryManager {
 
     // Сохраняю идентификаторы истории задач в строку
     public static String toString(HistoryManager manager) {
-        String comma = ",";
+        String comma = "";
         StringBuilder stringHistory = new StringBuilder();
         for (Task task : manager.getHistory()) {
-            stringHistory.append(task.getId()).append(comma);
+            stringHistory.append(comma).append(task.getId());
+            if (comma.equals("")) { comma = ",";}
         }
         return "\n" + stringHistory;
     }
@@ -173,6 +175,7 @@ public class FileBackedManager extends InMemoryManager {
         return null;
     }
 
+    // Создаю тип статус из типа стринг
     public static TaskStatus statusFromString(String status) {
         switch (status) {
             case "NEW":
