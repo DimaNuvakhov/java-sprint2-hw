@@ -1,5 +1,6 @@
 package inmemorymanagers;
 
+import managers.HistoryManager;
 import tasks.Epic;
 import managers.Manager;
 import tasks.SubTask;
@@ -13,7 +14,7 @@ import java.util.UUID;
 
 public class InMemoryManager implements Manager {
     private final HashMap<String, Task> allTasks = new HashMap<>();
-    InMemoryHistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
+    HistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
 
     // Добавление задачи
     @Override
