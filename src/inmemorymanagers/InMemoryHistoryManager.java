@@ -28,8 +28,8 @@ public class InMemoryHistoryManager implements HistoryManager {
     private Node<Task> tail;
     private int size = 0;
 
-    // Добавление последнего элемента в LinkedList
-    public void addLast(Task element) {
+    // Добавление последнего элемента в LinkedList, сделал его privat
+    private void addLast(Task element) {
         final Node<Task> oldTail = tail;
         final Node<Task> newNode = new Node<>(oldTail, element, null);
         tail = newNode;
@@ -60,8 +60,8 @@ public class InMemoryHistoryManager implements HistoryManager {
         removeNode(nodes.get(id));
     }
 
-    // Удаление задачи из LinkedList
-    public void removeNode(Node<Task> node) {
+    // Удаление задачи из LinkedList, сделал его privat
+    private void removeNode(Node<Task> node) {
         final Node<Task> next = node.next;
         final Node<Task> prev = node.prev;
 

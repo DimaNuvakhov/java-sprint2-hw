@@ -7,8 +7,8 @@ import java.util.HashMap;
 public class Epic extends Task {
     private final HashMap<String, SubTask> subTasks;
 
-    public Epic(String id, String name, String description) {
-        super(id, name, description, null);
+    public Epic(String name, String description) {
+        super(name, description, null);
         subTasks = new HashMap<>();
     }
 

@@ -6,9 +6,9 @@ import java.io.File;
 
 public class Main3 {
     public static void main(String[] args) {
-        // Создаю файл
+        // Создание файла
         File file = new File("Data.csv");
-        // Создаю менеджера
+        // Создание менеджера
         Manager fileBackedManager = FileBackedManager.loadFromFile(file);
         // Просмотр всех задач
         MyLibrary.showAllItems(fileBackedManager);

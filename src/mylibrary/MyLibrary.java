@@ -106,7 +106,7 @@ public class MyLibrary {
                     append(padLeft(tasks.getStatus().toString(), 15)).
                     append(verticalTableBorder);
         }
-        return firstPhrase + "\n" + table + value + "\n" + horizontalTableBorder + "\n" + secondPhrase;
+        return firstPhrase + "\n" + table + value + "\n" + horizontalTableBorder + "\n" + secondPhrase + "\n";
     }
 
     public static String className(Task task) {

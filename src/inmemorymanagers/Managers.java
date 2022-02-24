@@ -1,5 +1,6 @@
 package inmemorymanagers;
 
+import managers.HistoryManager;
 import managers.Manager;
 import tasks.Epic;
 import tasks.SubTask;
@@ -15,18 +16,8 @@ public class Managers {
         return new InMemoryManager();
     }
 
-    public static Task createTask(String name, String description, TaskStatus status) {
-        String id = UUID.randomUUID().toString().substring(0, 32);
-        return new Task(id, name, description, status);
+    public static HistoryManager getDefaultHistory() {
+        return new InMemoryHistoryManager();
     }
 
-    public static Epic createEpic(String name, String description) {
-        String id = UUID.randomUUID().toString().substring(0, 32);
-        return new Epic(id, name, description);
-    }
-
-    public static SubTask createSubTask(String name, String description, TaskStatus status, String epicId) {
-        String id = UUID.randomUUID().toString().substring(0, 32);
-        return new SubTask(id, name, description, status, epicId);
-    }
 }

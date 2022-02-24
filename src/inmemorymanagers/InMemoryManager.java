@@ -9,6 +9,7 @@ import tasks.TaskStatus;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 public class InMemoryManager implements Manager {
     private final HashMap<String, Task> allTasks = new HashMap<>();
@@ -17,12 +18,20 @@ public class InMemoryManager implements Manager {
     // Добавление задачи
     @Override
     public void addTask(Task task) {
+        if (task.getId() == null) {
+            String id = UUID.randomUUID().toString().substring(0, 32);
+            task.setId(id);
+        }
         allTasks.put(task.getId(), task);
     }
 
     // Добавление эпика
     @Override
     public void addEpic(Epic epic) {
+        if (epic.getId() == null) {
+            String id = UUID.randomUUID().toString().substring(0, 32);
+            epic.setId(id);
+        }
         allTasks.put(epic.getId(), epic);
         epic.setStatus(calcStatus(epic));
     }
@@ -30,6 +39,10 @@ public class InMemoryManager implements Manager {
     // Добавление подзадачи к определенному эпику
     @Override
     public void addSubTaskIntoEpic(SubTask subTask) {
+        if (subTask.getId() == null) {
+            String id = UUID.randomUUID().toString().substring(0, 32);
+            subTask.setId(id);
+        }
         if (allTasks.containsKey(subTask.getEpicId())) {
             Epic epic = (Epic) allTasks.get(subTask.getEpicId());
             epic.getSubTasks().put(subTask.getId(), subTask);

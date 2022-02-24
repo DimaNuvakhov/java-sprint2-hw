@@ -3,16 +3,15 @@ package tasks;
 import java.util.UUID;
 
 public class Task {
-    private String id;
+    private String id = null;
     private String name;
     private String description;
     private TaskStatus status;
 
-    public Task(String id, String name, String description, TaskStatus status) {
+    public Task(String name, String description, TaskStatus status) {
         this.name = name;
         this.description = description;
         this.status = status;
-        this.id = id;
     }
 
     public void setId(String id) {

@@ -165,12 +165,18 @@ public class FileBackedManager extends InMemoryManager {
     public static Task fromString(String value) {
         String[] lines = value.split(",");
         if (lines[1].equals(TaskType.TASK.toString())) {
-            return new Task(lines[0], lines[2], lines[4], statusFromString(lines[3]));
+            Task taskFromFile = new Task(lines[2], lines[4], statusFromString(lines[3]));
+            taskFromFile.setId(lines[0]);
+            return taskFromFile;
         } else if (lines[1].equals(TaskType.EPIC.toString())) {
-            return new Epic(lines[0], lines[2], lines[4]);
+            Epic epicFromFile = new Epic(lines[2], lines[4]);
+            epicFromFile.setId(lines[0]);
+            return epicFromFile;
         } else if (lines[1].equals(TaskType.SUBTASK.toString())) {
-            return new SubTask(lines[0], lines[2], lines[4],
+            SubTask subTaskFromFile = new SubTask(lines[2], lines[4],
                     statusFromString(lines[3]), lines[5]);
+            subTaskFromFile.setId(lines[0]);
+            return subTaskFromFile;
         }
         return null;
     }
