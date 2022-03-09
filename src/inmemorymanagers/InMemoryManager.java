@@ -18,7 +18,7 @@ public class InMemoryManager implements Manager {
 
     // Добавление задачи
     @Override
-    public void addTask(Task task) {
+    public void addTask(Task task) { // Проверен
         if (task.getId() == null) {
             String id = UUID.randomUUID().toString().substring(0, 32);
             task.setId(id);
@@ -28,7 +28,7 @@ public class InMemoryManager implements Manager {
 
     // Добавление эпика
     @Override
-    public void addEpic(Epic epic) {
+    public void addEpic(Epic epic) { // Проверен
         if (epic.getId() == null) {
             String id = UUID.randomUUID().toString().substring(0, 32);
             epic.setId(id);
@@ -39,7 +39,7 @@ public class InMemoryManager implements Manager {
 
     // Добавление подзадачи к определенному эпику
     @Override
-    public void addSubTaskIntoEpic(SubTask subTask) {
+    public void addSubTaskIntoEpic(SubTask subTask) { // Проверен
         if (subTask.getId() == null) {
             String id = UUID.randomUUID().toString().substring(0, 32);
             subTask.setId(id);
@@ -54,13 +54,13 @@ public class InMemoryManager implements Manager {
 
     // Я не знаю, нужен ли этот метод, возвращающий все задачи, но сделал его
     @Override
-    public HashMap<String, Task> getAllItems() {
+    public HashMap<String, Task> getAllItems() { // Не нуждается в проверке
         return allTasks;
     }
 
     // Получение списка всех задач
     @Override
-    public ArrayList<Task> getAllTasks() {
+    public ArrayList<Task> getAllTasks() { // Проверен
         ArrayList<Task> tasks = new ArrayList<>();
         for (Task task : allTasks.values()) {
             if (task.getClass().getName().equals(TASK_NAME)) {
@@ -72,7 +72,7 @@ public class InMemoryManager implements Manager {
 
     // Получение списка всех эпиков
     @Override
-    public ArrayList<Epic> getAllEpics() {
+    public ArrayList<Epic> getAllEpics() { // Проверен
         ArrayList<Epic> epics = new ArrayList<>();
         for (Task task : allTasks.values()) {
             if (task.getClass().getName().equals(EPIC_NAME)) {
@@ -125,7 +125,7 @@ public class InMemoryManager implements Manager {
 
     // Удаление задачи, эпика и подзадачи по id
     @Override
-    public Boolean deleteTaskById(String id) {
+    public Boolean deleteTaskById(String id) { // Проверен
         if (!allTasks.containsKey(id)) {
             return false;
         }
@@ -176,7 +176,7 @@ public class InMemoryManager implements Manager {
 
     // Обновление любой задачи по id
     @Override
-    public void renewTaskById(String oldId, Task task) {
+    public void renewTaskById(String oldId, Task task) { // Проверен
         if (allTasks.containsKey(oldId)) {
             if (allTasks.get(oldId).getClass().getName().equals(SUBTASK_NAME)) {
                 SubTask subTask = (SubTask) allTasks.get(oldId);
@@ -206,7 +206,7 @@ public class InMemoryManager implements Manager {
 
     // Вычисление статуса эпика
     @Override
-    public TaskStatus calcStatus(Epic epic) {
+    public TaskStatus calcStatus(Epic epic) { // Проверен
         int newStatusNumber = 0;
         int inProgressStatusNumber = 0;
         int doneStatusNumber = 0;
