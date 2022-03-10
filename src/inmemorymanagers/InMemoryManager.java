@@ -20,7 +20,7 @@ public class InMemoryManager implements Manager {
     @Override
     public void addTask(Task task) { // Проверен
         if (task.getId() == null) {
-            String id = UUID.randomUUID().toString().substring(0, 32);
+            String id = UUID.randomUUID().toString().substring(0, 32); // заполнить id в тесте
             task.setId(id);
         }
         allTasks.put(task.getId(), task);
@@ -85,7 +85,7 @@ public class InMemoryManager implements Manager {
 
     // Получение списка всех подзадач
     @Override
-    public ArrayList<SubTask> getAllSubtasks() {
+    public ArrayList<SubTask> getAllSubtasks() { // Проверен
         ArrayList<SubTask> subTasks = new ArrayList<>();
         for (Task task : allTasks.values()) {
             if (task.getClass().getName().equals(SUBTASK_NAME)) {
@@ -106,7 +106,7 @@ public class InMemoryManager implements Manager {
 
     // Получение списка всех подзадач определенного эпика
     @Override
-    public ArrayList<SubTask> getSubTaskListFromEpicById(String id) {
+    public ArrayList<SubTask> getSubTaskListFromEpicById(String id) { // Проверен
         ArrayList<SubTask> subTaskListFromEpic = new ArrayList<>();
         if (allTasks.containsKey(id) && allTasks.get(id).getClass().getName().equals(EPIC_NAME)) {
             Epic epic = (Epic) allTasks.get(id);
