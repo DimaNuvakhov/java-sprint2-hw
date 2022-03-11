@@ -50,15 +50,6 @@ public interface Manager {
     // Удаление задачи, эпика и подзадачи по id
     Boolean deleteTaskById(String id);
 
-    // Удаление задачи
-    void deleteTask(Task task);
-
-    // Удаление эпика
-    void deleteEpic(Epic epic);
-
-    // Удаление подзадачи из эпика
-    void deleteSubTaskFromEpic(SubTask subTask);
-
     // Обновление задачи по id
     void renewTaskById(String oldId, Task task);
 

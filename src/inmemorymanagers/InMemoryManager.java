@@ -101,6 +101,8 @@ public class InMemoryManager implements Manager {
     public void getTaskById(String id) {
         if (allTasks.containsKey(id)) {
             inMemoryHistoryManager.add(allTasks.get(id));
+        } else {
+            throw new IllegalArgumentException("Задача с указанным id в трекер задач не добавлена");
         }
     }
 
@@ -119,7 +121,7 @@ public class InMemoryManager implements Manager {
 
     // Удаление всех задач
     @Override
-    public void deleteAllTasks() {
+    public void deleteAllTasks() { // Проверен
         allTasks.clear();
     }
 
@@ -142,15 +144,13 @@ public class InMemoryManager implements Manager {
         return true;
     }
 
-    // Удаление задачи
-    @Override
-    public void deleteTask(Task task) {
+    // Удаление задачи. Этот метод раньше был в интерфейсе, это было ошибкой
+    private void deleteTask(Task task) {
         allTasks.remove(task.getId());
     }
 
-    // Удаление эпика
-    @Override
-    public void deleteEpic(Epic epic) {
+    // Удаление эпика. Этот метод раньше был в интерфейсе, это было ошибкой
+    private void deleteEpic(Epic epic) {
         ArrayList<String> toRemove = new ArrayList<>();
         for (SubTask subTask : epic.getSubTasks().values()) {
             toRemove.add(subTask.getId());
@@ -164,9 +164,8 @@ public class InMemoryManager implements Manager {
         deleteTask(epic);
     }
 
-    // Удаление подзадачи из эпика
-    @Override
-    public void deleteSubTaskFromEpic(SubTask subTask) {
+    // Удаление подзадачи из эпика. Этот метод раньше был в интерфейсе, это было ошибкой
+    private void deleteSubTaskFromEpic(SubTask subTask) {
         if (allTasks.containsKey(subTask.getEpicId())) {
             Epic epic = (Epic) allTasks.get(subTask.getEpicId());
             epic.getSubTasks().remove(subTask.getId());
@@ -201,6 +200,8 @@ public class InMemoryManager implements Manager {
                 Task newTask = task;
                 allTasks.put(newTask.getId(), newTask);
             }
+        } else {
+            throw new IllegalArgumentException("Задача с указанным id в трекер задач не добавлена");
         }
     }
 
