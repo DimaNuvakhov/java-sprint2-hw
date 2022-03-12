@@ -621,6 +621,46 @@ class InMemoryManagerTest {
         }
     }
 
+    // Проверка метода history и getTaskById. Проверка истории просмотра задач, в истории нет задач
+    @Test
+    public void shouldReturnZeroIfZeroTasksInHistory() {
+        // Созадние менеджера
+        Manager inMemoryManager = Managers.getDefault();
+        // Проверка
+        assertEquals(0, inMemoryManager.history().size());
+    }
+
+    // Проверка метода history и getTaskById. Проверка истории просмотра задач, дублирование
+    @Test
+    public void shouldReturnHistoryWhenDuplication() {
+        // Созадние менеджера
+        Manager inMemoryManager = Managers.getDefault();
+        // Создание задач
+        Task firstTask = new Task("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW);
+        Task secondTask = new Task("Купить хлеб", "Нужен хлеб \"Литовский\"", TaskStatus.DONE);
+        // Добавлние задач в трекер
+        inMemoryManager.addTask(firstTask);
+        inMemoryManager.addTask(secondTask);
+        // Добавляем задачи в историю просмотров
+        inMemoryManager.getTaskById(firstTask.getId());
+        inMemoryManager.getTaskById(secondTask.getId());
+        // Добавляем первую задачу снова в историю
+        inMemoryManager.getTaskById(firstTask.getId());
+        // Проверка истории
+        List<Task> history = inMemoryManager.history();
+        for (int i = history.size(); i >= 0; i--) {
+            if (i == 0) {
+                assertEquals("Помыть посуду", history.get(i).getName());
+                assertEquals("Помыть тарелки и вилки", history.get(i).getDescription());
+                assertEquals(TaskStatus.NEW, history.get(i).getStatus());
+            } else if (i == 1) {
+                assertEquals("Купить хлеб", history.get(i).getName());
+                assertEquals("Нужен хлеб \"Литовский\"", history.get(i).getDescription());
+                assertEquals(TaskStatus.DONE, history.get(i).getStatus());
+            }
+        }
+    }
+
     // Проверка метода deleteAllTasks
     @Test
     public void shouldDeleteAllTasks() {

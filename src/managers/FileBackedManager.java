@@ -125,9 +125,9 @@ public class FileBackedManager extends InMemoryManager {
 
     // Создаю менеджер из информации, которая была считана из файла
     public static void makeManager(String[] stringTask, FileBackedManager fileBackedManager) {
+        boolean isEmptyLine = false;
         for (int i = 1; i < stringTask.length; i++) {
-            boolean isEmptyLine = false;
-            if (!stringTask[i].isEmpty()) {
+            if (!stringTask[i].isEmpty() && !isEmptyLine) {
                 if (fromString(stringTask[i]).getClass().getName().equals(TASK_NAME)) {
                     Task task = fromString(stringTask[i]);
                     fileBackedManager.addTask(task);

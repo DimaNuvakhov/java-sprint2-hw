@@ -17,8 +17,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class FileBackedManagerTest {
 
+    // Создание задачи, восстановление менеджера из файла
     @Test
-    public void shouldAddTaskAndSave() {
+    public void shouldAddTaskAndLoad() {
         // Создание файла
         File file = new File("Data.csv");
         // Удаление файла и проверка удаления
@@ -43,8 +44,67 @@ class FileBackedManagerTest {
         assertEquals(TaskStatus.NEW, sameTask.getStatus());
     }
 
+    // Проверка метода renewTaskById стандартная реализация, восстановление менеджера из файла
     @Test
-    public void shouldAddEpicAndSave() {
+    public void shouldRenewTaskByIdAndLoad() {
+        // Создание файла
+        File file = new File("Data.csv");
+        // Удаление файла и проверка удаления
+        boolean isDelete = file.delete();
+        // Создание менеджера
+        Manager fileBackedManager = FileBackedManager.loadFromFile(file);
+        // Создание задачи
+        Task firstTask = new Task("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW);
+        // Добавление задачи в трекер задач
+        fileBackedManager.addTask(firstTask);
+        // Выключение менеджера
+        fileBackedManager = null;
+        //Включение нового менеджера
+        Manager newFileBackedManager = FileBackedManager.loadFromFile(file);
+        // Создание новой задачи
+        Task secondTask = new Task("Купить хлеб", "Нужен хлеб \"Литовский\"", TaskStatus.DONE);
+        // Обновление задачи
+        newFileBackedManager.renewTaskById(firstTask.getId(), secondTask);
+        // Поиск задачи в трекере по имени
+        Task oldTask = getTaskByName(newFileBackedManager, "Помыть посуду");
+        // Проверка, что задачи нет в трекере
+        assertNull(oldTask);
+        // Поиск обновленной задачи в трекере по имени
+        Task renewedTask = getTaskByName(newFileBackedManager, "Купить хлеб");
+        // Проверка, есть ли обновленная задача в трекере
+        assertNotNull(renewedTask);
+        // Сверка описания задачи
+        assertEquals("Нужен хлеб \"Литовский\"", renewedTask.getDescription());
+        // Сверка статуса задачи
+        assertEquals(TaskStatus.DONE, renewedTask.getStatus());
+        // Сверка id первой задачи с id обновленной задачи
+        assertEquals(firstTask.getId(), renewedTask.getId());
+    }
+
+    // Проверка метода deleteTaskById стандартная реалиация, удаление задачи, восстановление менеджера из файла
+    @Test
+    public void shouldDeleteTaskByIdAndLoad() {
+        // Создание файла
+        File file = new File("Data.csv");
+        // Удаление файла
+        boolean isDelete = file.delete();
+        // Создание менеджера
+        Manager fileBackedManager = FileBackedManager.loadFromFile(file);
+        // Создание задачи
+        Task firstTask = new Task("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW);
+        // Добавление задачи в трекер задач
+        fileBackedManager.addTask(firstTask);
+        // Выключение менеджера
+        fileBackedManager = null;
+        //Включение нового менеджера
+        Manager newFileBackedManager = FileBackedManager.loadFromFile(file);
+        // Удаление задачи из трекера проверка, что задача удалена
+        assertTrue(newFileBackedManager.deleteTaskById(firstTask.getId()));
+    }
+
+    // Проверка метода addEpic, восстановление менеджера из файла
+    @Test
+    public void shouldAddEpicAndLoad() {
         // Создание файла
         File file = new File("Data.csv");
         // Удаление файла
@@ -65,6 +125,396 @@ class FileBackedManagerTest {
         assertNotNull(sameEpic);
         // Сверка описания эпика
         assertEquals("Прокачать 3 группы мышц", sameEpic.getDescription());
+    }
+
+    // Проверка метода renewTaskById стандартная реализация, восстановление менеджера из файла
+    @Test
+    public void shouldRenewEpicByIdAndLoad() {
+        // Создание файла
+        File file = new File("Data.csv");
+        // Удаление файла
+        boolean isDelete = file.delete();
+        // Создание менеджера
+        Manager fileBackedManager = FileBackedManager.loadFromFile(file);
+        // Создание эпика
+        Epic firstEpic = new Epic("Сходить в спортзал", "Прокачать 3 группы мышц");
+        // Добавление эпика в трекер задач
+        fileBackedManager.addEpic(firstEpic);
+        // Выключение менеджера
+        fileBackedManager = null;
+        //Включение нового менеджера
+        Manager newFileBackedManager = FileBackedManager.loadFromFile(file);
+        // Создание нового эпика
+        Epic secondEpic = new Epic("Изучение Java", "Изучить язык программирования Java");
+        // Обновление эпика
+        newFileBackedManager.renewTaskById(firstEpic.getId(), secondEpic);
+        // Поиск задачи в трекере по имени
+        Epic oldEpic = (Epic) getTaskByName(newFileBackedManager, "Сходить в спортзал");
+        // Проверка, что эпика нет в трекере
+        assertNull(oldEpic);
+        // Поиск обновленной задачи в трекере по имени
+        Epic renewedEpic = (Epic) getTaskByName(newFileBackedManager, "Изучение Java");
+        // Проверка, есть ли обновленный эпик в трекере
+        assertNotNull(renewedEpic);
+        // Сверка описания эпика
+        assertEquals("Изучить язык программирования Java", renewedEpic.getDescription());
+        // Сверка id первого эпика с id обновленного эпика
+        assertEquals(firstEpic.getId(), renewedEpic.getId());
+    }
+
+    // Проверка метода deleteTaskById стандартная реалиация, удаление эпика, восстановление менеджера из файла
+    @Test
+    public void shouldDeleteEpicByIdAndLoad() {
+        // Создание файла
+        File file = new File("Data.csv");
+        // Удаление файла
+        boolean isDelete = file.delete();
+        // Создание менеджера
+        Manager fileBackedManager = FileBackedManager.loadFromFile(file);
+        // Создание эпика
+        Epic firstEpic = new Epic("Сходить в спортзал", "Прокачать 3 группы мышц");
+        // Добавление эпика в трекер задач
+        fileBackedManager.addEpic(firstEpic);
+        // Выключение менеджера
+        fileBackedManager = null;
+        //Включение нового менеджера
+        Manager newFileBackedManager = FileBackedManager.loadFromFile(file);
+        // Удаление задачи из трекера проверка, что задача удалена
+        assertTrue(newFileBackedManager.deleteTaskById(firstEpic.getId()));
+    }
+
+    // Проверка метода addSubTaskIntoEpic, восстановление менеджера из файла
+    @Test
+    public void shouldAddSubTaskIntoEpicAndLoad() {
+        // Создание файла
+        File file = new File("Data.csv");
+        // Удаление файла
+        boolean isDelete = file.delete();
+        // Создание менеджера
+        Manager fileBackedManager = FileBackedManager.loadFromFile(file);
+        // Создание эпика
+        Epic firstEpic = new Epic("Изучение Java", "Изучить язык программирования Java");
+        // Добавление эпика в трекер задач
+        fileBackedManager.addEpic(firstEpic);
+        // Создание подзадачи к эпику
+        SubTask firstSubTask = new SubTask("Изучить Дженерики",
+                "Изучить случаи применения дженериков", TaskStatus.NEW, firstEpic.getId());
+        // Добавление подзадачи в трекер задач
+        fileBackedManager.addSubTaskIntoEpic(firstSubTask);
+        // Выключение менеджера
+        fileBackedManager = null;
+        //Включение нового менеджера
+        Manager newFileBackedManager = FileBackedManager.loadFromFile(file);
+        // Поиск подзадачи в трекере по имени
+        SubTask sameSubTask = (SubTask) getTaskByName(newFileBackedManager, "Изучить Дженерики");
+        // Проверка, есть ли подзадача в трекере
+        assertNotNull(sameSubTask);
+        // Сверка описания задачи
+        assertEquals("Изучить случаи применения дженериков", sameSubTask.getDescription());
+        // Сверка статуса задачи
+        assertEquals(TaskStatus.NEW, sameSubTask.getStatus());
+        // Проверка наличия эпика у подзадачи
+        assertEquals(firstEpic.getId(), sameSubTask.getEpicId());
+    }
+
+    // Проверка метода renewTaskById стандартная реализация, восстановление менеджера из файла
+    @Test
+    public void shouldRenewSubTaskByIdAndLoad() {
+        // Создание файла
+        File file = new File("Data.csv");
+        // Удаление файла
+        boolean isDelete = file.delete();
+        // Создание менеджера
+        Manager fileBackedManager = FileBackedManager.loadFromFile(file);
+        // Создание эпика
+        Epic firstEpic = new Epic("Изучение Java", "Изучить язык программирования Java");
+        // Добавление эпика в трекер задач
+        fileBackedManager.addEpic(firstEpic);
+        // Создание подзадачи к эпику
+        SubTask firstSubTask = new SubTask("Изучить Дженерики",
+                "Изучить случаи применения дженериков", TaskStatus.NEW, firstEpic.getId());
+        // Добавление подзадачи в трекер задач
+        fileBackedManager.addSubTaskIntoEpic(firstSubTask);
+        // Выключение менеджера
+        fileBackedManager = null;
+        //Включение нового менеджера
+        Manager newFileBackedManager = FileBackedManager.loadFromFile(file);
+        // Создание новой подзадачи
+        SubTask secondSubTask = new SubTask("Изучить полиморфизм",
+                "Изучить перегрузку методов", TaskStatus.NEW, firstEpic.getId());
+        // Обновление подзадачи
+        newFileBackedManager.renewTaskById(firstSubTask.getId(), secondSubTask);
+        // Поиск подзадачи в трекере по имени
+        SubTask oldTask = (SubTask) getTaskByName(newFileBackedManager, "Изучить Дженерики");
+        // Проверка, что подзадачи нет в трекере
+        assertNull(oldTask);
+        // Поиск обновленной подзадачи в трекере по имени
+        SubTask renewedSubTask = (SubTask) getTaskByName(newFileBackedManager, "Изучить полиморфизм");
+        // Проверка, есть ли обновленная подзадача в трекере
+        assertNotNull(renewedSubTask);
+        // Сверка описания подзадачи
+        assertEquals("Изучить перегрузку методов", renewedSubTask.getDescription());
+        // Сверка статуса подзадачи
+        assertEquals(TaskStatus.NEW, renewedSubTask.getStatus());
+        // Сверка id первой подзадачи с id обновленной подзадачи
+        assertEquals(firstSubTask.getId(), renewedSubTask.getId());
+    }
+
+    // Проверка метода deleteTaskById стандартная реалиация, удаление подзадачи, восстановление менеджера из файла
+    @Test
+    public void shouldDeleteSubTaskByIdAndLoad() {
+        // Создание файла
+        File file = new File("Data.csv");
+        // Удаление файла
+        boolean isDelete = file.delete();
+        // Создание менеджера
+        Manager fileBackedManager = FileBackedManager.loadFromFile(file);
+        // Создание эпика
+        Epic firstEpic = new Epic("Изучение Java", "Изучить язык программирования Java");
+        // Добавление эпика в трекер задач
+        fileBackedManager.addEpic(firstEpic);
+        // Создание подзадачи к эпику
+        SubTask firstSubTask = new SubTask("Изучить Дженерики",
+                "Изучить случаи применения дженериков", TaskStatus.NEW, firstEpic.getId());
+        // Добавление подзадачи в трекер задач
+        fileBackedManager.addSubTaskIntoEpic(firstSubTask);
+        // Выключение менеджера
+        fileBackedManager = null;
+        //Включение нового менеджера
+        Manager newFileBackedManager = FileBackedManager.loadFromFile(file);
+        // Удаление задачи из трекера проверка, что задача удалена
+        assertTrue(newFileBackedManager.deleteTaskById(firstSubTask.getId()));
+    }
+
+    // Провека метода getAllTasks, стандартная реализация, восстановление менеджера из файла
+    @Test
+    public void shouldReturnTaskListAndLoad() {
+        // Создание файла
+        File file = new File("Data.csv");
+        // Удаление файла
+        boolean isDelete = file.delete();
+        // Создание менеджера
+        Manager fileBackedManager = FileBackedManager.loadFromFile(file);
+        // Создание задач
+        Task firstTask = new Task("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW);
+        Task secondTask = new Task("Купить хлеб", "Нужен хлеб \"Литовский\"", TaskStatus.DONE);
+        // Добавлние задач в трекер
+        fileBackedManager.addTask(firstTask);
+        fileBackedManager.addTask(secondTask);
+        // Выключение менеджера
+        fileBackedManager = null;
+        //Включение нового менеджера
+        Manager newFileBackedManager = FileBackedManager.loadFromFile(file);
+        // Проверка, что в списке 2 задачи
+        assertEquals(2, newFileBackedManager.getAllTasks().size());
+        // Проверка списка задач
+        ArrayList<Task> tasks = newFileBackedManager.getAllTasks();
+        for (Task task : tasks) {
+            if (task.getId().equals(firstTask.getId())) {
+                assertEquals("Помыть посуду", task.getName());
+                assertEquals("Помыть тарелки и вилки", task.getDescription());
+                assertEquals(TaskStatus.NEW, task.getStatus());
+            } else if (task.getId().equals(secondTask.getId())) {
+                assertEquals("Купить хлеб", task.getName());
+                assertEquals("Нужен хлеб \"Литовский\"", task.getDescription());
+                assertEquals(TaskStatus.DONE, task.getStatus());
+            }
+        }
+    }
+
+    // Провека метода getAllEpics, стандартная реализация, восстановление менеджера из файла
+    @Test
+    public void shouldReturnEpicListAndLoad() {
+        // Создание файла
+        File file = new File("Data.csv");
+        // Удаление файла
+        boolean isDelete = file.delete();
+        // Создание менеджера
+        Manager fileBackedManager = FileBackedManager.loadFromFile(file);
+        // Создание эпиков
+        Epic firstEpic = new Epic("Переезд", "Собрать все вещи");
+        Epic secondEpic = new Epic("Изучение Java", "Изучить язык программирования Java");
+        // Добавление эпиков в трекер
+        fileBackedManager.addEpic(firstEpic);
+        fileBackedManager.addEpic(secondEpic);
+        // Выключение менеджера
+        fileBackedManager = null;
+        //Включение нового менеджера
+        Manager newFileBackedManager = FileBackedManager.loadFromFile(file);
+        // Проверка, что в списке 2 эпика
+        assertEquals(2, newFileBackedManager.getAllEpics().size());
+        // Проверка списка эпиков
+        for (Epic epic : newFileBackedManager.getAllEpics()) {
+            if (epic.getId().equals(firstEpic.getId())) {
+                assertEquals("Переезд", epic.getName());
+                assertEquals("Собрать все вещи", epic.getDescription());
+            } else if (epic.getId().equals(secondEpic.getId())) {
+                assertEquals("Изучение Java", epic.getName());
+                assertEquals("Изучить язык программирования Java", epic.getDescription());
+            }
+        }
+    }
+
+    // Провека метода getSubTaskListFromEpicById, стандартная реализация, восстановление менеджера из файла
+    @Test
+    public void shouldReturnSubTaskListByEpicIdAndLoad() {
+        // Создание файла
+        File file = new File("Data.csv");
+        // Удаление файла
+        boolean isDelete = file.delete();
+        // Создание менеджера
+        Manager fileBackedManager = FileBackedManager.loadFromFile(file);
+        // Создание эпиков
+        Epic firstEpic = new Epic("Переезд", "Собрать все вещи");
+        Epic secondEpic = new Epic("Изучение Java", "Изучить язык программирования Java");
+        // Добавление эпиков в трекер
+        fileBackedManager.addEpic(firstEpic);
+        fileBackedManager.addEpic(secondEpic);
+        // Создание подзадач к первому эпику
+        SubTask firstEpicFirstSubTask = new SubTask("Собрать чемодан",
+                "Положить в чемодан все необходимое", TaskStatus.DONE, firstEpic.getId());
+        // Добавление подзадачи в трекер
+        fileBackedManager.addSubTaskIntoEpic(firstEpicFirstSubTask);
+        // Создание подзадач ко второму эпику
+        SubTask secondEpicFirstSubTask = new SubTask("Изучить Дженерики",
+                "Изучить случаи применения дженериков", TaskStatus.NEW, secondEpic.getId());
+        SubTask secondEpicSecondSubTask = new SubTask("Изучить полиморфизм",
+                "Изучить перегрузку методов", TaskStatus.NEW, secondEpic.getId());
+        // Добавление подзадач второго эпика
+        fileBackedManager.addSubTaskIntoEpic(secondEpicFirstSubTask);
+        fileBackedManager.addSubTaskIntoEpic(secondEpicSecondSubTask);
+        // Выключение менеджера
+        fileBackedManager = null;
+        //Включение нового менеджера
+        Manager newFileBackedManager = FileBackedManager.loadFromFile(file);
+        // Проверка, что у второго эпика 2 подзадачи
+        assertEquals(2, newFileBackedManager.getSubTaskListFromEpicById(secondEpic.getId()).size());
+        // Проверка списка подзадач определенного эпика
+        for (SubTask subTask : newFileBackedManager.getSubTaskListFromEpicById(secondEpic.getId())) {
+            if (subTask.getId().equals(secondEpicFirstSubTask.getId())) {
+                assertEquals("Изучить Дженерики", subTask.getName());
+                assertEquals("Изучить случаи применения дженериков", subTask.getDescription());
+                assertEquals(TaskStatus.NEW, subTask.getStatus());
+                assertEquals(secondEpic.getId(), subTask.getEpicId());
+            } else {
+                assertEquals("Изучить полиморфизм", subTask.getName());
+                assertEquals("Изучить перегрузку методов", subTask.getDescription());
+                assertEquals(TaskStatus.NEW, subTask.getStatus());
+                assertEquals(secondEpic.getId(), subTask.getEpicId());
+            }
+        }
+    }
+
+    // Проверка метода history и getTaskById. Проверка истории, 2 задачи в истории, восстановление менеджера из файла
+    @Test
+    public void shouldReturnHistoryAndLoad() {
+        // Создание файла
+        File file = new File("Data.csv");
+        // Удаление файла
+        boolean isDelete = file.delete();
+        // Создание менеджера
+        Manager fileBackedManager = FileBackedManager.loadFromFile(file);
+        // Создание задач
+        Task firstTask = new Task("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW);
+        Task secondTask = new Task("Купить хлеб", "Нужен хлеб \"Литовский\"", TaskStatus.DONE);
+        // Добавлние задач в трекер
+        fileBackedManager.addTask(firstTask);
+        fileBackedManager.addTask(secondTask);
+        // Добавляем задачи в историю просмотров
+        fileBackedManager.getTaskById(firstTask.getId());
+        fileBackedManager.getTaskById(secondTask.getId());
+        // Выключение менеджера
+        fileBackedManager = null;
+        //Включение нового менеджера
+        Manager newFileBackedManager = FileBackedManager.loadFromFile(file);
+        // Проверка истории
+        List<Task> history = newFileBackedManager.history();
+        for (int i = history.size(); i >= 0; i--) {
+            if (i == 0) {
+                assertEquals("Купить хлеб", history.get(i).getName());
+                assertEquals("Нужен хлеб \"Литовский\"", history.get(i).getDescription());
+                assertEquals(TaskStatus.DONE, history.get(i).getStatus());
+            } else if (i == 1) {
+                assertEquals("Помыть посуду", history.get(i).getName());
+                assertEquals("Помыть тарелки и вилки", history.get(i).getDescription());
+                assertEquals(TaskStatus.NEW, history.get(i).getStatus());
+            }
+        }
+    }
+
+    // Проверка метода history и getTaskById. Проверка истории, дублирование, восстановление менеджера из файла
+    @Test
+    public void shouldReturnHistoryWhenDuplicationAndLoad() {
+        // Создание файла
+        File file = new File("Data.csv");
+        // Удаление файла
+        boolean isDelete = file.delete();
+        // Создание менеджера
+        Manager fileBackedManager = FileBackedManager.loadFromFile(file);
+        // Создание задач
+        Task firstTask = new Task("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW);
+        Task secondTask = new Task("Купить хлеб", "Нужен хлеб \"Литовский\"", TaskStatus.DONE);
+        // Добавлние задач в трекер
+        fileBackedManager.addTask(firstTask);
+        fileBackedManager.addTask(secondTask);
+        // Добавляем задачи в историю просмотров
+        fileBackedManager.getTaskById(firstTask.getId());
+        fileBackedManager.getTaskById(secondTask.getId());
+        // Добавляем первую задачу снова в историю
+        fileBackedManager.getTaskById(firstTask.getId());
+        // Выключение менеджера
+        fileBackedManager = null;
+        //Включение нового менеджера
+        Manager newFileBackedManager = FileBackedManager.loadFromFile(file);
+        // Проверка истории
+        List<Task> history = newFileBackedManager.history();
+        for (int i = history.size(); i >= 0; i--) {
+            if (i == 0) {
+                assertEquals("Помыть посуду", history.get(i).getName());
+                assertEquals("Помыть тарелки и вилки", history.get(i).getDescription());
+                assertEquals(TaskStatus.NEW, history.get(i).getStatus());
+            } else if (i == 1) {
+                assertEquals("Купить хлеб", history.get(i).getName());
+                assertEquals("Нужен хлеб \"Литовский\"", history.get(i).getDescription());
+                assertEquals(TaskStatus.DONE, history.get(i).getStatus());
+            }
+        }
+    }
+
+    // Проверка метода deleteAllTasks
+    @Test
+    public void shouldDeleteAllTasksAndLoad() {
+        // Создание файла
+        File file = new File("Data.csv");
+        // Удаление файла
+        boolean isDelete = file.delete();
+        // Создание менеджера
+        Manager fileBackedManager = FileBackedManager.loadFromFile(file);
+        // Создание задач
+        Task firstTask = new Task("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW);
+        Task secondTask = new Task("Купить хлеб", "Нужен хлеб \"Литовский\"", TaskStatus.DONE);
+        // Добавлние задач в трекер
+        fileBackedManager.addTask(firstTask);
+        fileBackedManager.addTask(secondTask);
+        //Создаем эпик
+        Epic secondEpic = new Epic("Изучение Java", "Изучить язык программирования Java");
+        // Добавление эпиков в трекер
+        fileBackedManager.addEpic(secondEpic);
+        // Создание подзадач ко второму эпику
+        SubTask secondEpicFirstSubTask = new SubTask("Изучить Дженерики",
+                "Изучить случаи применения дженериков", TaskStatus.NEW, secondEpic.getId());
+        SubTask secondEpicSecondSubTask = new SubTask("Изучить полиморфизм",
+                "Изучить перегрузку методов", TaskStatus.NEW, secondEpic.getId());
+        // Добавление подзадач второго эпика
+        fileBackedManager.addSubTaskIntoEpic(secondEpicFirstSubTask);
+        fileBackedManager.addSubTaskIntoEpic(secondEpicSecondSubTask);
+        // Выключение менеджера
+        fileBackedManager = null;
+        //Включение нового менеджера
+        Manager newFileBackedManager = FileBackedManager.loadFromFile(file);
+        // Удаляем все задачи из трекера
+        newFileBackedManager.deleteAllTasks();
+        assertEquals(0, newFileBackedManager.getAllItems().size());
     }
 
     // Проверка метода addTask
@@ -787,6 +1237,54 @@ class FileBackedManagerTest {
         }
     }
 
+    // Проверка метода history и getTaskById. Проверка истории просмотра задач, в истории нет задач
+    @Test
+    public void shouldReturnZeroIfZeroTasksInHistory() {
+        // Создание файла
+        File file = new File("Data.csv");
+        // Удаление файла
+        boolean isDelete = file.delete();
+        // Создание менеджера
+        Manager fileBackedManager = FileBackedManager.loadFromFile(file);
+        // Проверка
+        assertEquals(0, fileBackedManager.history().size());
+    }
+
+    // Проверка метода history и getTaskById. Проверка истории просмотра задач, дублирование
+    @Test
+    public void shouldReturnHistoryWhenDuplication() {
+        // Создание файла
+        File file = new File("Data.csv");
+        // Удаление файла
+        boolean isDelete = file.delete();
+        // Создание менеджера
+        Manager fileBackedManager = FileBackedManager.loadFromFile(file);
+        // Создание задач
+        Task firstTask = new Task("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW);
+        Task secondTask = new Task("Купить хлеб", "Нужен хлеб \"Литовский\"", TaskStatus.DONE);
+        // Добавлние задач в трекер
+        fileBackedManager.addTask(firstTask);
+        fileBackedManager.addTask(secondTask);
+        // Добавляем задачи в историю просмотров
+        fileBackedManager.getTaskById(firstTask.getId());
+        fileBackedManager.getTaskById(secondTask.getId());
+        // Добавляем первую задачу снова в историю
+        fileBackedManager.getTaskById(firstTask.getId());
+        // Проверка истории
+        List<Task> history = fileBackedManager.history();
+        for (int i = history.size(); i >= 0; i--) {
+            if (i == 0) {
+                assertEquals("Помыть посуду", history.get(i).getName());
+                assertEquals("Помыть тарелки и вилки", history.get(i).getDescription());
+                assertEquals(TaskStatus.NEW, history.get(i).getStatus());
+            } else if (i == 1) {
+                assertEquals("Купить хлеб", history.get(i).getName());
+                assertEquals("Нужен хлеб \"Литовский\"", history.get(i).getDescription());
+                assertEquals(TaskStatus.DONE, history.get(i).getStatus());
+            }
+        }
+    }
+
     // Проверка метода deleteAllTasks
     @Test
     public void shouldDeleteAllTasks() {
@@ -818,8 +1316,6 @@ class FileBackedManagerTest {
         fileBackedManager.deleteAllTasks();
         assertEquals(0, fileBackedManager.getAllItems().size());
     }
-
-
 
     public Task getTaskByName(Manager inMemoryManager, String name) {
         for (Task task : inMemoryManager.getAllItems().values()) {
