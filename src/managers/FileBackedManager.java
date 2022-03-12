@@ -1,7 +1,7 @@
-package inmemorymanagers;
+package managers;
 
 import exception.ManagerSaveException;
-import managers.HistoryManager;
+import imanagers.HistoryManager;
 import tasks.*;
 
 import java.io.File;
@@ -53,6 +53,31 @@ public class FileBackedManager extends InMemoryManager {
         }
     }
 
+    @Override
+    public void renewTaskById(String oldId, Task task) {
+        super.renewTaskById(oldId, task);
+        if (managerStatus) {
+            save();
+        }
+    }
+
+    @Override
+    public void deleteAllTasks() {
+        super.deleteAllTasks();
+        if (managerStatus) {
+            save();
+        }
+    }
+
+    @Override
+    public Boolean deleteTaskById(String id) {
+       boolean isDelete = super.deleteTaskById(id);
+        if (managerStatus && isDelete) {
+            save();
+        }
+        return isDelete;
+    }
+
     // Сохраняем информацию в файл
     public void save() {
         try {
@@ -101,12 +126,9 @@ public class FileBackedManager extends InMemoryManager {
     // Создаю менеджер из информации, которая была считана из файла
     public static void makeManager(String[] stringTask, FileBackedManager fileBackedManager) {
         for (int i = 1; i < stringTask.length; i++) {
+            boolean isEmptyLine = false;
             if (!stringTask[i].isEmpty()) {
-                if (i == stringTask.length - 1) {
-                    for (String id : historyFromString(stringTask[i])) {
-                        fileBackedManager.getTaskById(id);
-                    }
-                } else if (fromString(stringTask[i]).getClass().getName().equals(TASK_NAME)) {
+                if (fromString(stringTask[i]).getClass().getName().equals(TASK_NAME)) {
                     Task task = fromString(stringTask[i]);
                     fileBackedManager.addTask(task);
                 } else if (fromString(stringTask[i]).getClass().getName().equals(EPIC_NAME)) {
@@ -115,6 +137,13 @@ public class FileBackedManager extends InMemoryManager {
                 } else if (fromString(stringTask[i]).getClass().getName().equals(SUBTASK_NAME)) {
                     SubTask subTask = (SubTask) fromString(stringTask[i]);
                     fileBackedManager.addSubTaskIntoEpic(subTask);
+                }
+            } else {
+                isEmptyLine = true;
+            }
+            if (i == stringTask.length - 1 && isEmptyLine) {
+                for (String id : historyFromString(stringTask[i])) {
+                    fileBackedManager.getTaskById(id);
                 }
             }
         }

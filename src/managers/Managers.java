@@ -1,14 +1,7 @@
-package inmemorymanagers;
+package managers;
 
-import managers.HistoryManager;
-import managers.Manager;
-import tasks.Epic;
-import tasks.SubTask;
-import tasks.Task;
-import tasks.TaskStatus;
-
-import java.io.File;
-import java.util.UUID;
+import imanagers.HistoryManager;
+import imanagers.Manager;
 
 public class Managers {
 

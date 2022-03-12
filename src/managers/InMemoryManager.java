@@ -1,8 +1,8 @@
-package inmemorymanagers;
+package managers;
 
-import managers.HistoryManager;
+import imanagers.HistoryManager;
 import tasks.Epic;
-import managers.Manager;
+import imanagers.Manager;
 import tasks.SubTask;
 import tasks.Task;
 import tasks.TaskStatus;

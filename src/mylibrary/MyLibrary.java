@@ -1,6 +1,6 @@
 package mylibrary;
 
-import managers.Manager;
+import imanagers.Manager;
 import tasks.Epic;
 import tasks.SubTask;
 import tasks.Task;

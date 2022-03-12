@@ -1,6 +1,6 @@
-package inmemorymanagers;
+package managers;
 
-import managers.HistoryManager;
+import imanagers.HistoryManager;
 import tasks.Task;
 
 import java.util.ArrayList;

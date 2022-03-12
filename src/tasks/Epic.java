@@ -1,6 +1,6 @@
 package tasks;
 
-import inmemorymanagers.InMemoryManager;
+import managers.InMemoryManager;
 
 import java.util.HashMap;
 

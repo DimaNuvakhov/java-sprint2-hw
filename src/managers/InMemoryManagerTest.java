@@ -1,6 +1,6 @@
-package inmemorymanagers;
+package managers;
 
-import managers.Manager;
+import imanagers.Manager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -69,6 +69,7 @@ class InMemoryManagerTest {
     public void shouldThrowExceptionWhenIncorrectTaskId() {
         // Создание менеджера
         Manager inMemoryManager = Managers.getDefault();
+        // Создание задачи
         Task firstTask = new Task("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW);
         // Добавление задачи в трекер задач
         inMemoryManager.addTask(firstTask);
@@ -91,21 +92,10 @@ class InMemoryManagerTest {
         Manager inMemoryManager = Managers.getDefault();
         // Создание задачи
         Task firstTask = new Task("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW);
-        // Шаг первый - добавление задачи в трекер
         // Добавление задачи в трекер задач
         inMemoryManager.addTask(firstTask);
-        // Поиск задачи в трекере по имени
-        Task sameTask = getTaskByName(inMemoryManager, "Помыть посуду");
-        // Проверка, есть ли задача в трекере
-        assertNotNull(sameTask);
-        // Сверка описания задачи
-        assertEquals("Помыть тарелки и вилки", sameTask.getDescription());
-        // Сверка статуса задачи
-        assertEquals(TaskStatus.NEW, sameTask.getStatus());
-        // Удаление задачи из трекера
-        inMemoryManager.deleteTaskById(sameTask.getId());
-        // Проверка, что задача удалена
-        assertEquals(0, inMemoryManager.getAllTasks().size());
+        // Удаление задачи из трекера проверка, что задача удалена
+        assertTrue(inMemoryManager.deleteTaskById(firstTask.getId()));
     }
 
     // Проверка метода deleteTaskById некорректный id, проверка удаления задачи, подзадачи и эпика
@@ -166,6 +156,7 @@ class InMemoryManagerTest {
     public void shouldThrowExceptionWhenIncorrectEpicId() {
         // Создание менеджера
         Manager inMemoryManager = Managers.getDefault();
+        // Создание эпика
         Epic firstEpic = new Epic("Сходить в спортзал", "Прокачать 3 группы мышц");
         // Добавление задачи в трекер задач
         inMemoryManager.addEpic(firstEpic);
@@ -191,16 +182,8 @@ class InMemoryManagerTest {
         Epic firstEpic = new Epic("Сходить в спортзал", "Прокачать 3 группы мышц");
         // Добавление эпика в трекер задач
         inMemoryManager.addEpic(firstEpic);
-        // Поиск задачи в трекере по имени
-        Epic sameEpic = (Epic) getTaskByName(inMemoryManager, "Сходить в спортзал");
-        // Проверка, есть ли эпик в трекере
-        assertNotNull(sameEpic);
-        // Сверка описания эпика
-        assertEquals("Прокачать 3 группы мышц", sameEpic.getDescription());
-        // Удаление эпика из трекера
-        inMemoryManager.deleteTaskById(sameEpic.getId());
-        // Проверка, что эпик удален
-        assertEquals(0, inMemoryManager.getAllEpics().size());
+        // Удаление задачи из трекера проверка, что задача удалена
+        assertTrue(inMemoryManager.deleteTaskById(firstEpic.getId()));
     }
 
     // Проверка метода addSubTaskIntoEpic
@@ -219,7 +202,7 @@ class InMemoryManagerTest {
         inMemoryManager.addSubTaskIntoEpic(firstSubTask);
         // Поиск подзадачи в трекере по имени
         SubTask sameSubTask = (SubTask) getTaskByName(inMemoryManager, "Изучить Дженерики");
-        // Проверка, есть ли обновленная подзадача в трекере
+        // Проверка, есть ли подзадача в трекере
         assertNotNull(sameSubTask);
         // Сверка описания задачи
         assertEquals("Изучить случаи применения дженериков", sameSubTask.getDescription());
@@ -269,6 +252,7 @@ class InMemoryManagerTest {
     public void shouldThrowExceptionWhenIncorrectSubTaskId() {
         // Создание менеджера
         Manager inMemoryManager = Managers.getDefault();
+        // Создание эпика
         Epic firstEpic = new Epic("Сходить в спортзал", "Прокачать 3 группы мышц");
         // Добавление задачи в трекер задач
         inMemoryManager.addEpic(firstEpic);
@@ -303,10 +287,8 @@ class InMemoryManagerTest {
                 "Изучить случаи применения дженериков", TaskStatus.NEW, firstEpic.getId());
         // Добавление подзадачи в трекер задач
         inMemoryManager.addSubTaskIntoEpic(firstSubTask);
-        // Удаление подзадачи из трекера
-        inMemoryManager.deleteTaskById(firstSubTask.getId());
-        // Проверка, что задача удалена
-        assertEquals(0, inMemoryManager.getAllSubtasks().size());
+        // Удаление задачи из трекера проверка, что задача удалена
+        assertTrue(inMemoryManager.deleteTaskById(firstSubTask.getId()));
     }
 
     // Провека метода calcStatus, эпик пустой
@@ -593,7 +575,7 @@ class InMemoryManagerTest {
         assertEquals(0, inMemoryManager.history().size());
     }
 
-    // Проверка метода history. Проверка истории просмотра задач, пустая история
+    // Проверка метода history. Проверка истории просмотра задач, некорректный id
     @Test
     public void shouldThrowExceptionWhenIncorrectId() {
         // Созадние менеджера
@@ -608,7 +590,35 @@ class InMemoryManagerTest {
                     }
                 });
         assertEquals("Задача с указанным id в трекер задач не добавлена", ex.getMessage());
+    }
 
+    // Проверка метода history и getTaskById. Проверка истории просмотра задач, 2 задачи в истории
+    @Test
+    public void shouldReturnHistory() {
+        // Созадние менеджера
+        Manager inMemoryManager = Managers.getDefault();
+        // Создание задач
+        Task firstTask = new Task("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW);
+        Task secondTask = new Task("Купить хлеб", "Нужен хлеб \"Литовский\"", TaskStatus.DONE);
+        // Добавлние задач в трекер
+        inMemoryManager.addTask(firstTask);
+        inMemoryManager.addTask(secondTask);
+        // Добавляем задачи в историю просмотров
+        inMemoryManager.getTaskById(firstTask.getId());
+        inMemoryManager.getTaskById(secondTask.getId());
+        // Проверка истории
+        List<Task> history = inMemoryManager.history();
+        for (int i = history.size(); i >= 0; i--) {
+            if (i == 0) {
+                assertEquals("Купить хлеб", history.get(i).getName());
+                assertEquals("Нужен хлеб \"Литовский\"", history.get(i).getDescription());
+                assertEquals(TaskStatus.DONE, history.get(i).getStatus());
+            } else if (i == 1) {
+                assertEquals("Помыть посуду", history.get(i).getName());
+                assertEquals("Помыть тарелки и вилки", history.get(i).getDescription());
+                assertEquals(TaskStatus.NEW, history.get(i).getStatus());
+            }
+        }
     }
 
     // Проверка метода deleteAllTasks
@@ -647,32 +657,4 @@ class InMemoryManagerTest {
         }
         return null;
     }
-
-    // Проверка метода history и getTaskById. Проверка истории просмотра задач, 2 задачи в истории
-//    @Test
-//    public void shouldReturnHistory() {
-//        // Созадние менеджера
-//        Manager inMemoryManager = Managers.getDefault();
-//        // Создание задач
-//        Task firstTask = new Task("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW);
-//        Task secondTask = new Task("Купить хлеб", "Нужен хлеб \"Литовский\"", TaskStatus.DONE);
-//        // Добавлние задач в трекер
-//        inMemoryManager.addTask(firstTask);
-//        inMemoryManager.addTask(secondTask);
-//        // Добавляем задачи в историю просмотров п
-//        inMemoryManager.getTaskById(firstTask.getId());
-//        // Проверка истории
-//        List<Task> history = inMemoryManager.history();
-//        for (int i = history.size(); i >= 0; i--) {
-//            if (i == ) {
-//                assertEquals("Помыть посуду", task.getName());
-//                assertEquals("Помыть тарелки и вилки", task.getDescription());
-//                assertEquals(TaskStatus.NEW, task.getStatus());
-//            } else {
-//                assertEquals("Купить хлеб", task.getName());
-//                assertEquals("Нужен хлеб \"Литовский\"", task.getDescription());
-//                assertEquals(TaskStatus.DONE, task.getStatus());
-//            }
-//        }
-//    }
 }

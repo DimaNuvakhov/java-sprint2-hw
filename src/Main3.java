@@ -1,5 +1,5 @@
-import inmemorymanagers.FileBackedManager;
-import managers.Manager;
+import managers.FileBackedManager;
+import imanagers.Manager;
 import mylibrary.MyLibrary;
 
 import java.io.File;

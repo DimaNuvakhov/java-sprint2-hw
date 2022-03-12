@@ -1,6 +1,5 @@
-import inmemorymanagers.FileBackedManager;
-import inmemorymanagers.Managers;
-import managers.Manager;
+import managers.FileBackedManager;
+import imanagers.Manager;
 import mylibrary.MyLibrary;
 import tasks.Task;
 import tasks.TaskStatus;
