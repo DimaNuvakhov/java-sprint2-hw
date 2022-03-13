@@ -8,6 +8,7 @@ import tasks.TaskStatus;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TreeSet;
 
 public interface Manager {
 
@@ -55,6 +56,8 @@ public interface Manager {
 
     // Вычисление статуса эпика
     TaskStatus calcStatus(Epic epic);
+
+    TreeSet<Task> getPrioritizedTasks();
 
     // История просмотра задач
     List<Task> history();

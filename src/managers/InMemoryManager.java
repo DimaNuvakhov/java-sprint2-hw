@@ -7,10 +7,8 @@ import tasks.SubTask;
 import tasks.Task;
 import tasks.TaskStatus;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.time.ZoneOffset;
+import java.util.*;
 
 public class InMemoryManager implements Manager {
     private final HashMap<String, Task> allTasks = new HashMap<>();
@@ -227,6 +225,20 @@ public class InMemoryManager implements Manager {
         } else {
             return TaskStatus.IN_PROGRESS;
         }
+    }
+
+    @Override
+    public TreeSet<Task> getPrioritizedTasks() {
+        Comparator<Task> comparator = new Comparator<Task>() {
+            @Override
+            public int compare(Task o1, Task o2) {
+                return (int) (o1.getStartTime().toInstant(ZoneOffset.UTC).toEpochMilli()
+                        - o2.getStartTime().toInstant(ZoneOffset.UTC).toEpochMilli());
+            }
+        };
+        TreeSet<Task> tasks = new TreeSet<>(comparator);
+        tasks.addAll(allTasks.values());
+        return tasks;
     }
 
     // История просмотра задач

@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,6 +103,30 @@ public class FileBackedManager extends InMemoryManager {
         }
     }
 
+    // Сохраняем информацию в файл
+    public void saveWithDateAndDuration() {
+        try {
+            String header = "id,type,name,status,description,epicId,startTime,duration" + "\n";
+            Writer fileWriter = new FileWriter(file);
+            fileWriter.write(header);
+            for (Task task : getAllItems().values()) {
+                if (task.getClass().getName().equals(TASK_NAME)) {
+                    fileWriter.write(toString(task));
+                } else if (task.getClass().getName().equals(EPIC_NAME)) {
+                    Epic epic = (Epic) task;
+                    fileWriter.write(toString(epic));
+                    for (SubTask subTask : epic.getSubTasks().values()) {
+                        fileWriter.write(toString(subTask));
+                    }
+                }
+            }
+            fileWriter.write(toString(inMemoryHistoryManager));
+            fileWriter.close();
+        } catch (IOException exception) {
+            throw new ManagerSaveException("Ошибка, возможно файл не находится в данной директории");
+        }
+    }
+
     // Считываю файл из директории
     public static String load(File file) {
         try {
@@ -141,7 +166,7 @@ public class FileBackedManager extends InMemoryManager {
             } else {
                 isEmptyLine = true;
             }
-            if (i == stringTask.length - 1 && isEmptyLine) {
+            if (isEmptyLine && i == stringTask.length - 1) {
                 for (String id : historyFromString(stringTask[i])) {
                     fileBackedManager.getTaskById(id);
                 }
@@ -169,6 +194,29 @@ public class FileBackedManager extends InMemoryManager {
         return stringTask.toString();
     }
 
+    // Делаю из задачи строку, новые поля startDate и Duration
+    public String toStringWithDateAndDuration(Task task) {
+        String comma = ",";
+        StringBuilder stringTask = new StringBuilder();
+        if (task.getClass().getName().equals(TASK_NAME)) {
+            stringTask.append(task.getId()).append(comma).append(TaskType.TASK).append(comma).
+                    append(task.getName()).append(comma).append(task.getStatus()).append(comma).
+                    append(task.getDescription()).append(comma).append("null").append(comma).
+                    append(task.getStartTime()).append(task.getDuration()).append("\n");
+        } else if (task.getClass().getName().equals(EPIC_NAME)) {
+            stringTask.append(task.getId()).append(comma).append(TaskType.EPIC).append(comma).
+                    append(task.getName()).append(comma).append(task.getStatus()).append(comma).
+                    append(task.getDescription()).append(comma).append("null").
+                    append(task.getStartTime()).append(task.getDuration()).append("\n");
+        } else if (task.getClass().getName().equals(SUBTASK_NAME)) {
+            stringTask.append(task.getId()).append(comma).append(TaskType.SUBTASK).append(comma).
+                    append(task.getName()).append(comma).append(task.getStatus()).append(comma).
+                    append(task.getDescription()).append(comma).append(((SubTask) task).getEpicId()).
+                    append(task.getStartTime()).append(task.getDuration()).append("\n");
+        }
+        return stringTask.toString();
+    }
+
     // Сохраняю идентификаторы истории задач в строку
     public static String toString(HistoryManager manager) {
         String comma = "";
@@ -188,6 +236,27 @@ public class FileBackedManager extends InMemoryManager {
             ids.add(stringHistory[i]);
         }
         return ids;
+    }
+
+    // Делаю задачу, эпик или подзадачу из строки новые поля startDate и Duration
+    public static Task fromStringWithDateAndDuration(String value) {
+        String[] lines = value.split(",");
+        if (lines[1].equals(TaskType.TASK.toString())) {
+            Task taskFromFile = new Task(lines[2], lines[4], statusFromString(lines[3]), LocalDateTime.parse(lines[6]),
+                    Integer.parseInt(lines[7]));
+            taskFromFile.setId(lines[0]);
+            return taskFromFile;
+        } else if (lines[1].equals(TaskType.EPIC.toString())) {
+            Epic epicFromFile = new Epic(lines[2], lines[4]);
+            epicFromFile.setId(lines[0]);
+            return epicFromFile;
+        } else if (lines[1].equals(TaskType.SUBTASK.toString())) {
+            SubTask subTaskFromFile = new SubTask(lines[2], lines[4],
+                    statusFromString(lines[3]), lines[5]);
+            subTaskFromFile.setId(lines[0]);
+            return subTaskFromFile;
+        }
+        return null;
     }
 
     // Делаю задачу, эпик или подзадачу из строки

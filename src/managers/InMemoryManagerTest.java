@@ -9,10 +9,13 @@ import tasks.SubTask;
 import tasks.Task;
 import tasks.TaskStatus;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeSet;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class InMemoryManagerTest {
 
@@ -690,6 +693,86 @@ class InMemoryManagerTest {
         // Удаляем все задачи из трекера
         inMemoryManager.deleteAllTasks();
         assertEquals(0, inMemoryManager.getAllItems().size());
+    }
+
+    //Провека добавления задачи с новыми полями
+    @Test
+    public void shouldAddTaskWithDateAndDuration() {
+        // Создание менеджера
+        Manager inMemoryManager = Managers.getDefault();
+        // Создание задачи
+        Task firstTask = new Task("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW,
+                LocalDateTime.of(2022, 3,15,10,0), 3);
+        // Добавление задачи в трекер задач
+        inMemoryManager.addTask(firstTask);
+        // Поиск задачи в трекере по имени
+        Task sameTask = getTaskByName(inMemoryManager, "Помыть посуду");
+        // Проверка, есть ли задача в трекере
+        assertNotNull(sameTask);
+        // Сверка описания задачи
+        assertEquals("Помыть тарелки и вилки", sameTask.getDescription());
+        // Сверка статуса задачи
+        assertEquals(TaskStatus.NEW, sameTask.getStatus());
+        // Сверка даты задачи
+        assertEquals("2022-03-15T10:00", sameTask.getStartTime().toString());
+        // Сверка продолжительности
+        assertEquals(3, sameTask.getDuration());
+    }
+
+    // Проверка обновления задачи с новыми полями
+    @Test
+    public void shouldRenewTaskByIdWithDateAndDuration() {
+        // Создание менеджера
+        Manager inMemoryManager = Managers.getDefault();
+        // Создание задачи
+        Task firstTask = new Task("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW);
+        // Добавление задачи в трекер задач
+        inMemoryManager.addTask(firstTask);
+        // Создание новой задачи
+        Task secondTask = new Task("Купить хлеб", "Нужен хлеб \"Литовский\"", TaskStatus.DONE,
+                LocalDateTime.of(2022, 3,20,11,0), 4);
+        // Обновление задачи
+        inMemoryManager.renewTaskById(firstTask.getId(), secondTask);
+        // Поиск задачи в трекере по имени
+        Task oldTask = getTaskByName(inMemoryManager, "Помыть посуду");
+        // Проверка, что задачи нет в трекере
+        assertNull(oldTask);
+        // Поиск обновленной задачи в трекере по имени
+        Task renewedTask = getTaskByName(inMemoryManager, "Купить хлеб");
+        // Проверка, есть ли обновленная задача в трекере
+        assertNotNull(renewedTask);
+        // Сверка описания задачи
+        assertEquals("Нужен хлеб \"Литовский\"", renewedTask.getDescription());
+        // Сверка статуса задачи
+        assertEquals(TaskStatus.DONE, renewedTask.getStatus());
+        // Сверка id первой задачи с id обновленной задачи
+        assertEquals(firstTask.getId(), renewedTask.getId());
+        // Сверка даты задачи
+        assertEquals("2022-03-20T11:00", renewedTask.getStartTime().toString());
+        // Сверка продолжительности
+        assertEquals(4, renewedTask.getDuration());
+    }
+
+    @Test
+    public void shouldReturnPrioritizedTasks() {
+        // Созадние менеджера
+        Manager inMemoryManager = Managers.getDefault();
+        // Создание задач
+        Task firstTask = new Task("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW,
+                LocalDateTime.of(2022, 3,15,10,0), 3);
+        Task secondTask = new Task("Купить хлеб", "Нужен хлеб \"Литовский\"", TaskStatus.DONE,
+                LocalDateTime.of(2022, 3,20,11,0), 4);
+        Task thirdTask = new Task("Помыть машину", "Помыть машину на мойке \"Мой-ка\"",
+                TaskStatus.DONE, LocalDateTime.of(2022, 3,20,11,1), 5);
+        // Добавлние задач в трекер
+        inMemoryManager.addTask(firstTask);
+        inMemoryManager.addTask(secondTask);
+        inMemoryManager.addTask(thirdTask);
+        // Вызов отсортированного списка
+        TreeSet<Task> sortedTasks = inMemoryManager.getPrioritizedTasks();
+        for (Task task : sortedTasks) {
+
+        }
     }
 
     public Task getTaskByName(Manager inMemoryManager, String name) {

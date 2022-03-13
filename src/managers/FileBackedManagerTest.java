@@ -32,7 +32,7 @@ class FileBackedManagerTest {
         fileBackedManager.addTask(firstTask);
         // Выключение менеджера
         fileBackedManager = null;
-        //Включение нового менеджера
+        // Включение нового менеджера
         Manager newFileBackedManager = FileBackedManager.loadFromFile(file);
         // Поиск задачи в трекере по имени
         Task sameTask = getTaskByName(newFileBackedManager, "Помыть посуду");
@@ -59,7 +59,7 @@ class FileBackedManagerTest {
         fileBackedManager.addTask(firstTask);
         // Выключение менеджера
         fileBackedManager = null;
-        //Включение нового менеджера
+        // Включение нового менеджера
         Manager newFileBackedManager = FileBackedManager.loadFromFile(file);
         // Создание новой задачи
         Task secondTask = new Task("Купить хлеб", "Нужен хлеб \"Литовский\"", TaskStatus.DONE);
@@ -96,7 +96,7 @@ class FileBackedManagerTest {
         fileBackedManager.addTask(firstTask);
         // Выключение менеджера
         fileBackedManager = null;
-        //Включение нового менеджера
+        // Включение нового менеджера
         Manager newFileBackedManager = FileBackedManager.loadFromFile(file);
         // Удаление задачи из трекера проверка, что задача удалена
         assertTrue(newFileBackedManager.deleteTaskById(firstTask.getId()));
@@ -117,7 +117,7 @@ class FileBackedManagerTest {
         fileBackedManager.addEpic(firstEpic);
         // Выключение менеджера
         fileBackedManager = null;
-        //Включение нового менеджера
+        // Включение нового менеджера
         Manager newFileBackedManager = FileBackedManager.loadFromFile(file);
         // Поиск задачи в трекере по имени
         Epic sameEpic = (Epic) getTaskByName(newFileBackedManager, "Сходить в спортзал");
@@ -142,7 +142,7 @@ class FileBackedManagerTest {
         fileBackedManager.addEpic(firstEpic);
         // Выключение менеджера
         fileBackedManager = null;
-        //Включение нового менеджера
+        // Включение нового менеджера
         Manager newFileBackedManager = FileBackedManager.loadFromFile(file);
         // Создание нового эпика
         Epic secondEpic = new Epic("Изучение Java", "Изучить язык программирования Java");
@@ -177,7 +177,7 @@ class FileBackedManagerTest {
         fileBackedManager.addEpic(firstEpic);
         // Выключение менеджера
         fileBackedManager = null;
-        //Включение нового менеджера
+        // Включение нового менеджера
         Manager newFileBackedManager = FileBackedManager.loadFromFile(file);
         // Удаление задачи из трекера проверка, что задача удалена
         assertTrue(newFileBackedManager.deleteTaskById(firstEpic.getId()));
@@ -203,7 +203,7 @@ class FileBackedManagerTest {
         fileBackedManager.addSubTaskIntoEpic(firstSubTask);
         // Выключение менеджера
         fileBackedManager = null;
-        //Включение нового менеджера
+        // Включение нового менеджера
         Manager newFileBackedManager = FileBackedManager.loadFromFile(file);
         // Поиск подзадачи в трекере по имени
         SubTask sameSubTask = (SubTask) getTaskByName(newFileBackedManager, "Изучить Дженерики");
@@ -237,7 +237,7 @@ class FileBackedManagerTest {
         fileBackedManager.addSubTaskIntoEpic(firstSubTask);
         // Выключение менеджера
         fileBackedManager = null;
-        //Включение нового менеджера
+        // Включение нового менеджера
         Manager newFileBackedManager = FileBackedManager.loadFromFile(file);
         // Создание новой подзадачи
         SubTask secondSubTask = new SubTask("Изучить полиморфизм",
@@ -280,7 +280,7 @@ class FileBackedManagerTest {
         fileBackedManager.addSubTaskIntoEpic(firstSubTask);
         // Выключение менеджера
         fileBackedManager = null;
-        //Включение нового менеджера
+        // Включение нового менеджера
         Manager newFileBackedManager = FileBackedManager.loadFromFile(file);
         // Удаление подзадачи из трекера и проверка, что задача удалена
         assertTrue(newFileBackedManager.deleteTaskById(firstSubTask.getId()));
@@ -303,7 +303,7 @@ class FileBackedManagerTest {
         fileBackedManager.addTask(secondTask);
         // Выключение менеджера
         fileBackedManager = null;
-        //Включение нового менеджера
+        // Включение нового менеджера
         Manager newFileBackedManager = FileBackedManager.loadFromFile(file);
         // Проверка, что в списке 2 задачи
         assertEquals(2, newFileBackedManager.getAllTasks().size());
@@ -339,7 +339,7 @@ class FileBackedManagerTest {
         fileBackedManager.addEpic(secondEpic);
         // Выключение менеджера
         fileBackedManager = null;
-        //Включение нового менеджера
+        // Включение нового менеджера
         Manager newFileBackedManager = FileBackedManager.loadFromFile(file);
         // Проверка, что в списке 2 эпика
         assertEquals(2, newFileBackedManager.getAllEpics().size());
@@ -386,7 +386,7 @@ class FileBackedManagerTest {
         fileBackedManager.addSubTaskIntoEpic(secondEpicSecondSubTask);
         // Выключение менеджера
         fileBackedManager = null;
-        //Включение нового менеджера
+        // Включение нового менеджера
         Manager newFileBackedManager = FileBackedManager.loadFromFile(file);
         // Проверка, что у второго эпика 2 подзадачи
         assertEquals(2, newFileBackedManager.getSubTaskListFromEpicById(secondEpic.getId()).size());
@@ -437,7 +437,7 @@ class FileBackedManagerTest {
         fileBackedManager.addSubTaskIntoEpic(secondEpicSecondSubTask);
         // Выключение менеджера
         fileBackedManager = null;
-        //Включение нового менеджера
+        // Включение нового менеджера
         Manager newFileBackedManager = FileBackedManager.loadFromFile(file);
         // Проверка, что всего 3 подзадачи
         assertEquals(3, newFileBackedManager.getAllSubtasks().size());
@@ -483,7 +483,7 @@ class FileBackedManagerTest {
         fileBackedManager.getTaskById(secondTask.getId());
         // Выключение менеджера
         fileBackedManager = null;
-        //Включение нового менеджера
+        // Включение нового менеджера
         Manager newFileBackedManager = FileBackedManager.loadFromFile(file);
         // Проверка истории
         List<Task> history = newFileBackedManager.history();
@@ -522,7 +522,7 @@ class FileBackedManagerTest {
         fileBackedManager.getTaskById(firstTask.getId());
         // Выключение менеджера
         fileBackedManager = null;
-        //Включение нового менеджера
+        // Включение нового менеджера
         Manager newFileBackedManager = FileBackedManager.loadFromFile(file);
         // Проверка истории
         List<Task> history = newFileBackedManager.history();
@@ -568,11 +568,24 @@ class FileBackedManagerTest {
         fileBackedManager.addSubTaskIntoEpic(secondEpicSecondSubTask);
         // Выключение менеджера
         fileBackedManager = null;
-        //Включение нового менеджера
+        // Включение нового менеджера
         Manager newFileBackedManager = FileBackedManager.loadFromFile(file);
         // Удаляем все задачи из трекера
         newFileBackedManager.deleteAllTasks();
         assertEquals(0, newFileBackedManager.getAllItems().size());
+    }
+
+    // Пустой тест
+    @Test
+    public void emptyTest() {
+        // Создание файла
+        File file = new File("Data.csv");
+        // Удаление файла
+        boolean isDelete = file.delete();
+        // Создание менеджера
+        Manager fileBackedManager = FileBackedManager.loadFromFile(file);
+        // Просмотр всех задач
+        assertEquals(0, fileBackedManager.getAllItems().size());
     }
 
     // Проверка метода addTask

@@ -1,5 +1,8 @@
 package tasks;
 
+import javax.xml.datatype.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.UUID;
 
 public class Task {
@@ -7,11 +10,27 @@ public class Task {
     private String name;
     private String description;
     private TaskStatus status;
+    private LocalDateTime startTime;
+    private Integer duration;
 
     public Task(String name, String description, TaskStatus status) {
         this.name = name;
         this.description = description;
         this.status = status;
+    }
+
+    public Task(String name, String description, TaskStatus status, LocalDateTime startTime, Integer duration) {
+        this(name,description,status);
+        this.startTime = startTime;
+        this.duration = duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public Integer getDuration() {
+        return duration;
     }
 
     public void setId(String id) {
@@ -45,6 +64,8 @@ public class Task {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", status=" + status +
+                ", startTime=" + startTime +
+                ", duration=" + duration +
                 '}';
     }
 }
