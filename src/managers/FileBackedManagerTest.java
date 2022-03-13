@@ -282,7 +282,7 @@ class FileBackedManagerTest {
         fileBackedManager = null;
         //Включение нового менеджера
         Manager newFileBackedManager = FileBackedManager.loadFromFile(file);
-        // Удаление задачи из трекера проверка, что задача удалена
+        // Удаление подзадачи из трекера и проверка, что задача удалена
         assertTrue(newFileBackedManager.deleteTaskById(firstSubTask.getId()));
     }
 
@@ -344,7 +344,8 @@ class FileBackedManagerTest {
         // Проверка, что в списке 2 эпика
         assertEquals(2, newFileBackedManager.getAllEpics().size());
         // Проверка списка эпиков
-        for (Epic epic : newFileBackedManager.getAllEpics()) {
+        ArrayList<Epic> epics = newFileBackedManager.getAllEpics();
+        for (Epic epic : epics) {
             if (epic.getId().equals(firstEpic.getId())) {
                 assertEquals("Переезд", epic.getName());
                 assertEquals("Собрать все вещи", epic.getDescription());
@@ -390,8 +391,65 @@ class FileBackedManagerTest {
         // Проверка, что у второго эпика 2 подзадачи
         assertEquals(2, newFileBackedManager.getSubTaskListFromEpicById(secondEpic.getId()).size());
         // Проверка списка подзадач определенного эпика
-        for (SubTask subTask : newFileBackedManager.getSubTaskListFromEpicById(secondEpic.getId())) {
+        ArrayList<SubTask> subTasks = newFileBackedManager.getSubTaskListFromEpicById(secondEpic.getId());
+        for (SubTask subTask : subTasks) {
             if (subTask.getId().equals(secondEpicFirstSubTask.getId())) {
+                assertEquals("Изучить Дженерики", subTask.getName());
+                assertEquals("Изучить случаи применения дженериков", subTask.getDescription());
+                assertEquals(TaskStatus.NEW, subTask.getStatus());
+                assertEquals(secondEpic.getId(), subTask.getEpicId());
+            } else {
+                assertEquals("Изучить полиморфизм", subTask.getName());
+                assertEquals("Изучить перегрузку методов", subTask.getDescription());
+                assertEquals(TaskStatus.NEW, subTask.getStatus());
+                assertEquals(secondEpic.getId(), subTask.getEpicId());
+            }
+        }
+    }
+
+    // Провека метода getAllSubTasks, стандартная реализация, восстановление менеджера из файла
+    @Test
+    public void shouldReturnSubTaskListAndLoad() {
+        // Создание файла
+        File file = new File("Data.csv");
+        // Удаление файла
+        boolean isDelete = file.delete();
+        // Создание менеджера
+        Manager fileBackedManager = FileBackedManager.loadFromFile(file);
+        // Создание эпиков
+        Epic firstEpic = new Epic("Переезд", "Собрать все вещи");
+        Epic secondEpic = new Epic("Изучение Java", "Изучить язык программирования Java");
+        // Добавление эпиков в трекер
+        fileBackedManager.addEpic(firstEpic);
+        fileBackedManager.addEpic(secondEpic);
+        // Создание подзадач к первому эпику
+        SubTask firstEpicFirstSubTask = new SubTask("Собрать чемодан",
+                "Положить в чемодан все необходимое", TaskStatus.DONE, firstEpic.getId());
+        // Добавление подзадачи в трекер
+        fileBackedManager.addSubTaskIntoEpic(firstEpicFirstSubTask);
+        // Создание подзадач ко второму эпику
+        SubTask secondEpicFirstSubTask = new SubTask("Изучить Дженерики",
+                "Изучить случаи применения дженериков", TaskStatus.NEW, secondEpic.getId());
+        SubTask secondEpicSecondSubTask = new SubTask("Изучить полиморфизм",
+                "Изучить перегрузку методов", TaskStatus.NEW, secondEpic.getId());
+        // Добавление подзадач второго эпика
+        fileBackedManager.addSubTaskIntoEpic(secondEpicFirstSubTask);
+        fileBackedManager.addSubTaskIntoEpic(secondEpicSecondSubTask);
+        // Выключение менеджера
+        fileBackedManager = null;
+        //Включение нового менеджера
+        Manager newFileBackedManager = FileBackedManager.loadFromFile(file);
+        // Проверка, что всего 3 подзадачи
+        assertEquals(3, newFileBackedManager.getAllSubtasks().size());
+        // Проверка списка подзадач
+        ArrayList<SubTask> subTasks = newFileBackedManager.getAllSubtasks();
+        for (SubTask subTask : subTasks) {
+            if (subTask.getId().equals(firstEpicFirstSubTask.getId())) {
+                assertEquals("Собрать чемодан", subTask.getName());
+                assertEquals("Положить в чемодан все необходимое", subTask.getDescription());
+                assertEquals(TaskStatus.DONE, subTask.getStatus());
+                assertEquals(firstEpic.getId(), subTask.getEpicId());
+            } else if (subTask.getId().equals(secondEpicFirstSubTask.getId())) {
                 assertEquals("Изучить Дженерики", subTask.getName());
                 assertEquals("Изучить случаи применения дженериков", subTask.getDescription());
                 assertEquals(TaskStatus.NEW, subTask.getStatus());
@@ -1036,7 +1094,8 @@ class FileBackedManagerTest {
         // Проверка, что в списке 2 эпика
         assertEquals(2, fileBackedManager.getAllEpics().size());
         // Проверка списка эпиков
-        for (Epic epic : fileBackedManager.getAllEpics()) {
+        ArrayList<Epic> epics = fileBackedManager.getAllEpics();
+        for (Epic epic : epics) {
             if (epic.getId().equals(firstEpic.getId())) {
                 assertEquals("Переезд", epic.getName());
                 assertEquals("Собрать все вещи", epic.getDescription());
@@ -1091,7 +1150,8 @@ class FileBackedManagerTest {
         // Проверка, что всего 3 подзадачи
         assertEquals(3, fileBackedManager.getAllSubtasks().size());
         // Проверка списка подзадач
-        for (SubTask subTask : fileBackedManager.getAllSubtasks()) {
+        ArrayList<SubTask> subTasks = fileBackedManager.getAllSubtasks();
+        for (SubTask subTask : subTasks) {
             if (subTask.getId().equals(firstEpicFirstSubTask.getId())) {
                 assertEquals("Собрать чемодан", subTask.getName());
                 assertEquals("Положить в чемодан все необходимое", subTask.getDescription());
@@ -1142,7 +1202,8 @@ class FileBackedManagerTest {
         // Проверка, что у второго эпика 2 подзадачи
         assertEquals(2, fileBackedManager.getSubTaskListFromEpicById(secondEpic.getId()).size());
         // Проверка списка подзадач определенного эпика
-        for (SubTask subTask : fileBackedManager.getSubTaskListFromEpicById(secondEpic.getId())) {
+        ArrayList<SubTask> subTasks = fileBackedManager.getSubTaskListFromEpicById(secondEpic.getId());
+        for (SubTask subTask : subTasks) {
             if (subTask.getId().equals(secondEpicFirstSubTask.getId())) {
                 assertEquals("Изучить Дженерики", subTask.getName());
                 assertEquals("Изучить случаи применения дженериков", subTask.getDescription());

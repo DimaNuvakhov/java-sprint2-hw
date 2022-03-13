@@ -448,7 +448,8 @@ class InMemoryManagerTest {
         // Проверка, что в списке 2 эпика
         assertEquals(2, inMemoryManager.getAllEpics().size());
         // Проверка списка эпиков
-        for (Epic epic : inMemoryManager.getAllEpics()) {
+        ArrayList<Epic> epics = inMemoryManager.getAllEpics();
+        for (Epic epic : epics) {
             if (epic.getId().equals(firstEpic.getId())) {
                 assertEquals("Переезд", epic.getName());
                 assertEquals("Собрать все вещи", epic.getDescription());
@@ -495,7 +496,8 @@ class InMemoryManagerTest {
         // Проверка, что всего 3 подзадачи
         assertEquals(3, inMemoryManager.getAllSubtasks().size());
         // Проверка списка подзадач
-        for (SubTask subTask : inMemoryManager.getAllSubtasks()) {
+        ArrayList<SubTask> subTasks = inMemoryManager.getAllSubtasks();
+        for (SubTask subTask : subTasks) {
             if (subTask.getId().equals(firstEpicFirstSubTask.getId())) {
                 assertEquals("Собрать чемодан", subTask.getName());
                 assertEquals("Положить в чемодан все необходимое", subTask.getDescription());
@@ -542,7 +544,8 @@ class InMemoryManagerTest {
         // Проверка, что у второго эпика 2 подзадачи
         assertEquals(2, inMemoryManager.getSubTaskListFromEpicById(secondEpic.getId()).size());
         // Проверка списка подзадач определенного эпика
-        for (SubTask subTask : inMemoryManager.getSubTaskListFromEpicById(secondEpic.getId())) {
+        ArrayList<SubTask> subTasks = inMemoryManager.getSubTaskListFromEpicById(secondEpic.getId());
+        for (SubTask subTask : subTasks) {
             if (subTask.getId().equals(secondEpicFirstSubTask.getId())) {
                 assertEquals("Изучить Дженерики", subTask.getName());
                 assertEquals("Изучить случаи применения дженериков", subTask.getDescription());
