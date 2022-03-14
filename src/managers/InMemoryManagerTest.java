@@ -758,18 +758,19 @@ class InMemoryManagerTest {
         // Созадние менеджера
         Manager inMemoryManager = Managers.getDefault();
         // Создание задач
-        Task firstTask = new Task("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW,
-                LocalDateTime.of(2022, 3,15,10,0), 3);
         Task secondTask = new Task("Купить хлеб", "Нужен хлеб \"Литовский\"", TaskStatus.DONE,
                 LocalDateTime.of(2022, 3,20,11,0), 4);
         Task thirdTask = new Task("Помыть машину", "Помыть машину на мойке \"Мой-ка\"",
                 TaskStatus.DONE, LocalDateTime.of(2022, 3,20,11,1), 5);
+        Task firstTask = new Task("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW,
+                LocalDateTime.of(2022, 3,15,10,0), 3);
         // Добавлние задач в трекер
-        inMemoryManager.addTask(firstTask);
         inMemoryManager.addTask(secondTask);
         inMemoryManager.addTask(thirdTask);
+        inMemoryManager.addTask(firstTask);
         // Вызов отсортированного списка
         TreeSet<Task> sortedTasks = inMemoryManager.getPrioritizedTasks();
+        System.out.println(sortedTasks);
         for (Task task : sortedTasks) {
 
         }

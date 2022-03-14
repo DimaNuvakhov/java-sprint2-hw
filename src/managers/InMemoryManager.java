@@ -7,6 +7,7 @@ import tasks.SubTask;
 import tasks.Task;
 import tasks.TaskStatus;
 
+import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
 
@@ -33,6 +34,8 @@ public class InMemoryManager implements Manager {
         }
         allTasks.put(epic.getId(), epic);
         epic.setStatus(calcStatus(epic));
+        epic.setStartTime(calcStartTime(epic));
+        epic.setDuration(calcDuration(epic));
     }
 
     // Добавление подзадачи к определенному эпику
@@ -47,6 +50,8 @@ public class InMemoryManager implements Manager {
             epic.getSubTasks().put(subTask.getId(), subTask);
             allTasks.put(subTask.getId(), subTask);
             epic.setStatus(calcStatus(epic));
+            epic.setStartTime(calcStartTime(epic));
+            epic.setDuration(calcDuration(epic));
         }
     }
 
@@ -168,6 +173,8 @@ public class InMemoryManager implements Manager {
             Epic epic = (Epic) allTasks.get(subTask.getEpicId());
             epic.getSubTasks().remove(subTask.getId());
             epic.setStatus(calcStatus(epic));
+            epic.setStartTime(calcStartTime(epic));
+            epic.setDuration(calcDuration(epic));
         }
     }
 
@@ -185,6 +192,8 @@ public class InMemoryManager implements Manager {
                 epic.getSubTasks().put(task.getId(), newSubTask);
                 allTasks.put(newSubTask.getId(), newSubTask);
                 epic.setStatus(calcStatus(epic));
+                epic.setStartTime(calcStartTime(epic));
+                epic.setDuration(calcDuration(epic));
             } else if ((allTasks.get(oldId).getClass().getName().equals(EPIC_NAME))) {
                 Epic oldEpic = (Epic) allTasks.get(oldId);
                 Epic newEpic = (Epic) task;
@@ -192,6 +201,8 @@ public class InMemoryManager implements Manager {
                 newEpic.setId(oldId);
                 allTasks.put(newEpic.getId(), newEpic);
                 newEpic.setStatus(calcStatus(newEpic));
+                newEpic.setStartTime(calcStartTime(newEpic));
+                newEpic.setDuration(calcDuration(newEpic));
             } else {
                 allTasks.remove(oldId);
                 task.setId(oldId);
@@ -225,6 +236,44 @@ public class InMemoryManager implements Manager {
         } else {
             return TaskStatus.IN_PROGRESS;
         }
+    }
+
+    private LocalDateTime calcStartTime(Epic epic) {
+        for (SubTask subTask : epic.getSubTasks().values()) {
+            if (subTask.getStartTime() == null) {
+                return null;
+            }
+        }
+        Comparator<SubTask> comparator = new Comparator<SubTask>() {
+            @Override
+            public int compare(SubTask o1, SubTask o2) {
+                return (int) (o1.getStartTime().toInstant(ZoneOffset.UTC).toEpochMilli()
+                        - o2.getStartTime().toInstant(ZoneOffset.UTC).toEpochMilli());
+            }
+        };
+        TreeSet<SubTask> subTasks = new TreeSet<>(comparator);
+        if (epic.getSubTasks().isEmpty()) {
+            return LocalDateTime.now();
+        } else {
+            subTasks.addAll(epic.getSubTasks().values());
+            return subTasks.first().getStartTime();
+        }
+    }
+
+    private Integer calcDuration(Epic epic) {
+        for (SubTask subTask : epic.getSubTasks().values()) {
+            if (subTask.getStartTime() == null) {
+                return null;
+            }
+        }
+        int subTaskDurationSum = 0;
+        if (epic.getSubTasks().isEmpty()) {
+            return subTaskDurationSum;
+        }
+        for (SubTask subTask : epic.getSubTasks().values()) {
+            subTaskDurationSum = subTask.getDuration() + subTaskDurationSum;
+        }
+        return subTaskDurationSum;
     }
 
     @Override

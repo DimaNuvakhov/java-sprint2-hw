@@ -25,6 +25,14 @@ public class Task {
         this.duration = duration;
     }
 
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setDuration(Integer duration) {
+        this.duration = duration;
+    }
+
     public LocalDateTime getStartTime() {
         return startTime;
     }

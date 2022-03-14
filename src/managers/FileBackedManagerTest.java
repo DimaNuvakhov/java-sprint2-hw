@@ -10,12 +10,94 @@ import tasks.Task;
 import tasks.TaskStatus;
 
 import java.io.File;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class FileBackedManagerTest {
+
+    @Test
+    public void shouldRenewSubTaskByIdAndLoadRENAME() {
+        // Создание файла
+        File file = new File("Data.csv");
+        // Удаление файла
+        boolean isDelete = file.delete();
+        // Создание менеджера
+        Manager fileBackedManager = FileBackedManager.loadFromFile(file);
+        // Создание эпика
+        Epic firstEpic = new Epic("Изучение Java", "Изучить язык программирования Java");
+        // Добавление эпика в трекер задач
+        fileBackedManager.addEpic(firstEpic);
+        // Создание подзадач к эпику
+        SubTask firstSubTask = new SubTask("Изучить Дженерики",
+                "Изучить случаи применения дженериков", TaskStatus.NEW, firstEpic.getId(),
+                LocalDateTime.of(2022, 3,15,10,0), 4);
+        // Добавление подзадачи в трекер задач
+        fileBackedManager.addSubTaskIntoEpic(firstSubTask);
+        // Выключение менеджера
+        fileBackedManager = null;
+        // Включение нового менеджера
+        Manager newFileBackedManager = FileBackedManager.loadFromFile(file);
+        // Создание новой подзадачи
+        SubTask secondSubTask = new SubTask("Изучить полиморфизм",
+                "Изучить перегрузку методов", TaskStatus.NEW, firstEpic.getId(),
+                LocalDateTime.of(2022, 3,16,10,0), 3);
+        // Обновление подзадачи
+        newFileBackedManager.renewTaskById(firstSubTask.getId(), secondSubTask);
+        // Поиск подзадачи в трекере по имени
+        SubTask oldTask = (SubTask) getTaskByName(newFileBackedManager, "Изучить Дженерики");
+        // Проверка, что подзадачи нет в трекере
+        assertNull(oldTask);
+        // Поиск обновленной подзадачи в трекере по имени
+        SubTask renewedSubTask = (SubTask) getTaskByName(newFileBackedManager, "Изучить полиморфизм");
+        // Проверка, есть ли обновленная подзадача в трекере
+        assertNotNull(renewedSubTask);
+        // Сверка описания подзадачи
+        assertEquals("Изучить перегрузку методов", renewedSubTask.getDescription());
+        // Сверка статуса подзадачи
+        assertEquals(TaskStatus.NEW, renewedSubTask.getStatus());
+        // Сверка id первой подзадачи с id обновленной подзадачи
+        assertEquals(firstSubTask.getId(), renewedSubTask.getId());
+        // Сверка даты задачи
+        assertEquals("2022-03-16T10:00", renewedSubTask.getStartTime().toString());
+        // Сверка продолжительности
+        assertEquals(3, renewedSubTask.getDuration());
+    }
+
+    // Создание задачи, восстановление менеджера из файла
+    @Test
+    public void shouldAddTaskAndLoadRENAME() {
+        // Создание файла
+        File file = new File("Data.csv");
+        // Удаление файла и проверка удаления
+        boolean isDelete = file.delete();
+        // Создание менеджера
+        Manager fileBackedManager = FileBackedManager.loadFromFile(file);
+        // Создание задачи
+        Task firstTask = new Task("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW,
+                LocalDateTime.of(2022, 3,15,10,0), 4);
+        // Добавление задачи в трекер задач
+        fileBackedManager.addTask(firstTask);
+        // Выключение менеджера
+        fileBackedManager = null;
+        // Включение нового менеджера
+        Manager newFileBackedManager = FileBackedManager.loadFromFile(file);
+        // Поиск задачи в трекере по имени
+        Task sameTask = getTaskByName(newFileBackedManager, "Помыть посуду");
+        // Проверка, есть ли задача в трекере
+        assertNotNull(sameTask);
+        // Сверка описания задачи
+        assertEquals("Помыть тарелки и вилки", sameTask.getDescription());
+        // Сверка статуса задачи
+        assertEquals(TaskStatus.NEW, sameTask.getStatus());
+        // Сверка даты задачи
+        assertEquals("2022-03-15T10:00", sameTask.getStartTime().toString());
+        // Сверка продолжительности
+        assertEquals(4, sameTask.getDuration());
+    }
+
 
     // Создание задачи, восстановление менеджера из файла
     @Test
