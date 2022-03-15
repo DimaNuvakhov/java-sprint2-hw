@@ -22,6 +22,9 @@ public class InMemoryManager implements Manager {
             String id = UUID.randomUUID().toString().substring(0, 32); // заполнить id в тесте
             task.setId(id);
         }
+        if (task.getStartTime() != null) {
+            findIntersection(task);
+        }
         allTasks.put(task.getId(), task);
     }
 
@@ -44,6 +47,9 @@ public class InMemoryManager implements Manager {
         if (subTask.getId() == null) {
             String id = UUID.randomUUID().toString().substring(0, 32);
             subTask.setId(id);
+        }
+        if (subTask.getStartTime() != null) {
+            findIntersection(subTask);
         }
         if (allTasks.containsKey(subTask.getEpicId())) {
             Epic epic = (Epic) allTasks.get(subTask.getEpicId());
@@ -181,6 +187,9 @@ public class InMemoryManager implements Manager {
     // Обновление любой задачи по id
     @Override
     public void renewTaskById(String oldId, Task task) { // Проверен
+        if (!task.getClass().getName().equals(EPIC_NAME) && task.getStartTime() != null) {
+            findIntersection(task);
+        }
         if (allTasks.containsKey(oldId)) {
             if (allTasks.get(oldId).getClass().getName().equals(SUBTASK_NAME)) {
                 SubTask subTask = (SubTask) allTasks.get(oldId);
@@ -288,6 +297,25 @@ public class InMemoryManager implements Manager {
         TreeSet<Task> tasks = new TreeSet<>(comparator);
         tasks.addAll(allTasks.values());
         return tasks;
+    }
+
+    private void findIntersection(Task newTask) {
+        LocalDateTime endTimeOfNewTask = newTask.getStartTime().plusHours(newTask.getDuration());
+        for (Task task : allTasks.values()) {
+            if (!task.getClass().getName().equals(EPIC_NAME)) {
+                LocalDateTime endTimeOfTask = task.getStartTime().plusHours(task.getDuration());
+                if (newTask.getStartTime().isAfter(task.getStartTime())
+                        && newTask.getStartTime().isBefore(endTimeOfTask)) {
+                    throw new IllegalArgumentException("Ошибка, задача не может быть добавлена в трекер" +
+                            " т.к. она пересекается во времени с ранее добавленой");
+                }
+                if (endTimeOfNewTask.isAfter(task.getStartTime())
+                        && endTimeOfNewTask.isBefore(endTimeOfTask)) {
+                    throw new IllegalArgumentException("Ошибка, задача не может быть добавлена в трекер" +
+                            " т.к. она пересекается во времени с ранее добавленой");
+                }
+            }
+        }
     }
 
     // История просмотра задач
