@@ -768,7 +768,8 @@ class FileBackedManagerTest {
         }
     }
 
-    public Task getTaskByName(Manager inMemoryManager, String name) {
+
+    private Task getTaskByName(Manager inMemoryManager, String name) {
         for (Task task : inMemoryManager.getAllItems().values()) {
             if (task.getName().equals(name)) {
                 return task;

@@ -47,7 +47,6 @@ public class InMemoryManager implements Manager {
             subTask.setId(id);
         }
         findIntersection(subTask);
-
         if (allTasks.containsKey(subTask.getEpicId())) {
             Epic epic = (Epic) allTasks.get(subTask.getEpicId());
             epic.getSubTasks().put(subTask.getId(), subTask);
@@ -244,12 +243,8 @@ public class InMemoryManager implements Manager {
         }
     }
 
+    // Вычисление времени начала задачи у эпика
     private LocalDateTime calcStartTime(Epic epic) {
-        for (SubTask subTask : epic.getSubTasks().values()) {
-            if (subTask.getStartTime() == null) {
-                return null;
-            }
-        }
         Comparator<SubTask> comparator = new Comparator<SubTask>() {
             @Override
             public int compare(SubTask o1, SubTask o2) {
@@ -266,6 +261,7 @@ public class InMemoryManager implements Manager {
         }
     }
 
+    // Вычисление продолжительности задачи
     private Integer calcDuration(Epic epic) {
         for (SubTask subTask : epic.getSubTasks().values()) {
             if (subTask.getStartTime() == null) {
@@ -282,6 +278,7 @@ public class InMemoryManager implements Manager {
         return subTaskDurationSum;
     }
 
+    // Вывод задач по приоритету
     @Override
     public TreeSet<Task> getPrioritizedTasks() {
         Comparator<Task> comparator = new Comparator<Task>() {
@@ -296,10 +293,8 @@ public class InMemoryManager implements Manager {
         return tasks;
     }
 
+    // Нахождение пересечений задач
     private void findIntersection(Task newTask) {
-        if (!(newTask.getStartTime() != null && newTask.getDuration() != null)) {
-            throw new IllegalArgumentException("Не задана дата начала или длительность");
-        }
         LocalDateTime endTimeOfNewTask = newTask.getStartTime().plusHours(newTask.getDuration());
         for (Task task : allTasks.values()) {
             if (!task.getClass().getName().equals(EPIC_NAME)) {
