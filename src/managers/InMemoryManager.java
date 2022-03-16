@@ -22,9 +22,7 @@ public class InMemoryManager implements Manager {
             String id = UUID.randomUUID().toString().substring(0, 32); // заполнить id в тесте
             task.setId(id);
         }
-        if (task.getStartTime() != null) {
-            findIntersection(task);
-        }
+        findIntersection(task);
         allTasks.put(task.getId(), task);
     }
 
@@ -48,9 +46,8 @@ public class InMemoryManager implements Manager {
             String id = UUID.randomUUID().toString().substring(0, 32);
             subTask.setId(id);
         }
-        if (subTask.getStartTime() != null) {
-            findIntersection(subTask);
-        }
+        findIntersection(subTask);
+
         if (allTasks.containsKey(subTask.getEpicId())) {
             Epic epic = (Epic) allTasks.get(subTask.getEpicId());
             epic.getSubTasks().put(subTask.getId(), subTask);
@@ -187,7 +184,7 @@ public class InMemoryManager implements Manager {
     // Обновление любой задачи по id
     @Override
     public void renewTaskById(String oldId, Task task) { // Проверен
-        if (!task.getClass().getName().equals(EPIC_NAME) && task.getStartTime() != null) {
+        if (!task.getClass().getName().equals(EPIC_NAME)) {
             findIntersection(task);
         }
         if (allTasks.containsKey(oldId)) {
@@ -300,6 +297,9 @@ public class InMemoryManager implements Manager {
     }
 
     private void findIntersection(Task newTask) {
+        if (!(newTask.getStartTime() != null && newTask.getDuration() != null)) {
+            throw new IllegalArgumentException("Не задана дата начала или длительность");
+        }
         LocalDateTime endTimeOfNewTask = newTask.getStartTime().plusHours(newTask.getDuration());
         for (Task task : allTasks.values()) {
             if (!task.getClass().getName().equals(EPIC_NAME)) {

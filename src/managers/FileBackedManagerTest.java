@@ -306,6 +306,8 @@ class FileBackedManagerTest {
         fileBackedManager = null;
         // Включение нового менеджера
         Manager newFileBackedManager = FileBackedManager.loadFromFile(file);
+        // Провека, что задача одна
+        assertEquals(1, newFileBackedManager.getAllItems().size());
         // Поиск задачи в трекере по имени
         Epic sameEpic = (Epic) getTaskByName(newFileBackedManager, "Сходить в спортзал");
         // Проверка, есть ли эпик в трекере
@@ -764,15 +766,19 @@ class FileBackedManagerTest {
 
     // Пустой тест
     @Test
-    public void emptyTest() {
+    public void shouldReturnZeroWhenNoTasksAndLoad() {
         // Создание файла
         File file = new File("Data.csv");
         // Удаление файла
         boolean isDelete = file.delete();
         // Создание менеджера
         Manager fileBackedManager = FileBackedManager.loadFromFile(file);
+        // Выключение менеджера
+        fileBackedManager = null;
+        // Включение нового менеджера
+        Manager newFileBackedManager = FileBackedManager.loadFromFile(file);
         // Просмотр всех задач
-        assertEquals(0, fileBackedManager.getAllItems().size());
+        assertEquals(0, newFileBackedManager.getAllItems().size());
     }
 
     // Проверка метода addTask
@@ -1440,8 +1446,12 @@ class FileBackedManagerTest {
         boolean isDelete = file.delete();
         // Создание менеджера
         Manager fileBackedManager = FileBackedManager.loadFromFile(file);
+        // Выключение менеджера
+        fileBackedManager = null;
+        // Включение нового менеджера
+        Manager newFileBackedManager = FileBackedManager.loadFromFile(file);
         // Вызов истории
-        assertEquals(0, fileBackedManager.history().size());
+        assertEquals(0, newFileBackedManager.history().size());
     }
 
     // Проверка метода history. Проверка истории просмотра задач, некорректный id
