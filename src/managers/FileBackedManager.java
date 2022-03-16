@@ -72,7 +72,7 @@ public class FileBackedManager extends InMemoryManager {
 
     @Override
     public Boolean deleteTaskById(String id) {
-       boolean isDelete = super.deleteTaskById(id);
+        boolean isDelete = super.deleteTaskById(id);
         if (managerStatus && isDelete) {
             save();
         }
@@ -179,7 +179,9 @@ public class FileBackedManager extends InMemoryManager {
         StringBuilder stringHistory = new StringBuilder();
         for (Task task : manager.getHistory()) {
             stringHistory.append(comma).append(task.getId());
-            if (comma.equals("")) { comma = ",";}
+            if (comma.equals("")) {
+                comma = ",";
+            }
         }
         return "\n" + stringHistory;
     }
@@ -197,38 +199,21 @@ public class FileBackedManager extends InMemoryManager {
     // Делаю задачу, эпик или подзадачу из строки
     public static Task fromString(String value) {
         String[] lines = value.split(",");
-        if (lines[7].equals("null")) {
-            if (lines[1].equals(TaskType.TASK.toString())) {
-                Task taskFromFile = new Task(lines[2], lines[4], statusFromString(lines[3]));
-                taskFromFile.setId(lines[0]);
-                return taskFromFile;
-            } else if (lines[1].equals(TaskType.EPIC.toString())) {
-                Epic epicFromFile = new Epic(lines[2], lines[4]);
-                epicFromFile.setId(lines[0]);
-                return epicFromFile;
-            } else if (lines[1].equals(TaskType.SUBTASK.toString())) {
-                SubTask subTaskFromFile = new SubTask(lines[2], lines[4],
-                        statusFromString(lines[3]), lines[5]);
-                subTaskFromFile.setId(lines[0]);
-                return subTaskFromFile;
-            }
-        } else {
-            if (lines[1].equals(TaskType.TASK.toString())) {
-                Task taskFromFile = new Task(lines[2], lines[4], statusFromString(lines[3]),
-                        LocalDateTime.parse(lines[6]), Integer.parseInt(lines[7]));
-                taskFromFile.setId(lines[0]);
-                return taskFromFile;
-            } else if (lines[1].equals(TaskType.EPIC.toString())) {
-                Epic epicFromFile = new Epic(lines[2], lines[4]);
-                epicFromFile.setId(lines[0]);
-                return epicFromFile;
-            } else if (lines[1].equals(TaskType.SUBTASK.toString())) {
-                SubTask subTaskFromFile = new SubTask(lines[2], lines[4],
-                        statusFromString(lines[3]), lines[5], LocalDateTime.parse(lines[6]),
-                        Integer.parseInt(lines[7]));
-                subTaskFromFile.setId(lines[0]);
-                return subTaskFromFile;
-            }
+        if (lines[1].equals(TaskType.TASK.toString())) {
+            Task taskFromFile = new Task(lines[2], lines[4], statusFromString(lines[3]),
+                    LocalDateTime.parse(lines[6]), Integer.parseInt(lines[7]));
+            taskFromFile.setId(lines[0]);
+            return taskFromFile;
+        } else if (lines[1].equals(TaskType.EPIC.toString())) {
+            Epic epicFromFile = new Epic(lines[2], lines[4]);
+            epicFromFile.setId(lines[0]);
+            return epicFromFile;
+        } else if (lines[1].equals(TaskType.SUBTASK.toString())) {
+            SubTask subTaskFromFile = new SubTask(lines[2], lines[4],
+                    statusFromString(lines[3]), lines[5], LocalDateTime.parse(lines[6]),
+                    Integer.parseInt(lines[7]));
+            subTaskFromFile.setId(lines[0]);
+            return subTaskFromFile;
         }
         return null;
     }

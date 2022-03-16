@@ -19,8 +19,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class InMemoryManagerTest {
 
+    // Проверка метода addTask, добавление задачи
     @Test
-    public void shouldAddTaskWithStartTimeAndDuration() {
+    public void shouldAddTask() {
         // Создание менеджера
         Manager inMemoryManager = Managers.getDefault();
         // Создание задачи
@@ -42,8 +43,9 @@ class InMemoryManagerTest {
         assertEquals(3, sameTask.getDuration());
     }
 
+    // Проверка метода renewTaskById, обновление задачи
     @Test
-    public void shouldRenewTaskWithStartTimeAndDurationById() {
+    public void shouldRenewTaskById() {
         // Создание менеджера
         Manager inMemoryManager = Managers.getDefault();
         // Создание задачи
@@ -76,7 +78,7 @@ class InMemoryManagerTest {
         assertEquals(3, renewedTask.getDuration());
     }
 
-    // Проверка метода renewTaskById некорректный id
+    // Некорректный id задачи
     @Test
     public void shouldThrowExceptionWhenIncorrectTaskId() {
         // Создание менеджера
@@ -98,7 +100,7 @@ class InMemoryManagerTest {
         assertEquals("Задача с указанным id в трекер задач не добавлена", ex.getMessage());
     }
 
-    // Проверка метода deleteTaskById стандартная реалиация, удаление задачи
+    // Проверка метода deleteTaskById, удаление задачи по id
     @Test
     public void shouldDeleteTaskById() {
         // Создание менеджера
@@ -112,8 +114,118 @@ class InMemoryManagerTest {
         assertTrue(inMemoryManager.deleteTaskById(firstTask.getId()));
     }
 
+    // Проверка метода addEpic
     @Test
-    public void shouldRenewSubTaskWithStartTimeAndDurationById() {
+    public void shouldAddEpic() {
+        // Созадние менеджера
+        Manager inMemoryManager = Managers.getDefault();
+        // Создание эпика
+        Epic firstEpic = new Epic("Сходить в спортзал", "Прокачать 3 группы мышц");
+        // Добавление эпика в трекер задач
+        inMemoryManager.addEpic(firstEpic);
+        // Поиск задачи в трекере по имени
+        Epic sameEpic = (Epic) getTaskByName(inMemoryManager, "Сходить в спортзал");
+        // Проверка, есть ли эпик в трекере
+        assertNotNull(sameEpic);
+        // Сверка описания эпика
+        assertEquals("Прокачать 3 группы мышц", sameEpic.getDescription());
+    }
+
+    // Проверка метода renewTaskById, обновление эпика
+    @Test
+    public void shouldRenewEpicById() {
+        // Созадние менеджера
+        Manager inMemoryManager = Managers.getDefault();
+        // Создание эпика
+        Epic firstEpic = new Epic("Сходить в спортзал", "Прокачать 3 группы мышц");
+        // Добавление эпика в трекер задач
+        inMemoryManager.addEpic(firstEpic);
+        // Создание нового эпика
+        Epic secondEpic = new Epic("Изучение Java", "Изучить язык программирования Java");
+        // Обновление эпика
+        inMemoryManager.renewTaskById(firstEpic.getId(), secondEpic);
+        // Поиск задачи в трекере по имени
+        Epic oldEpic = (Epic) getTaskByName(inMemoryManager, "Сходить в спортзал");
+        // Проверка, что эпика нет в трекере
+        assertNull(oldEpic);
+        // Поиск обновленной задачи в трекере по имени
+        Epic renewedEpic = (Epic) getTaskByName(inMemoryManager, "Изучение Java");
+        // Проверка, есть ли обновленный эпик в трекере
+        assertNotNull(renewedEpic);
+        // Сверка описания эпика
+        assertEquals("Изучить язык программирования Java", renewedEpic.getDescription());
+        // Сверка id первого эпика с id обновленного эпика
+        assertEquals(firstEpic.getId(), renewedEpic.getId());
+    }
+
+    // Некорректный id эпика
+    @Test
+    public void shouldThrowExceptionWhenIncorrectEpicId() {
+        // Создание менеджера
+        Manager inMemoryManager = Managers.getDefault();
+        // Создание эпика
+        Epic firstEpic = new Epic("Сходить в спортзал", "Прокачать 3 группы мышц");
+        // Добавление задачи в трекер задач
+        inMemoryManager.addEpic(firstEpic);
+        // Проверка
+        IllegalArgumentException ex = Assertions.assertThrows(
+                IllegalArgumentException.class,
+                new Executable() {
+                    @Override
+                    public void execute() {
+                        inMemoryManager.renewTaskById("1", firstEpic);
+                    }
+                });
+        assertEquals("Задача с указанным id в трекер задач не добавлена", ex.getMessage());
+    }
+
+    // Проверка метода deleteTaskById, удаление эпика
+    @Test
+    public void shouldDeleteEpicById() {
+        // Созадние менеджера
+        Manager inMemoryManager = Managers.getDefault();
+        // Создание эпика
+        Epic firstEpic = new Epic("Сходить в спортзал", "Прокачать 3 группы мышц");
+        // Добавление эпика в трекер задач
+        inMemoryManager.addEpic(firstEpic);
+        // Удаление задачи из трекера проверка, что задача удалена
+        assertTrue(inMemoryManager.deleteTaskById(firstEpic.getId()));
+    }
+
+    // Проверка метода addSubTaskIntoEpic, добавление подзадачи
+    @Test
+    public void shouldAddSubTaskIntoEpic() {
+        // Созадние менеджера
+        Manager inMemoryManager = Managers.getDefault();
+        // Создание эпика
+        Epic firstEpic = new Epic("Изучение Java", "Изучить язык программирования Java");
+        // Добавление эпика в трекер задач
+        inMemoryManager.addEpic(firstEpic);
+        // Создание подзадачи к эпику
+        SubTask firstSubTask = new SubTask("Изучить Дженерики",
+                "Изучить случаи применения дженериков", TaskStatus.NEW, firstEpic.getId(),
+                LocalDateTime.of(2022, 3, 15, 10, 0), 4);
+        // Добавление подзадачи в трекер задач
+        inMemoryManager.addSubTaskIntoEpic(firstSubTask);
+        // Поиск подзадачи в трекере по имени
+        SubTask sameSubTask = (SubTask) getTaskByName(inMemoryManager, "Изучить Дженерики");
+        // Проверка, есть ли подзадача в трекере
+        assertNotNull(sameSubTask);
+        // Сверка описания задачи
+        assertEquals("Изучить случаи применения дженериков", sameSubTask.getDescription());
+        // Сверка статуса задачи
+        assertEquals(TaskStatus.NEW, sameSubTask.getStatus());
+        // Проверка наличия эпика у подзадачи
+        assertEquals(firstEpic.getId(), sameSubTask.getEpicId());
+        // Сверка даты задачи
+        assertEquals("2022-03-15T10:00", sameSubTask.getStartTime().toString());
+        // Сверка продолжительности
+        assertEquals(4, sameSubTask.getDuration());
+    }
+
+    // // Проверка метода renewTaskById, обновление подзадачи
+    @Test
+    public void shouldRenewSubTaskById() {
         // Создание менеджера
         Manager inMemoryManager = Managers.getDefault();
         // Создание эпика
@@ -152,8 +264,36 @@ class InMemoryManagerTest {
         assertEquals(3, renewedSubTask.getDuration());
     }
 
+    // Некорректный id подзадачи
     @Test
-    public void shouldReturnSubTaskWithStartTimeAndDurationListByEpicIdAndLoad() {
+    public void shouldThrowExceptionWhenIncorrectSubTaskId() {
+        // Создание менеджера
+        Manager inMemoryManager = Managers.getDefault();
+        // Создание эпика
+        Epic firstEpic = new Epic("Изучение Java", "Изучить язык программирования Java");
+        // Добавление задачи в трекер задач
+        inMemoryManager.addEpic(firstEpic);
+        // Создание подзадачи к эпику
+        SubTask firstSubTask = new SubTask("Изучить Дженерики",
+                "Изучить случаи применения дженериков", TaskStatus.NEW, firstEpic.getId(),
+                LocalDateTime.of(2022, 3, 15, 10, 0), 4);
+        // Добавление подзадачи в трекер задач
+        inMemoryManager.addSubTaskIntoEpic(firstSubTask);
+        // Проверка
+        IllegalArgumentException ex = Assertions.assertThrows(
+                IllegalArgumentException.class,
+                new Executable() {
+                    @Override
+                    public void execute() {
+                        inMemoryManager.renewTaskById("1", firstSubTask);
+                    }
+                });
+        assertEquals("Задача с указанным id в трекер задач не добавлена", ex.getMessage());
+    }
+
+    // Просмотр подзадач определенного эпика
+    @Test
+    public void shouldReturnSubTaskListByEpicIdAndLoad() {
         // Создание менеджера
         Manager inMemoryManager = Managers.getDefault();
         // Создание эпиков
@@ -206,240 +346,7 @@ class InMemoryManagerTest {
         }
     }
 
-    // Проверка метода addEpic
-    @Test
-    public void shouldAddEpic() {
-        // Созадние менеджера
-        Manager inMemoryManager = Managers.getDefault();
-        // Создание эпика
-        Epic firstEpic = new Epic("Сходить в спортзал", "Прокачать 3 группы мышц");
-        // Добавление эпика в трекер задач
-        inMemoryManager.addEpic(firstEpic);
-        // Поиск задачи в трекере по имени
-        Epic sameEpic = (Epic) getTaskByName(inMemoryManager, "Сходить в спортзал");
-        // Проверка, есть ли эпик в трекере
-        assertNotNull(sameEpic);
-        // Сверка описания эпика
-        assertEquals("Прокачать 3 группы мышц", sameEpic.getDescription());
-    }
-
-    // Проверка метода renewTaskById стандартная реализация
-    @Test
-    public void shouldRenewEpicById() {
-        // Созадние менеджера
-        Manager inMemoryManager = Managers.getDefault();
-        // Создание эпика
-        Epic firstEpic = new Epic("Сходить в спортзал", "Прокачать 3 группы мышц");
-        // Добавление эпика в трекер задач
-        inMemoryManager.addEpic(firstEpic);
-        // Создание нового эпика
-        Epic secondEpic = new Epic("Изучение Java", "Изучить язык программирования Java");
-        // Обновление эпика
-        inMemoryManager.renewTaskById(firstEpic.getId(), secondEpic);
-        // Поиск задачи в трекере по имени
-        Epic oldEpic = (Epic) getTaskByName(inMemoryManager, "Сходить в спортзал");
-        // Проверка, что эпика нет в трекере
-        assertNull(oldEpic);
-        // Поиск обновленной задачи в трекере по имени
-        Epic renewedEpic = (Epic) getTaskByName(inMemoryManager, "Изучение Java");
-        // Проверка, есть ли обновленный эпик в трекере
-        assertNotNull(renewedEpic);
-        // Сверка описания эпика
-        assertEquals("Изучить язык программирования Java", renewedEpic.getDescription());
-        // Сверка id первого эпика с id обновленного эпика
-        assertEquals(firstEpic.getId(), renewedEpic.getId());
-    }
-
-    // Проверка метода renewTaskById некорректный id эпика
-    @Test
-    public void shouldThrowExceptionWhenIncorrectEpicId() {
-        // Создание менеджера
-        Manager inMemoryManager = Managers.getDefault();
-        // Создание эпика
-        Epic firstEpic = new Epic("Сходить в спортзал", "Прокачать 3 группы мышц");
-        // Добавление задачи в трекер задач
-        inMemoryManager.addEpic(firstEpic);
-        // Проверка
-        IllegalArgumentException ex = Assertions.assertThrows(
-                IllegalArgumentException.class,
-                new Executable() {
-                    @Override
-                    public void execute() {
-                        inMemoryManager.renewTaskById("1", firstEpic);
-                    }
-                });
-        assertEquals("Задача с указанным id в трекер задач не добавлена", ex.getMessage());
-    }
-
-    // Проверка метода deleteTaskById стандартная реалиация, удаление эпика
-    @Test
-    public void shouldDeleteEpicById() {
-        // Созадние менеджера
-        Manager inMemoryManager = Managers.getDefault();
-        // Создание эпика
-        Epic firstEpic = new Epic("Сходить в спортзал", "Прокачать 3 группы мышц");
-        // Добавление эпика в трекер задач
-        inMemoryManager.addEpic(firstEpic);
-        // Удаление задачи из трекера проверка, что задача удалена
-        assertTrue(inMemoryManager.deleteTaskById(firstEpic.getId()));
-    }
-
-    // Проверка метода deleteTaskById некорректный id, проверка удаления задачи, подзадачи и эпика
-    @Test
-    public void shouldDeleteTaskByIncorrectId() {
-        // Создание менеджера
-        Manager inMemoryManager = Managers.getDefault();
-        // Удаление задачи из трекера по неверному id
-        assertFalse(inMemoryManager.deleteTaskById("1"));
-    }
-
-
-    // ПОСЛЕ ТОГО КАК ДОПИШУ УДАЛИТЬ ВСЕ ЧТО НИЖЕ ЭТОЙ СТРОКИ
-    // Проверка метода addTask
-    @Test
-    public void shouldAddTask() {
-        // Создание менеджера
-        Manager inMemoryManager = Managers.getDefault();
-        // Создание задачи
-        Task firstTask = new Task("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW);
-        // Добавление задачи в трекер задач
-        inMemoryManager.addTask(firstTask);
-        // Поиск задачи в трекере по имени
-        Task sameTask = getTaskByName(inMemoryManager, "Помыть посуду");
-        // Проверка, есть ли задача в трекере
-        assertNotNull(sameTask);
-        // Сверка описания задачи
-        assertEquals("Помыть тарелки и вилки", sameTask.getDescription());
-        // Сверка статуса задачи
-        assertEquals(TaskStatus.NEW, sameTask.getStatus());
-    }
-
-    // Проверка метода renewTaskById стандартная реализация
-    @Test
-    public void shouldRenewTaskById() {
-        // Создание менеджера
-        Manager inMemoryManager = Managers.getDefault();
-        // Создание задачи
-        Task firstTask = new Task("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW);
-        // Добавление задачи в трекер задач
-        inMemoryManager.addTask(firstTask);
-        // Создание новой задачи
-        Task secondTask = new Task("Купить хлеб", "Нужен хлеб \"Литовский\"", TaskStatus.DONE);
-        // Обновление задачи
-        inMemoryManager.renewTaskById(firstTask.getId(), secondTask);
-        // Поиск задачи в трекере по имени
-        Task oldTask = getTaskByName(inMemoryManager, "Помыть посуду");
-        // Проверка, что задачи нет в трекере
-        assertNull(oldTask);
-        // Поиск обновленной задачи в трекере по имени
-        Task renewedTask = getTaskByName(inMemoryManager, "Купить хлеб");
-        // Проверка, есть ли обновленная задача в трекере
-        assertNotNull(renewedTask);
-        // Сверка описания задачи
-        assertEquals("Нужен хлеб \"Литовский\"", renewedTask.getDescription());
-        // Сверка статуса задачи
-        assertEquals(TaskStatus.DONE, renewedTask.getStatus());
-        // Сверка id первой задачи с id обновленной задачи
-        assertEquals(firstTask.getId(), renewedTask.getId());
-    }
-
-
-
-
-
-
-
-
-
-
-    // Проверка метода addSubTaskIntoEpic
-    @Test
-    public void shouldAddSubTaskIntoEpic() {
-        // Созадние менеджера
-        Manager inMemoryManager = Managers.getDefault();
-        // Создание эпика
-        Epic firstEpic = new Epic("Изучение Java", "Изучить язык программирования Java");
-        // Добавление эпика в трекер задач
-        inMemoryManager.addEpic(firstEpic);
-        // Создание подзадачи к эпику
-        SubTask firstSubTask = new SubTask("Изучить Дженерики",
-                "Изучить случаи применения дженериков", TaskStatus.NEW, firstEpic.getId());
-        // Добавление подзадачи в трекер задач
-        inMemoryManager.addSubTaskIntoEpic(firstSubTask);
-        // Поиск подзадачи в трекере по имени
-        SubTask sameSubTask = (SubTask) getTaskByName(inMemoryManager, "Изучить Дженерики");
-        // Проверка, есть ли подзадача в трекере
-        assertNotNull(sameSubTask);
-        // Сверка описания задачи
-        assertEquals("Изучить случаи применения дженериков", sameSubTask.getDescription());
-        // Сверка статуса задачи
-        assertEquals(TaskStatus.NEW, sameSubTask.getStatus());
-        // Проверка наличия эпика у подзадачи
-        assertEquals(firstEpic.getId(), sameSubTask.getEpicId());
-    }
-
-    // Проверка метода renewTaskById стандартная реализация
-    @Test
-    public void shouldRenewSubTaskById() {
-        // Созадние менеджера
-        Manager inMemoryManager = Managers.getDefault();
-        // Создание эпика
-        Epic firstEpic = new Epic("Изучение Java", "Изучить язык программирования Java");
-        // Добавление эпика в трекер задач
-        inMemoryManager.addEpic(firstEpic);
-        // Создание подзадачи к эпику
-        SubTask firstSubTask = new SubTask("Изучить Дженерики",
-                "Изучить случаи применения дженериков", TaskStatus.NEW, firstEpic.getId());
-        // Добавление подзадачи в трекер задач
-        inMemoryManager.addSubTaskIntoEpic(firstSubTask);
-        // Создание новой подзадачи
-        SubTask secondSubTask = new SubTask("Изучить полиморфизм",
-                "Изучить перегрузку методов", TaskStatus.NEW, firstEpic.getId());
-        // Обновление подзадачи
-        inMemoryManager.renewTaskById(firstSubTask.getId(), secondSubTask);
-        // Поиск подзадачи в трекере по имени
-        SubTask oldTask = (SubTask) getTaskByName(inMemoryManager, "Изучить Дженерики");
-        // Проверка, что подзадачи нет в трекере
-        assertNull(oldTask);
-        // Поиск обновленной подзадачи в трекере по имени
-        SubTask renewedSubTask = (SubTask) getTaskByName(inMemoryManager, "Изучить полиморфизм");
-        // Проверка, есть ли обновленная подзадача в трекере
-        assertNotNull(renewedSubTask);
-        // Сверка описания подзадачи
-        assertEquals("Изучить перегрузку методов", renewedSubTask.getDescription());
-        // Сверка статуса подзадачи
-        assertEquals(TaskStatus.NEW, renewedSubTask.getStatus());
-        // Сверка id первой подзадачи с id обновленной подзадачи
-        assertEquals(firstSubTask.getId(), renewedSubTask.getId());
-    }
-
-    // Проверка метода renewTaskById некорректный id подзадачи
-    @Test
-    public void shouldThrowExceptionWhenIncorrectSubTaskId() {
-        // Создание менеджера
-        Manager inMemoryManager = Managers.getDefault();
-        // Создание эпика
-        Epic firstEpic = new Epic("Сходить в спортзал", "Прокачать 3 группы мышц");
-        // Добавление задачи в трекер задач
-        inMemoryManager.addEpic(firstEpic);
-        // Создание подзадачи к эпику
-        SubTask firstSubTask = new SubTask("Изучить Дженерики",
-                "Изучить случаи применения дженериков", TaskStatus.NEW, firstEpic.getId());
-        // Добавление подзадачи в трекер задач
-        inMemoryManager.addSubTaskIntoEpic(firstSubTask);
-        // Проверка
-        IllegalArgumentException ex = Assertions.assertThrows(
-                IllegalArgumentException.class,
-                new Executable() {
-                    @Override
-                    public void execute() {
-                        inMemoryManager.renewTaskById("1", firstSubTask);
-                    }
-                });
-        assertEquals("Задача с указанным id в трекер задач не добавлена", ex.getMessage());
-    }
-
-    // Проверка метода deleteTaskById стандартная реалиация, удаление подзадачи
+    // Проверка метода deleteTaskById, удаление подзадачи
     @Test
     public void shouldDeleteSubTaskById() {
         // Созадние менеджера
@@ -450,7 +357,8 @@ class InMemoryManagerTest {
         inMemoryManager.addEpic(firstEpic);
         // Создание подзадачи к эпику
         SubTask firstSubTask = new SubTask("Изучить Дженерики",
-                "Изучить случаи применения дженериков", TaskStatus.NEW, firstEpic.getId());
+                "Изучить случаи применения дженериков", TaskStatus.NEW, firstEpic.getId(),
+                LocalDateTime.of(2022, 3, 15, 10, 0), 4);
         // Добавление подзадачи в трекер задач
         inMemoryManager.addSubTaskIntoEpic(firstSubTask);
         // Удаление задачи из трекера проверка, что задача удалена
@@ -481,9 +389,11 @@ class InMemoryManagerTest {
         inMemoryManager.addEpic(firstEpic);
         // Создание субтасок к эпику, все подзадачи со статусом NEW
         SubTask firstSubTask = new SubTask("Собрать чемодан",
-                "Положить в чемодан все необходимое", TaskStatus.NEW, firstEpic.getId());
+                "Положить в чемодан все необходимое", TaskStatus.NEW, firstEpic.getId(),
+                LocalDateTime.of(2022, 3, 15, 10, 0), 4);
         SubTask secondSubTask = new SubTask("Забрать сноуборд",
-                "Забрать свой сноуборд из кладовки", TaskStatus.NEW, firstEpic.getId());
+                "Забрать свой сноуборд из кладовки", TaskStatus.NEW, firstEpic.getId(),
+                LocalDateTime.of(2022, 3, 16, 10, 0), 4);
         // Добавление субтасок в трекер задач
         inMemoryManager.addSubTaskIntoEpic(firstSubTask);
         inMemoryManager.addSubTaskIntoEpic(secondSubTask);
@@ -502,9 +412,11 @@ class InMemoryManagerTest {
         inMemoryManager.addEpic(firstEpic);
         // Создание субтасок к эпику, все подзадачи со статусом DONE
         SubTask firstSubTask = new SubTask("Собрать чемодан",
-                "Положить в чемодан все необходимое", TaskStatus.DONE, firstEpic.getId());
+                "Положить в чемодан все необходимое", TaskStatus.DONE, firstEpic.getId(),
+                LocalDateTime.of(2022, 3, 15, 10, 0), 4);
         SubTask secondSubTask = new SubTask("Забрать сноуборд",
-                "Забрать свой сноуборд из кладовки", TaskStatus.DONE, firstEpic.getId());
+                "Забрать свой сноуборд из кладовки", TaskStatus.DONE, firstEpic.getId(),
+                LocalDateTime.of(2022, 3, 16, 10, 0), 4);
         // Добавление субтасок в трекер задач
         inMemoryManager.addSubTaskIntoEpic(firstSubTask);
         inMemoryManager.addSubTaskIntoEpic(secondSubTask);
@@ -523,9 +435,11 @@ class InMemoryManagerTest {
         inMemoryManager.addEpic(firstEpic);
         // Создание субтасок к эпику, обе подзадачи со статусом DONE и NEW
         SubTask firstSubTask = new SubTask("Собрать чемодан",
-                "Положить в чемодан все необходимое", TaskStatus.DONE, firstEpic.getId());
+                "Положить в чемодан все необходимое", TaskStatus.DONE, firstEpic.getId(),
+                LocalDateTime.of(2022, 3, 15, 10, 0), 4);
         SubTask secondSubTask = new SubTask("Забрать сноуборд",
-                "Забрать свой сноуборд из кладовки", TaskStatus.NEW, firstEpic.getId());
+                "Забрать свой сноуборд из кладовки", TaskStatus.NEW, firstEpic.getId(),
+                LocalDateTime.of(2022, 3, 16, 10, 0), 4);
         // Добавление субтасок в трекер задач
         inMemoryManager.addSubTaskIntoEpic(firstSubTask);
         inMemoryManager.addSubTaskIntoEpic(secondSubTask);
@@ -544,14 +458,25 @@ class InMemoryManagerTest {
         inMemoryManager.addEpic(firstEpic);
         // Создание субтасок к эпику, обе подзадачи со статусом DONE и NEW
         SubTask firstSubTask = new SubTask("Собрать чемодан",
-                "Положить в чемодан все необходимое", TaskStatus.IN_PROGRESS, firstEpic.getId());
+                "Положить в чемодан все необходимое", TaskStatus.IN_PROGRESS, firstEpic.getId(),
+                LocalDateTime.of(2022, 3, 15, 10, 0), 4);
         SubTask secondSubTask = new SubTask("Забрать сноуборд",
-                "Забрать свой сноуборд из кладовки", TaskStatus.IN_PROGRESS, firstEpic.getId());
+                "Забрать свой сноуборд из кладовки", TaskStatus.IN_PROGRESS, firstEpic.getId(),
+                LocalDateTime.of(2022, 3, 16, 10, 0), 4);
         // Добавление субтасок в трекер задач
         inMemoryManager.addSubTaskIntoEpic(firstSubTask);
         inMemoryManager.addSubTaskIntoEpic(secondSubTask);
         // Проверка статуса эпика, если у эпика две новые подзадачи
         assertEquals(TaskStatus.IN_PROGRESS, firstEpic.getStatus());
+    }
+
+    // Проверка метода deleteTaskById некорректный id, проверка удаления задачи, подзадачи и эпика
+    @Test
+    public void shouldDeleteTaskByIncorrectId() {
+        // Создание менеджера
+        Manager inMemoryManager = Managers.getDefault();
+        // Удаление задачи из трекера по неверному id
+        assertFalse(inMemoryManager.deleteTaskById("1"));
     }
 
     // Провека метода getAllTasks, пустой список задач
@@ -563,14 +488,16 @@ class InMemoryManagerTest {
         assertEquals(0, inMemoryManager.getAllTasks().size());
     }
 
-    // Провека метода getAllTasks, стандартная реализация
+    // Провека метода getAllTasks
     @Test
     public void shouldReturnTaskList() {
         // Созадние менеджера
         Manager inMemoryManager = Managers.getDefault();
         // Создание задач
-        Task firstTask = new Task("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW);
-        Task secondTask = new Task("Купить хлеб", "Нужен хлеб \"Литовский\"", TaskStatus.DONE);
+        Task firstTask = new Task("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW,
+                LocalDateTime.of(2022, 3, 15, 10, 0), 3);
+        Task secondTask = new Task("Купить хлеб", "Нужен хлеб \"Литовский\"", TaskStatus.DONE,
+                LocalDateTime.of(2022, 3, 16, 10, 0), 3);
         // Добавлние задач в трекер
         inMemoryManager.addTask(firstTask);
         inMemoryManager.addTask(secondTask);
@@ -583,15 +510,19 @@ class InMemoryManagerTest {
                 assertEquals("Помыть посуду", task.getName());
                 assertEquals("Помыть тарелки и вилки", task.getDescription());
                 assertEquals(TaskStatus.NEW, task.getStatus());
+                assertEquals("2022-03-15T10:00", task.getStartTime().toString());
+                assertEquals(3, task.getDuration());
             } else if (task.getId().equals(secondTask.getId())) {
                 assertEquals("Купить хлеб", task.getName());
                 assertEquals("Нужен хлеб \"Литовский\"", task.getDescription());
                 assertEquals(TaskStatus.DONE, task.getStatus());
+                assertEquals("2022-03-16T10:00", task.getStartTime().toString());
+                assertEquals(3, task.getDuration());
             }
         }
     }
 
-    // Провека метода getAllEpics, пустой список задач
+    // Провека метода getAllEpics, пустой список эпиков
     @Test
     public void shouldReturnZeroWhenEpicListIsEmpty() {
         // Созадние менеджера
@@ -648,14 +579,17 @@ class InMemoryManagerTest {
         inMemoryManager.addEpic(secondEpic);
         // Создание подзадач к первому эпику
         SubTask firstEpicFirstSubTask = new SubTask("Собрать чемодан",
-                "Положить в чемодан все необходимое", TaskStatus.DONE, firstEpic.getId());
+                "Положить в чемодан все необходимое", TaskStatus.DONE, firstEpic.getId(),
+                LocalDateTime.of(2022, 3, 15, 10, 0), 4);
         // Добавление подзадачи в трекер
         inMemoryManager.addSubTaskIntoEpic(firstEpicFirstSubTask);
         // Создание подзадач ко второму эпику
         SubTask secondEpicFirstSubTask = new SubTask("Изучить Дженерики",
-                "Изучить случаи применения дженериков", TaskStatus.NEW, secondEpic.getId());
+                "Изучить случаи применения дженериков", TaskStatus.NEW, secondEpic.getId(),
+                LocalDateTime.of(2022, 4, 21, 10, 0), 4);
         SubTask secondEpicSecondSubTask = new SubTask("Изучить полиморфизм",
-                "Изучить перегрузку методов", TaskStatus.NEW, secondEpic.getId());
+                "Изучить перегрузку методов", TaskStatus.NEW, secondEpic.getId(),
+                LocalDateTime.of(2022, 4, 22, 10, 0), 4);
         // Добавление подзадач второго эпика
         inMemoryManager.addSubTaskIntoEpic(secondEpicFirstSubTask);
         inMemoryManager.addSubTaskIntoEpic(secondEpicSecondSubTask);
@@ -669,59 +603,22 @@ class InMemoryManagerTest {
                 assertEquals("Положить в чемодан все необходимое", subTask.getDescription());
                 assertEquals(TaskStatus.DONE, subTask.getStatus());
                 assertEquals(firstEpic.getId(), subTask.getEpicId());
+                assertEquals("2022-03-15T10:00", subTask.getStartTime().toString());
+                assertEquals(4, subTask.getDuration());
             } else if (subTask.getId().equals(secondEpicFirstSubTask.getId())) {
                 assertEquals("Изучить Дженерики", subTask.getName());
                 assertEquals("Изучить случаи применения дженериков", subTask.getDescription());
                 assertEquals(TaskStatus.NEW, subTask.getStatus());
                 assertEquals(secondEpic.getId(), subTask.getEpicId());
+                assertEquals("2022-04-21T10:00", subTask.getStartTime().toString());
+                assertEquals(4, subTask.getDuration());
             } else {
                 assertEquals("Изучить полиморфизм", subTask.getName());
                 assertEquals("Изучить перегрузку методов", subTask.getDescription());
                 assertEquals(TaskStatus.NEW, subTask.getStatus());
                 assertEquals(secondEpic.getId(), subTask.getEpicId());
-            }
-        }
-    }
-
-    // Провека метода getSubTaskListFromEpicById, стандартная реализация
-    @Test
-    public void shouldReturnSubTaskListByEpicId() {
-        // Созадние менеджера
-        Manager inMemoryManager = Managers.getDefault();
-        // Создание эпиков
-        Epic firstEpic = new Epic("Переезд", "Собрать все вещи");
-        Epic secondEpic = new Epic("Изучение Java", "Изучить язык программирования Java");
-        // Добавление эпиков в трекер
-        inMemoryManager.addEpic(firstEpic);
-        inMemoryManager.addEpic(secondEpic);
-        // Создание подзадач к первому эпику
-        SubTask firstEpicFirstSubTask = new SubTask("Собрать чемодан",
-                "Положить в чемодан все необходимое", TaskStatus.DONE, firstEpic.getId());
-        // Добавление подзадачи в трекер
-        inMemoryManager.addSubTaskIntoEpic(firstEpicFirstSubTask);
-        // Создание подзадач ко второму эпику
-        SubTask secondEpicFirstSubTask = new SubTask("Изучить Дженерики",
-                "Изучить случаи применения дженериков", TaskStatus.NEW, secondEpic.getId());
-        SubTask secondEpicSecondSubTask = new SubTask("Изучить полиморфизм",
-                "Изучить перегрузку методов", TaskStatus.NEW, secondEpic.getId());
-        // Добавление подзадач второго эпика
-        inMemoryManager.addSubTaskIntoEpic(secondEpicFirstSubTask);
-        inMemoryManager.addSubTaskIntoEpic(secondEpicSecondSubTask);
-        // Проверка, что у второго эпика 2 подзадачи
-        assertEquals(2, inMemoryManager.getSubTaskListFromEpicById(secondEpic.getId()).size());
-        // Проверка списка подзадач определенного эпика
-        ArrayList<SubTask> subTasks = inMemoryManager.getSubTaskListFromEpicById(secondEpic.getId());
-        for (SubTask subTask : subTasks) {
-            if (subTask.getId().equals(secondEpicFirstSubTask.getId())) {
-                assertEquals("Изучить Дженерики", subTask.getName());
-                assertEquals("Изучить случаи применения дженериков", subTask.getDescription());
-                assertEquals(TaskStatus.NEW, subTask.getStatus());
-                assertEquals(secondEpic.getId(), subTask.getEpicId());
-            } else {
-                assertEquals("Изучить полиморфизм", subTask.getName());
-                assertEquals("Изучить перегрузку методов", subTask.getDescription());
-                assertEquals(TaskStatus.NEW, subTask.getStatus());
-                assertEquals(secondEpic.getId(), subTask.getEpicId());
+                assertEquals("2022-04-22T10:00", subTask.getStartTime().toString());
+                assertEquals(4, subTask.getDuration());
             }
         }
     }
@@ -767,8 +664,10 @@ class InMemoryManagerTest {
         // Созадние менеджера
         Manager inMemoryManager = Managers.getDefault();
         // Создание задач
-        Task firstTask = new Task("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW);
-        Task secondTask = new Task("Купить хлеб", "Нужен хлеб \"Литовский\"", TaskStatus.DONE);
+        Task firstTask = new Task("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW,
+                LocalDateTime.of(2022, 3, 15, 10, 0), 3);
+        Task secondTask = new Task("Купить хлеб", "Нужен хлеб \"Литовский\"", TaskStatus.DONE,
+                LocalDateTime.of(2022, 3, 16, 10, 0), 3);
         // Добавлние задач в трекер
         inMemoryManager.addTask(firstTask);
         inMemoryManager.addTask(secondTask);
@@ -782,10 +681,14 @@ class InMemoryManagerTest {
                 assertEquals("Купить хлеб", history.get(i).getName());
                 assertEquals("Нужен хлеб \"Литовский\"", history.get(i).getDescription());
                 assertEquals(TaskStatus.DONE, history.get(i).getStatus());
+                assertEquals("2022-03-16T10:00", history.get(i).getStartTime().toString());
+                assertEquals(3, history.get(i).getDuration());
             } else if (i == 1) {
                 assertEquals("Помыть посуду", history.get(i).getName());
                 assertEquals("Помыть тарелки и вилки", history.get(i).getDescription());
                 assertEquals(TaskStatus.NEW, history.get(i).getStatus());
+                assertEquals("2022-03-15T10:00", history.get(i).getStartTime().toString());
+                assertEquals(3, history.get(i).getDuration());
             }
         }
     }
@@ -805,8 +708,10 @@ class InMemoryManagerTest {
         // Созадние менеджера
         Manager inMemoryManager = Managers.getDefault();
         // Создание задач
-        Task firstTask = new Task("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW);
-        Task secondTask = new Task("Купить хлеб", "Нужен хлеб \"Литовский\"", TaskStatus.DONE);
+        Task firstTask = new Task("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW,
+                LocalDateTime.of(2022, 3, 15, 10, 0), 3);
+        Task secondTask = new Task("Купить хлеб", "Нужен хлеб \"Литовский\"", TaskStatus.DONE,
+                LocalDateTime.of(2022, 3, 16, 10, 0), 3);
         // Добавлние задач в трекер
         inMemoryManager.addTask(firstTask);
         inMemoryManager.addTask(secondTask);
@@ -822,10 +727,14 @@ class InMemoryManagerTest {
                 assertEquals("Помыть посуду", history.get(i).getName());
                 assertEquals("Помыть тарелки и вилки", history.get(i).getDescription());
                 assertEquals(TaskStatus.NEW, history.get(i).getStatus());
+                assertEquals("2022-03-15T10:00", history.get(i).getStartTime().toString());
+                assertEquals(3, history.get(i).getDuration());
             } else if (i == 1) {
                 assertEquals("Купить хлеб", history.get(i).getName());
                 assertEquals("Нужен хлеб \"Литовский\"", history.get(i).getDescription());
                 assertEquals(TaskStatus.DONE, history.get(i).getStatus());
+                assertEquals("2022-03-16T10:00", history.get(i).getStartTime().toString());
+                assertEquals(3, history.get(i).getDuration());
             }
         }
     }
@@ -836,8 +745,10 @@ class InMemoryManagerTest {
         // Созадние менеджера
         Manager inMemoryManager = Managers.getDefault();
         // Создание задач
-        Task firstTask = new Task("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW);
-        Task secondTask = new Task("Купить хлеб", "Нужен хлеб \"Литовский\"", TaskStatus.DONE);
+        Task firstTask = new Task("Помыть посуду", "Помыть тарелки и вилки", TaskStatus.NEW,
+                LocalDateTime.of(2022, 3, 15, 10, 0), 3);
+        Task secondTask = new Task("Купить хлеб", "Нужен хлеб \"Литовский\"", TaskStatus.DONE,
+                LocalDateTime.of(2022, 3, 16, 10, 0), 3);
         // Добавлние задач в трекер
         inMemoryManager.addTask(firstTask);
         inMemoryManager.addTask(secondTask);
@@ -847,9 +758,11 @@ class InMemoryManagerTest {
         inMemoryManager.addEpic(secondEpic);
         // Создание подзадач ко второму эпику
         SubTask secondEpicFirstSubTask = new SubTask("Изучить Дженерики",
-                "Изучить случаи применения дженериков", TaskStatus.NEW, secondEpic.getId());
+                "Изучить случаи применения дженериков", TaskStatus.NEW, secondEpic.getId(),
+                LocalDateTime.of(2022, 4, 21, 10, 0), 4);
         SubTask secondEpicSecondSubTask = new SubTask("Изучить полиморфизм",
-                "Изучить перегрузку методов", TaskStatus.NEW, secondEpic.getId());
+                "Изучить перегрузку методов", TaskStatus.NEW, secondEpic.getId(),
+                LocalDateTime.of(2022, 4, 22, 10, 0), 4);
         // Добавление подзадач второго эпика
         inMemoryManager.addSubTaskIntoEpic(secondEpicFirstSubTask);
         inMemoryManager.addSubTaskIntoEpic(secondEpicSecondSubTask);
@@ -858,6 +771,7 @@ class InMemoryManagerTest {
         assertEquals(0, inMemoryManager.getAllItems().size());
     }
 
+    // Провека того, что все задачи выводятся в порядке приоритета
     @Test
     public void shouldReturnPrioritizedTasks() {
         // Созадние менеджера
@@ -900,6 +814,7 @@ class InMemoryManagerTest {
         }
     }
 
+    // Проверка пересечения задач
     @Test
     public void shouldThrowExceptionWhenFindIntersectionBetweenTasks() {
         // Создание менеджера
@@ -922,7 +837,7 @@ class InMemoryManagerTest {
                 " т.к. она пересекается во времени с ранее добавленой", ex.getMessage());
     }
 
-    // Проверка, когда пересекается задача и подзадача
+    // Проверка пересечения задачи и подзадачи
     @Test
     public void shouldThrowExceptionWhenFindIntersectionBetweenTaskAndSubtask() {
         // Создание менеджера
@@ -953,6 +868,7 @@ class InMemoryManagerTest {
                 " т.к. она пересекается во времени с ранее добавленой", ex.getMessage());
     }
 
+    // Проверка пересечения подзадач
     @Test
     public void shouldThrowExceptionWhenFindIntersectionBetweenSubtasks() {
         // Создание менеджера
@@ -981,33 +897,7 @@ class InMemoryManagerTest {
                 " т.к. она пересекается во времени с ранее добавленой", ex.getMessage());
     }
 
-    @Test
-    public void shouldThrowExceptionWhenFindIntersectionBetweenSubtasks11111() {
-        // Создание менеджера
-        Manager inMemoryManager = Managers.getDefault();
-        // Создание эпика
-        Epic secondEpic = new Epic("Изучение Java", "Изучить язык программирования Java");
-        // Добавление эпика в трекер
-        inMemoryManager.addEpic(secondEpic);
-        // Создание подзадачи к эпику
-        SubTask secondEpicFirstSubTask = new SubTask("Изучить Дженерики",
-                "Изучить случаи применения дженериков", TaskStatus.NEW, secondEpic.getId(),
-                LocalDateTime.of(2022, 3, 15, 11, 0), 4);
-        SubTask secondEpicSecondSubTask = new SubTask("Изучить полиморфизм",
-                "Изучить перегрузку методов", TaskStatus.NEW, secondEpic.getId());
-        inMemoryManager.addTask(secondEpicFirstSubTask);
-        IllegalArgumentException ex = Assertions.assertThrows(
-                IllegalArgumentException.class,
-                new Executable() {
-                    @Override
-                    public void execute() {
-                        inMemoryManager.addTask(secondEpicSecondSubTask);
-                    }
-                });
-        assertEquals("Ошибка, задача не может быть добавлена в трекер" +
-                " т.к. она пересекается во времени с ранее добавленой", ex.getMessage());
-    }
-
+    // Проверка пересечения, когда задача обновляется
     @Test
     public void shouldThrowExceptionWhenFindIntersectionWhenRenewTask() {
         // Создание менеджера
@@ -1027,6 +917,39 @@ class InMemoryManagerTest {
                     @Override
                     public void execute() {
                         inMemoryManager.renewTaskById(firstTask.getId(), secondTask);
+                    }
+                });
+        assertEquals("Ошибка, задача не может быть добавлена в трекер" +
+                " т.к. она пересекается во времени с ранее добавленой", ex.getMessage());
+    }
+
+    // Проверка пересечения, когда подзадача обновляется
+    @Test
+    public void shouldThrowExceptionWhenFindIntersectionWhenRenewSubTask() {
+        // Создание менеджера
+        Manager inMemoryManager = Managers.getDefault();
+        // Создание эпика
+        Epic secondEpic = new Epic("Изучение Java", "Изучить язык программирования Java");
+        // Добавление эпика в трекер
+        inMemoryManager.addEpic(secondEpic);
+        // Создание подзадачи к эпику
+        SubTask secondEpicFirstSubTask = new SubTask("Изучить Дженерики",
+                "Изучить случаи применения дженериков", TaskStatus.NEW, secondEpic.getId(),
+                LocalDateTime.of(2022, 3, 15, 11, 0), 4);
+        // Добавлние первой подзадачи
+        inMemoryManager.addTask(secondEpicFirstSubTask);
+        // Создание новой подзадачи
+        SubTask secondEpicSecondSubTask = new SubTask("Изучить полиморфизм",
+                "Изучить перегрузку методов", TaskStatus.NEW, secondEpic.getId(),
+                LocalDateTime.of(2022, 3, 15, 9, 0), 4);
+        // Обновление подзадачи
+        // Обновление задачи
+        IllegalArgumentException ex = Assertions.assertThrows(
+                IllegalArgumentException.class,
+                new Executable() {
+                    @Override
+                    public void execute() {
+                        inMemoryManager.renewTaskById(secondEpicFirstSubTask.getId(), secondEpicSecondSubTask);
                     }
                 });
         assertEquals("Ошибка, задача не может быть добавлена в трекер" +
