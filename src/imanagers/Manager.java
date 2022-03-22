@@ -27,7 +27,7 @@ public interface Manager {
     // Добавление подзадачи к определенному эпику
     void addSubTaskIntoEpic(SubTask subTask);
 
-    // Получение списка всех сущностей
+    // Получение списка всех сущностей (задач, эпиков и подзадач)
     HashMap<String, Task> getAllItems();
 
     // Получение списка всех задач
@@ -54,13 +54,10 @@ public interface Manager {
     // Обновление задачи по id
     void renewTaskById(String oldId, Task task);
 
-    // Вычисление статуса эпика
-    TaskStatus calcStatus(Epic epic);
-
+    // Получение задач в порядке приоритета
     TreeSet<Task> getPrioritizedTasks();
 
     // История просмотра задач
     List<Task> history();
-
 }
 

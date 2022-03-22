@@ -220,8 +220,7 @@ public class InMemoryManager implements Manager {
     }
 
     // Вычисление статуса эпика
-    @Override
-    public TaskStatus calcStatus(Epic epic) { // Проверен
+    private TaskStatus calcStatus(Epic epic) { // Проверен
         int newStatusNumber = 0;
         int inProgressStatusNumber = 0;
         int doneStatusNumber = 0;
