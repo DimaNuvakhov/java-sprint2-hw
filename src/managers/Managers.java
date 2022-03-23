@@ -17,6 +17,7 @@ public class Managers {
 
     public static Manager getDefaultFileManager() {
         File file = new File("Data.csv");
+        boolean isDelete = file.delete();
         return new FileBackedManager(file);
     }
 }
