@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 
 public class Epic extends Task {
-    private final HashMap<String, SubTask> subTasks;
+    private HashMap<String, SubTask> subTasks;
 
     public Epic(String name, String description) {
         super(name, description, null, LocalDateTime.now(), 0);
@@ -17,9 +17,9 @@ public class Epic extends Task {
         return subTasks;
     }
 
-//    public void setSubTasks(HashMap<String, SubTask> subTasks) {
-//        this.subTasks = subTasks;
-//    }
+    public void setSubTasks(HashMap<String, SubTask> subTasks) {
+        this.subTasks = subTasks;
+    }
 
     @Override
     public String toString() {

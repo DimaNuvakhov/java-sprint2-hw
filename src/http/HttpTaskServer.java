@@ -41,6 +41,7 @@ public class HttpTaskServer {
     static class AddTaskHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange httpExchange) throws IOException {
+            String answer = "";
             String method = httpExchange.getRequestMethod();
             Headers requestHeaders = httpExchange.getRequestHeaders();
             List<String> contentTypeValues = requestHeaders.get("Content-type");
@@ -58,23 +59,22 @@ public class HttpTaskServer {
                 if (body.contains("Task")) {
                     Task task = gson.fromJson(body, Task.class);
                     fileManager.addTask(task);
-                    OutputStream os = httpExchange.getResponseBody();
-                    os.write(task.getId().getBytes(StandardCharsets.UTF_8));
-                    os.close();
+                    answer = task.getId();
                 } else if (body.contains("Epic")) {
                     Epic epic = gson.fromJson(body, Epic.class);
+                    HashMap<String, SubTask> subTasks = new HashMap<>();
+                    epic.setSubTasks(subTasks);
                     fileManager.addEpic(epic);
-                    OutputStream os = httpExchange.getResponseBody();
-                    os.write(epic.getId().getBytes(StandardCharsets.UTF_8));
-                    os.close();
-                } else if (body.contains("SubTask")) {
+                    answer = epic.getId();
+                } else if (body.contains("Sub")) {
                     SubTask subTask = gson.fromJson(body, SubTask.class);
                     fileManager.addSubTaskIntoEpic(subTask);
-                    OutputStream os = httpExchange.getResponseBody();
-                    os.write(subTask.getId().getBytes(StandardCharsets.UTF_8));
-                    os.close();
+                    answer = subTask.getId();
                 }
                 httpExchange.sendResponseHeaders(200, 0);
+                OutputStream os = httpExchange.getResponseBody();
+                os.write(answer.getBytes(StandardCharsets.UTF_8));
+                os.close();
             } else {
                 throw new IllegalArgumentException("Метод запроса не \"POST\"");
             }
