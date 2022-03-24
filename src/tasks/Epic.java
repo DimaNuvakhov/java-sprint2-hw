@@ -17,6 +17,10 @@ public class Epic extends Task {
         return subTasks;
     }
 
+//    public void setSubTasks(HashMap<String, SubTask> subTasks) {
+//        this.subTasks = subTasks;
+//    }
+
     @Override
     public String toString() {
         return "Epic{" +
