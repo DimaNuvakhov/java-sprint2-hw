@@ -34,9 +34,10 @@ public class HttpTaskServer {
         httpServer.createContext("/tasks/epic", new GetEpicHandler());
         httpServer.createContext("/tasks/subTask", new GetSubTaskHandler());
         httpServer.createContext("/tasks/items", new GetAllItemsHandler());
-        httpServer.createContext("/tasks/task1", new GetTaskByIdHandler());
-
-        httpServer.start(); // запускаем сервер
+        httpServer.createContext("/tasks/delete", new DeleteTaskHandler());
+        httpServer.createContext("/tasks/getPrioritized", new GetPrioritizedTasksHandler());
+        httpServer.createContext("/tasks/history", new HistoryHandler());
+        httpServer.start();
         System.out.println("HTTP-сервер запущен на " + PORT + " порту!");
     }
 
@@ -166,14 +167,62 @@ public class HttpTaskServer {
         }
     }
 
-    static class GetTaskByIdHandler implements HttpHandler {
+    static class DeleteTaskHandler implements HttpHandler {
+
+        @Override
+        public void handle(HttpExchange httpExchange) throws IOException {
+            String method = httpExchange.getRequestMethod();
+            if (method.equals("DELETE")) {
+                fileManager.deleteAllTasks();
+                httpExchange.sendResponseHeaders(200, 0);
+                String deteted = "Deleted";
+                OutputStream os = httpExchange.getResponseBody();
+                os.write(deteted.getBytes(StandardCharsets.UTF_8));
+                os.close();
+            } else {
+                throw new IllegalArgumentException("Метод запроса не \"GET\"");
+            }
+        }
+    }
+
+    static class GetPrioritizedTasksHandler implements HttpHandler {
+
         @Override
         public void handle(HttpExchange httpExchange) throws IOException {
             String method = httpExchange.getRequestMethod();
             if (method.equals("GET")) {
-                String path = httpExchange.getRequestURI().getPath();
-//                String id = path.split("/")[2];
-                System.out.println(path);
+                Gson gson = new GsonBuilder()
+                        .setPrettyPrinting()
+                        .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                        .create();
+                String postSerialized = gson.toJson(fileManager.getPrioritizedTasks());
+                httpExchange.sendResponseHeaders(200, 0);
+                OutputStream os = httpExchange.getResponseBody();
+                os.write(postSerialized.getBytes(StandardCharsets.UTF_8));
+                os.close();
+            } else {
+                throw new IllegalArgumentException("Метод запроса не \"GET\"");
+            }
+        }
+    }
+
+    static class HistoryHandler implements HttpHandler {
+
+        @Override
+        public void handle(HttpExchange httpExchange) throws IOException {
+            String method = httpExchange.getRequestMethod();
+            if (method.equals("GET")) {
+                Gson gson = new GsonBuilder()
+                        .setPrettyPrinting()
+                        .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                        .create();
+                String postSerialized = gson.toJson(fileManager.history());
+                httpExchange.sendResponseHeaders(200, 0);
+                OutputStream os = httpExchange.getResponseBody();
+                os.write(postSerialized.getBytes(StandardCharsets.UTF_8));
+                os.close();
+            } else {
+                throw new IllegalArgumentException("Метод запроса не \"GET\"");
             }
         }
     }
