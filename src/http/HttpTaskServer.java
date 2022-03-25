@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class HttpTaskServer {
-    private static final int PORT = 8005;
+    private static final int PORT = 8007;
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     private static Manager fileManager = Managers.getDefaultFileManager();
 
@@ -34,6 +34,8 @@ public class HttpTaskServer {
         httpServer.createContext("/tasks/epic", new GetEpicHandler());
         httpServer.createContext("/tasks/subTask", new GetSubTaskHandler());
         httpServer.createContext("/tasks/items", new GetAllItemsHandler());
+        httpServer.createContext("/tasks/task1", new GetTaskByIdHandler());
+
         httpServer.start(); // запускаем сервер
         System.out.println("HTTP-сервер запущен на " + PORT + " порту!");
     }
@@ -169,7 +171,9 @@ public class HttpTaskServer {
         public void handle(HttpExchange httpExchange) throws IOException {
             String method = httpExchange.getRequestMethod();
             if (method.equals("GET")) {
-
+                String path = httpExchange.getRequestURI().getPath();
+//                String id = path.split("/")[2];
+                System.out.println(path);
             }
         }
     }
