@@ -1,7 +1,5 @@
 package tasks;
 
-import managers.InMemoryManager;
-
 import java.time.LocalDateTime;
 import java.util.HashMap;
 
@@ -10,15 +8,13 @@ public class Epic extends Task {
 
     public Epic(String name, String description) {
         super(name, description, null, LocalDateTime.now(), 0);
-        subTasks = new HashMap<>();
     }
 
     public HashMap<String, SubTask> getSubTasks() {
+        if (subTasks == null) {
+            subTasks = new HashMap<>();
+        }
         return subTasks;
-    }
-
-    public void setSubTasks(HashMap<String, SubTask> subTasks) {
-        this.subTasks = subTasks;
     }
 
     @Override
@@ -28,7 +24,7 @@ public class Epic extends Task {
                 ", name='" + getName() + '\'' +
                 ", description='" + getDescription() + '\'' +
                 ", status=" + getStatus() + '\'' +
-                ", subTasks=" + subTasks +
+                ", subTasks=" + subTasks.size() +
                 ", startTime=" + getStartTime() +
                 ", duration=" + getDuration() +
                 '}';

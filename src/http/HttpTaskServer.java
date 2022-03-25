@@ -19,7 +19,6 @@ import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
 
 public class HttpTaskServer {
@@ -34,11 +33,13 @@ public class HttpTaskServer {
         httpServer.createContext("/tasks/task", new GetTaskHandler());
         httpServer.createContext("/tasks/epic", new GetEpicHandler());
         httpServer.createContext("/tasks/subTask", new GetSubTaskHandler());
+        httpServer.createContext("/tasks/items", new GetAllItemsHandler());
         httpServer.start(); // запускаем сервер
         System.out.println("HTTP-сервер запущен на " + PORT + " порту!");
     }
 
     static class AddTaskHandler implements HttpHandler {
+
         @Override
         public void handle(HttpExchange httpExchange) throws IOException {
             String answer = "";
@@ -50,23 +51,21 @@ public class HttpTaskServer {
             } else {
                 throw new IllegalArgumentException("Тело запроса передано не в формате JSON");
             }
-            if ("POST".equals(method)) {
+            if (method.equals("POST")) {
                 InputStream inputStream = httpExchange.getRequestBody();
                 String body = new String(inputStream.readAllBytes(), DEFAULT_CHARSET);
-                Gson gson = new GsonBuilder().setPrettyPrinting().
+                Gson gson = new GsonBuilder().
                         registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).
                         create();
-                if (body.contains("Task")) {
+                if (body.contains("\"type\":\"Task\"")) {
                     Task task = gson.fromJson(body, Task.class);
                     fileManager.addTask(task);
                     answer = task.getId();
-                } else if (body.contains("Epic")) {
+                } else if (body.contains("\"type\":\"Epic\"")) {
                     Epic epic = gson.fromJson(body, Epic.class);
-                    HashMap<String, SubTask> subTasks = new HashMap<>();
-                    epic.setSubTasks(subTasks);
                     fileManager.addEpic(epic);
                     answer = epic.getId();
-                } else if (body.contains("Sub")) {
+                } else if (body.contains("\"type\":\"Sub\"")) {
                     SubTask subTask = gson.fromJson(body, SubTask.class);
                     fileManager.addSubTaskIntoEpic(subTask);
                     answer = subTask.getId();
@@ -82,14 +81,19 @@ public class HttpTaskServer {
     }
 
     static class GetTaskHandler implements HttpHandler {
+
         @Override
         public void handle(HttpExchange httpExchange) throws IOException {
             String method = httpExchange.getRequestMethod();
-            if ("GET".equals(method)) {
-                String getTasks = fileManager.getAllTasks().toString();
+            if (method.equals("GET")) {
+                Gson gson = new GsonBuilder()
+                        .setPrettyPrinting()
+                        .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                        .create();
+                String postSerialized = gson.toJson(fileManager.getAllTasks());
                 httpExchange.sendResponseHeaders(200, 0);
                 OutputStream os = httpExchange.getResponseBody();
-                os.write(getTasks.getBytes(StandardCharsets.UTF_8));
+                os.write(postSerialized.getBytes(StandardCharsets.UTF_8));
                 os.close();
             } else {
                 throw new IllegalArgumentException("Метод запроса не \"GET\"");
@@ -98,14 +102,19 @@ public class HttpTaskServer {
     }
 
     static class GetEpicHandler implements HttpHandler {
+
         @Override
         public void handle(HttpExchange httpExchange) throws IOException {
             String method = httpExchange.getRequestMethod();
-            if ("GET".equals(method)) {
-                String getTasks = fileManager.getAllEpics().toString();
+            if (method.equals("GET")) {
+                Gson gson = new GsonBuilder()
+                        .setPrettyPrinting()
+                        .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                        .create();
+                String postSerialized = gson.toJson(fileManager.getAllEpics());
                 httpExchange.sendResponseHeaders(200, 0);
                 OutputStream os = httpExchange.getResponseBody();
-                os.write(getTasks.getBytes(StandardCharsets.UTF_8));
+                os.write(postSerialized.getBytes(StandardCharsets.UTF_8));
                 os.close();
             } else {
                 throw new IllegalArgumentException("Метод запроса не \"GET\"");
@@ -114,17 +123,53 @@ public class HttpTaskServer {
     }
 
     static class GetSubTaskHandler implements HttpHandler {
+
         @Override
         public void handle(HttpExchange httpExchange) throws IOException {
             String method = httpExchange.getRequestMethod();
-            if ("GET".equals(method)) {
-                String getTasks = fileManager.getAllSubtasks().toString();
+            if (method.equals("GET")) {
+                Gson gson = new GsonBuilder()
+                        .setPrettyPrinting()
+                        .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                        .create();
+                String postSerialized = gson.toJson(fileManager.getAllSubtasks());
                 httpExchange.sendResponseHeaders(200, 0);
                 OutputStream os = httpExchange.getResponseBody();
-                os.write(getTasks.getBytes(StandardCharsets.UTF_8));
+                os.write(postSerialized.getBytes(StandardCharsets.UTF_8));
                 os.close();
             } else {
                 throw new IllegalArgumentException("Метод запроса не \"GET\"");
+            }
+        }
+    }
+
+    static class GetAllItemsHandler implements HttpHandler {
+
+        @Override
+        public void handle(HttpExchange httpExchange) throws IOException {
+            String method = httpExchange.getRequestMethod();
+            if (method.equals("GET")) {
+                Gson gson = new GsonBuilder()
+                        .setPrettyPrinting()
+                        .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                        .create();
+                String postSerialized = gson.toJson(fileManager.getAllItems());
+                httpExchange.sendResponseHeaders(200, 0);
+                OutputStream os = httpExchange.getResponseBody();
+                os.write(postSerialized.getBytes(StandardCharsets.UTF_8));
+                os.close();
+            } else {
+                throw new IllegalArgumentException("Метод запроса не \"GET\"");
+            }
+        }
+    }
+
+    static class GetTaskByIdHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange httpExchange) throws IOException {
+            String method = httpExchange.getRequestMethod();
+            if (method.equals("GET")) {
+
             }
         }
     }

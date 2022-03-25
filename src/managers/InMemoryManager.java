@@ -54,6 +54,8 @@ public class InMemoryManager implements Manager {
             epic.setStatus(calcStatus(epic));
             epic.setStartTime(calcStartTime(epic));
             epic.setDuration(calcDuration(epic));
+        } else {
+            throw new IllegalArgumentException("Эпика с таким id нет в трекере");
         }
     }
 
