@@ -22,26 +22,25 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class HttpTaskServer {
-    private static final int PORT = 8007;
+    private static final int PORT = 8008;
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     private static Manager fileManager = Managers.getDefaultFileManager();
 
     public static void main(String[] args) throws IOException {
         HttpServer httpServer = HttpServer.create();
         httpServer.bind(new InetSocketAddress(PORT), 0);
-        httpServer.createContext("/tasks/add", new AddTaskHandler());
-        httpServer.createContext("/tasks/task", new GetTaskHandler());
-        httpServer.createContext("/tasks/epic", new GetEpicHandler());
-        httpServer.createContext("/tasks/subTask", new GetSubTaskHandler());
+        httpServer.createContext("/tasks/task", new TaskHandler());
+        httpServer.createContext("/tasks/epic", new TaskHandler());
+        httpServer.createContext("/tasks/subTask", new TaskHandler());
         httpServer.createContext("/tasks/items", new GetAllItemsHandler());
-        httpServer.createContext("/tasks/delete", new DeleteTaskHandler());
+        httpServer.createContext("/tasks/deleteAll", new DeleteAllTaskHandler());
         httpServer.createContext("/tasks/getPrioritized", new GetPrioritizedTasksHandler());
         httpServer.createContext("/tasks/history", new HistoryHandler());
         httpServer.start();
         System.out.println("HTTP-сервер запущен на " + PORT + " порту!");
     }
 
-    static class AddTaskHandler implements HttpHandler {
+    static class TaskHandler implements HttpHandler {
 
         @Override
         public void handle(HttpExchange httpExchange) throws IOException {
@@ -49,100 +48,149 @@ public class HttpTaskServer {
             String method = httpExchange.getRequestMethod();
             Headers requestHeaders = httpExchange.getRequestHeaders();
             List<String> contentTypeValues = requestHeaders.get("Content-type");
+            String query = httpExchange.getRequestURI().getQuery();
             if ((contentTypeValues != null) && (contentTypeValues.contains("application/json"))) {
                 System.out.println("Тело запроса передаётся в формате JSON");
             } else {
                 throw new IllegalArgumentException("Тело запроса передано не в формате JSON");
             }
-            if (method.equals("POST")) {
-                InputStream inputStream = httpExchange.getRequestBody();
-                String body = new String(inputStream.readAllBytes(), DEFAULT_CHARSET);
-                Gson gson = new GsonBuilder().
-                        registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).
-                        create();
-                if (body.contains("\"type\":\"Task\"")) {
-                    Task task = gson.fromJson(body, Task.class);
-                    fileManager.addTask(task);
-                    answer = task.getId();
-                } else if (body.contains("\"type\":\"Epic\"")) {
-                    Epic epic = gson.fromJson(body, Epic.class);
-                    fileManager.addEpic(epic);
-                    answer = epic.getId();
-                } else if (body.contains("\"type\":\"Sub\"")) {
-                    SubTask subTask = gson.fromJson(body, SubTask.class);
-                    fileManager.addSubTaskIntoEpic(subTask);
-                    answer = subTask.getId();
-                }
-                httpExchange.sendResponseHeaders(200, 0);
-                OutputStream os = httpExchange.getResponseBody();
-                os.write(answer.getBytes(StandardCharsets.UTF_8));
-                os.close();
-            } else {
-                throw new IllegalArgumentException("Метод запроса не \"POST\"");
+            InputStream inputStream = httpExchange.getRequestBody();
+            String body = new String(inputStream.readAllBytes(), DEFAULT_CHARSET);
+            Gson gson = new GsonBuilder().
+                    registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
+            Task task = gson.fromJson(body, Task.class);
+            switch (method) {
+                case "POST":
+                    if (query == null) {
+                        fileManager.addTask(task);
+                        answer = gson.toJson(task.getId());
+                    } else {
+                         String id = query.split("=")[1];
+                        fileManager.renewTaskById(id, task);
+                        answer = gson.toJson(fileManager.getAllTasks());
+                    }
+                    break;
+                case "GET":
+                    answer = gson.toJson(fileManager.getAllTasks());
+                    break;
+                case "DELETE":
+                    if (query != null) {
+                        String id = query.split("=")[1];
+                        answer = gson.toJson(fileManager.deleteTaskById(id));
+                    }
+                    break;
+                default:
+                    answer = "Вы использовали неизвестный метод!";
             }
+            httpExchange.sendResponseHeaders(200, 0);
+            OutputStream os = httpExchange.getResponseBody();
+            os.write(answer.getBytes(StandardCharsets.UTF_8));
+            os.close();
         }
     }
 
-    static class GetTaskHandler implements HttpHandler {
+    static class EpicHandler implements HttpHandler {
 
         @Override
         public void handle(HttpExchange httpExchange) throws IOException {
+            String answer = "";
             String method = httpExchange.getRequestMethod();
-            if (method.equals("GET")) {
-                Gson gson = new GsonBuilder()
-                        .setPrettyPrinting()
-                        .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-                        .create();
-                String postSerialized = gson.toJson(fileManager.getAllTasks());
-                httpExchange.sendResponseHeaders(200, 0);
-                OutputStream os = httpExchange.getResponseBody();
-                os.write(postSerialized.getBytes(StandardCharsets.UTF_8));
-                os.close();
+            Headers requestHeaders = httpExchange.getRequestHeaders();
+            List<String> contentTypeValues = requestHeaders.get("Content-type");
+            String query = httpExchange.getRequestURI().getQuery();
+            System.out.println(query);
+            if ((contentTypeValues != null) && (contentTypeValues.contains("application/json"))) {
+                System.out.println("Тело запроса передаётся в формате JSON");
             } else {
-                throw new IllegalArgumentException("Метод запроса не \"GET\"");
+                throw new IllegalArgumentException("Тело запроса передано не в формате JSON");
             }
+            InputStream inputStream = httpExchange.getRequestBody();
+            String body = new String(inputStream.readAllBytes(), DEFAULT_CHARSET);
+            Gson gson = new GsonBuilder().
+                    registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
+            Epic epic = gson.fromJson(body, Epic.class);
+            switch (method) {
+                case "POST":
+                    if (query == null) {
+                        fileManager.addEpic(epic);
+                        answer = gson.toJson(epic.getId());
+                    } else {
+                        String id = query.split("=")[1];
+                        fileManager.renewTaskById(id, epic);
+                        answer = gson.toJson(fileManager.getAllEpics());
+                    }
+                    break;
+                case "GET":
+                    answer = gson.toJson(fileManager.getAllEpics());
+                    break;
+                case "DELETE":
+                    if (query != null) {
+                        String id = query.split("=")[1];
+                        answer = gson.toJson(fileManager.deleteTaskById(id));
+                    }
+                    break;
+                default:
+                    answer = gson.toJson("Вы использовали неизвестный метод!");
+            }
+            httpExchange.sendResponseHeaders(200, 0);
+            OutputStream os = httpExchange.getResponseBody();
+            os.write(answer.getBytes(StandardCharsets.UTF_8));
+            os.close();
         }
     }
 
-    static class GetEpicHandler implements HttpHandler {
+    static class SubTaskHandler implements HttpHandler {
 
         @Override
         public void handle(HttpExchange httpExchange) throws IOException {
+            String answer = "";
             String method = httpExchange.getRequestMethod();
-            if (method.equals("GET")) {
-                Gson gson = new GsonBuilder()
-                        .setPrettyPrinting()
-                        .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-                        .create();
-                String postSerialized = gson.toJson(fileManager.getAllEpics());
-                httpExchange.sendResponseHeaders(200, 0);
-                OutputStream os = httpExchange.getResponseBody();
-                os.write(postSerialized.getBytes(StandardCharsets.UTF_8));
-                os.close();
+            Headers requestHeaders = httpExchange.getRequestHeaders();
+            List<String> contentTypeValues = requestHeaders.get("Content-type");
+            String query = httpExchange.getRequestURI().getQuery();
+            System.out.println(query);
+            if ((contentTypeValues != null) && (contentTypeValues.contains("application/json"))) {
+                System.out.println("Тело запроса передаётся в формате JSON");
             } else {
-                throw new IllegalArgumentException("Метод запроса не \"GET\"");
+                throw new IllegalArgumentException("Тело запроса передано не в формате JSON");
             }
-        }
-    }
-
-    static class GetSubTaskHandler implements HttpHandler {
-
-        @Override
-        public void handle(HttpExchange httpExchange) throws IOException {
-            String method = httpExchange.getRequestMethod();
-            if (method.equals("GET")) {
-                Gson gson = new GsonBuilder()
-                        .setPrettyPrinting()
-                        .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-                        .create();
-                String postSerialized = gson.toJson(fileManager.getAllSubtasks());
-                httpExchange.sendResponseHeaders(200, 0);
-                OutputStream os = httpExchange.getResponseBody();
-                os.write(postSerialized.getBytes(StandardCharsets.UTF_8));
-                os.close();
-            } else {
-                throw new IllegalArgumentException("Метод запроса не \"GET\"");
+            InputStream inputStream = httpExchange.getRequestBody();
+            String body = new String(inputStream.readAllBytes(), DEFAULT_CHARSET);
+            Gson gson = new GsonBuilder().
+                    registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
+            SubTask subTask = gson.fromJson(body, SubTask.class);
+            switch (method) {
+                case "POST":
+                    if (query == null) {
+                        fileManager.addSubTaskIntoEpic(subTask);
+                        answer = gson.toJson(subTask.getId());
+                    } else {
+                        String id = query.split("=")[1];
+                        fileManager.renewTaskById(id, subTask);
+                        answer = gson.toJson(fileManager.getAllEpics());
+                    }
+                    break;
+                case "GET":
+                    if (query == null) {
+                        answer = gson.toJson(fileManager.getAllSubtasks());
+                    } else {
+                        String id = query.split("=")[1];
+                        answer = gson.toJson(fileManager.getSubTaskListFromEpicById(id));
+                    }
+                    break;
+                case "DELETE":
+                    if (query != null) {
+                        String id = query.split("=")[1];
+                        answer = gson.toJson(fileManager.deleteTaskById(id));
+                    }
+                    break;
+                default:
+                    answer = gson.toJson("Вы использовали неизвестный метод!");
             }
+            httpExchange.sendResponseHeaders(200, 0);
+            OutputStream os = httpExchange.getResponseBody();
+            os.write(answer.getBytes(StandardCharsets.UTF_8));
+            os.close();
         }
     }
 
@@ -150,38 +198,42 @@ public class HttpTaskServer {
 
         @Override
         public void handle(HttpExchange httpExchange) throws IOException {
+            String answer = "";
             String method = httpExchange.getRequestMethod();
+            Gson gson = new GsonBuilder()
+                    .setPrettyPrinting()
+                    .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
             if (method.equals("GET")) {
-                Gson gson = new GsonBuilder()
-                        .setPrettyPrinting()
-                        .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-                        .create();
-                String postSerialized = gson.toJson(fileManager.getAllItems());
-                httpExchange.sendResponseHeaders(200, 0);
-                OutputStream os = httpExchange.getResponseBody();
-                os.write(postSerialized.getBytes(StandardCharsets.UTF_8));
-                os.close();
+                answer = gson.toJson(fileManager.getAllItems());
             } else {
-                throw new IllegalArgumentException("Метод запроса не \"GET\"");
+                answer = gson.toJson("Вы использовали неизвестный метод!");
             }
+            httpExchange.sendResponseHeaders(200, 0);
+            OutputStream os = httpExchange.getResponseBody();
+            os.write(answer.getBytes(StandardCharsets.UTF_8));
+            os.close();
         }
     }
 
-    static class DeleteTaskHandler implements HttpHandler {
+    static class DeleteAllTaskHandler implements HttpHandler {
 
         @Override
         public void handle(HttpExchange httpExchange) throws IOException {
+            String answer = "";
             String method = httpExchange.getRequestMethod();
+            Gson gson = new GsonBuilder()
+                    .setPrettyPrinting()
+                    .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
             if (method.equals("DELETE")) {
                 fileManager.deleteAllTasks();
-                httpExchange.sendResponseHeaders(200, 0);
-                String deteted = "Deleted";
-                OutputStream os = httpExchange.getResponseBody();
-                os.write(deteted.getBytes(StandardCharsets.UTF_8));
-                os.close();
+                answer =  gson.toJson("Все задачи удалены");
             } else {
-                throw new IllegalArgumentException("Метод запроса не \"GET\"");
+                answer = gson.toJson("Вы использовали неизвестный метод!");
             }
+            httpExchange.sendResponseHeaders(200, 0);
+            OutputStream os = httpExchange.getResponseBody();
+            os.write(answer.getBytes(StandardCharsets.UTF_8));
+            os.close();
         }
     }
 
@@ -189,20 +241,20 @@ public class HttpTaskServer {
 
         @Override
         public void handle(HttpExchange httpExchange) throws IOException {
+            String answer = "";
             String method = httpExchange.getRequestMethod();
+            Gson gson = new GsonBuilder()
+                    .setPrettyPrinting()
+                    .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
             if (method.equals("GET")) {
-                Gson gson = new GsonBuilder()
-                        .setPrettyPrinting()
-                        .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-                        .create();
-                String postSerialized = gson.toJson(fileManager.getPrioritizedTasks());
-                httpExchange.sendResponseHeaders(200, 0);
-                OutputStream os = httpExchange.getResponseBody();
-                os.write(postSerialized.getBytes(StandardCharsets.UTF_8));
-                os.close();
+                answer = gson.toJson(fileManager.getPrioritizedTasks());
             } else {
-                throw new IllegalArgumentException("Метод запроса не \"GET\"");
+                answer = gson.toJson("Вы использовали неизвестный метод!");
             }
+            httpExchange.sendResponseHeaders(200, 0);
+            OutputStream os = httpExchange.getResponseBody();
+            os.write(answer.getBytes(StandardCharsets.UTF_8));
+            os.close();
         }
     }
 
@@ -210,20 +262,25 @@ public class HttpTaskServer {
 
         @Override
         public void handle(HttpExchange httpExchange) throws IOException {
+            String answer = "";
             String method = httpExchange.getRequestMethod();
+            String query = httpExchange.getRequestURI().getQuery();
+            Gson gson = new GsonBuilder()
+                    .setPrettyPrinting()
+                    .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
             if (method.equals("GET")) {
-                Gson gson = new GsonBuilder()
-                        .setPrettyPrinting()
-                        .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-                        .create();
-                String postSerialized = gson.toJson(fileManager.history());
-                httpExchange.sendResponseHeaders(200, 0);
-                OutputStream os = httpExchange.getResponseBody();
-                os.write(postSerialized.getBytes(StandardCharsets.UTF_8));
-                os.close();
+                if (query != null) {
+                    String id = query.split("=")[1];
+                    fileManager.getTaskById(id);
+                    answer = gson.toJson(fileManager.history());
+                }
             } else {
-                throw new IllegalArgumentException("Метод запроса не \"GET\"");
+                answer = gson.toJson("Вы использовали неизвестный метод!");
             }
+            httpExchange.sendResponseHeaders(200, 0);
+            OutputStream os = httpExchange.getResponseBody();
+            os.write(answer.getBytes(StandardCharsets.UTF_8));
+            os.close();
         }
     }
 }
