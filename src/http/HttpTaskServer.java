@@ -30,8 +30,8 @@ public class HttpTaskServer {
         HttpServer httpServer = HttpServer.create();
         httpServer.bind(new InetSocketAddress(PORT), 0);
         httpServer.createContext("/tasks/task", new TaskHandler());
-        httpServer.createContext("/tasks/epic", new TaskHandler());
-        httpServer.createContext("/tasks/subTask", new TaskHandler());
+        httpServer.createContext("/tasks/epic", new EpicHandler());
+        httpServer.createContext("/tasks/subTask", new SubTaskHandler());
         httpServer.createContext("/tasks/items", new GetAllItemsHandler());
         httpServer.createContext("/tasks/deleteAll", new DeleteAllTaskHandler());
         httpServer.createContext("/tasks/getPrioritized", new GetPrioritizedTasksHandler());
@@ -46,14 +46,7 @@ public class HttpTaskServer {
         public void handle(HttpExchange httpExchange) throws IOException {
             String answer = "";
             String method = httpExchange.getRequestMethod();
-            Headers requestHeaders = httpExchange.getRequestHeaders();
-            List<String> contentTypeValues = requestHeaders.get("Content-type");
             String query = httpExchange.getRequestURI().getQuery();
-            if ((contentTypeValues != null) && (contentTypeValues.contains("application/json"))) {
-                System.out.println("Тело запроса передаётся в формате JSON");
-            } else {
-                throw new IllegalArgumentException("Тело запроса передано не в формате JSON");
-            }
             InputStream inputStream = httpExchange.getRequestBody();
             String body = new String(inputStream.readAllBytes(), DEFAULT_CHARSET);
             Gson gson = new GsonBuilder().
@@ -65,9 +58,9 @@ public class HttpTaskServer {
                         fileManager.addTask(task);
                         answer = gson.toJson(task.getId());
                     } else {
-                         String id = query.split("=")[1];
+                        String id = query.split("=")[1];
                         fileManager.renewTaskById(id, task);
-                        answer = gson.toJson(fileManager.getAllTasks());
+                        answer = gson.toJson(task.getId());
                     }
                     break;
                 case "GET":
@@ -95,15 +88,7 @@ public class HttpTaskServer {
         public void handle(HttpExchange httpExchange) throws IOException {
             String answer = "";
             String method = httpExchange.getRequestMethod();
-            Headers requestHeaders = httpExchange.getRequestHeaders();
-            List<String> contentTypeValues = requestHeaders.get("Content-type");
             String query = httpExchange.getRequestURI().getQuery();
-            System.out.println(query);
-            if ((contentTypeValues != null) && (contentTypeValues.contains("application/json"))) {
-                System.out.println("Тело запроса передаётся в формате JSON");
-            } else {
-                throw new IllegalArgumentException("Тело запроса передано не в формате JSON");
-            }
             InputStream inputStream = httpExchange.getRequestBody();
             String body = new String(inputStream.readAllBytes(), DEFAULT_CHARSET);
             Gson gson = new GsonBuilder().
@@ -117,11 +102,16 @@ public class HttpTaskServer {
                     } else {
                         String id = query.split("=")[1];
                         fileManager.renewTaskById(id, epic);
-                        answer = gson.toJson(fileManager.getAllEpics());
+                        answer = gson.toJson(epic.getId());
                     }
                     break;
                 case "GET":
-                    answer = gson.toJson(fileManager.getAllEpics());
+                    if (query == null) {
+                        answer = gson.toJson(fileManager.getAllEpics());
+                    } else {
+                        String id = query.split("=")[1];
+                        answer = gson.toJson(fileManager.getSubTaskListFromEpicById(id));
+                    }
                     break;
                 case "DELETE":
                     if (query != null) {
@@ -145,15 +135,7 @@ public class HttpTaskServer {
         public void handle(HttpExchange httpExchange) throws IOException {
             String answer = "";
             String method = httpExchange.getRequestMethod();
-            Headers requestHeaders = httpExchange.getRequestHeaders();
-            List<String> contentTypeValues = requestHeaders.get("Content-type");
             String query = httpExchange.getRequestURI().getQuery();
-            System.out.println(query);
-            if ((contentTypeValues != null) && (contentTypeValues.contains("application/json"))) {
-                System.out.println("Тело запроса передаётся в формате JSON");
-            } else {
-                throw new IllegalArgumentException("Тело запроса передано не в формате JSON");
-            }
             InputStream inputStream = httpExchange.getRequestBody();
             String body = new String(inputStream.readAllBytes(), DEFAULT_CHARSET);
             Gson gson = new GsonBuilder().
@@ -167,16 +149,11 @@ public class HttpTaskServer {
                     } else {
                         String id = query.split("=")[1];
                         fileManager.renewTaskById(id, subTask);
-                        answer = gson.toJson(fileManager.getAllEpics());
+                        answer = gson.toJson(subTask.getId());
                     }
                     break;
                 case "GET":
-                    if (query == null) {
-                        answer = gson.toJson(fileManager.getAllSubtasks());
-                    } else {
-                        String id = query.split("=")[1];
-                        answer = gson.toJson(fileManager.getSubTaskListFromEpicById(id));
-                    }
+                    answer = gson.toJson(fileManager.getAllSubtasks());
                     break;
                 case "DELETE":
                     if (query != null) {
@@ -226,7 +203,7 @@ public class HttpTaskServer {
                     .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
             if (method.equals("DELETE")) {
                 fileManager.deleteAllTasks();
-                answer =  gson.toJson("Все задачи удалены");
+                answer = gson.toJson("Все задачи удалены");
             } else {
                 answer = gson.toJson("Вы использовали неизвестный метод!");
             }
