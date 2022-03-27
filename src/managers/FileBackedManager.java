@@ -34,7 +34,7 @@ public class FileBackedManager extends InMemoryManager {
     public void getTaskById(String id) {
         super.getTaskById(id);
         if (managerStatus) {
-            save();
+//            save();
         }
     }
 
@@ -58,7 +58,7 @@ public class FileBackedManager extends InMemoryManager {
     public void renewTaskById(String oldId, Task task) {
         super.renewTaskById(oldId, task);
         if (managerStatus) {
-            save();
+//            save();
         }
     }
 
@@ -66,7 +66,7 @@ public class FileBackedManager extends InMemoryManager {
     public void deleteAllTasks() {
         super.deleteAllTasks();
         if (managerStatus) {
-            save();
+//            save();
         }
     }
 
@@ -74,7 +74,7 @@ public class FileBackedManager extends InMemoryManager {
     public Boolean deleteTaskById(String id) {
         boolean isDelete = super.deleteTaskById(id);
         if (managerStatus && isDelete) {
-            save();
+//            save();
         }
         return isDelete;
     }

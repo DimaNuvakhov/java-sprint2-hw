@@ -1,7 +1,5 @@
 package http;
 
-import com.google.gson.Gson;
-
 import java.io.IOException;
 import java.net.http.HttpClient;
 import java.net.URI;
@@ -20,7 +18,7 @@ public class KVTaskClient {
     private String getKey() {
         String answer = "";
         HttpClient client = HttpClient.newHttpClient();
-        URI registerUrl = URI.create("http://localhost:8079/" + "register");
+        URI registerUrl = URI.create("http://localhost:8075/" + "register");
         HttpRequest request = HttpRequest.newBuilder().uri(registerUrl).GET().build();
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -34,7 +32,7 @@ public class KVTaskClient {
     }
 
     public void save(String key, String json) {
-        URI saverUrl = URI.create("http://localhost:8079/" + "save" + "/" + key + "/" + "?API_KEY=" + keyNumber);
+        URI saverUrl = URI.create("http://localhost:8075/" + "save" + "/" + key + "/" + "?API_KEY=" + keyNumber);
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder().uri(saverUrl).
                 POST(HttpRequest.BodyPublishers.ofString(json)).build();
@@ -49,7 +47,7 @@ public class KVTaskClient {
     public String load(String key) {
         String answer = "";
         HttpClient client = HttpClient.newHttpClient();
-        URI loadUrl = URI.create("http://localhost:8079/" + "load" + "/" + key + "/" + "?API_KEY=" + keyNumber);
+        URI loadUrl = URI.create("http://localhost:8075/" + "load" + "/" + key + "/" + "?API_KEY=" + keyNumber);
         HttpRequest request = HttpRequest.newBuilder().uri(loadUrl).GET().build();
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());

@@ -2,18 +2,18 @@ package managers;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import http.KVServer;
+import com.google.gson.reflect.TypeToken;
 import http.KVTaskClient;
 import http.LocalDateTimeAdapter;
 import tasks.Epic;
 import tasks.SubTask;
 import tasks.Task;
 
-import java.io.File;
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
-public class HTTPTaskManager extends FileBackedManager{
+public class HTTPTaskManager extends FileBackedManager {
     public KVTaskClient kvTaskClient;
 
     public HTTPTaskManager(URI url) {
@@ -22,54 +22,128 @@ public class HTTPTaskManager extends FileBackedManager{
     }
 
     @Override
-    public void addTask(Task task) {
+    public void addTask(Task task) { // Проверен
         super.addTask(task);
         Gson gson = new GsonBuilder().
                 registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
-        String gsonManager = gson.toJson(getAllItems());
-        kvTaskClient.save("task",gsonManager);
+        String gsonTaskList = gson.toJson(getAllTasks());
+        kvTaskClient.save("task", gsonTaskList);
     }
 
     @Override
-    public void addEpic(Epic epic) {
+    public void addEpic(Epic epic) { // Проверен
         super.addEpic(epic);
         Gson gson = new GsonBuilder().
                 registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
-        String gsonManager = gson.toJson(getAllItems());
-        kvTaskClient.save("data",gsonManager);
+        String gsonEpicList = gson.toJson(getAllEpics());
+        kvTaskClient.save("epic", gsonEpicList);
     }
 
     @Override
-    public void addSubTaskIntoEpic(SubTask subTask) {
+    public void addSubTaskIntoEpic(SubTask subTask) { // Проверен
         super.addSubTaskIntoEpic(subTask);
         Gson gson = new GsonBuilder().
                 registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
-        String gsonManager = gson.toJson(getAllItems());
-        kvTaskClient.save("data",gsonManager);
+        String gsonSubTaskList = gson.toJson(getAllSubtasks());
+        kvTaskClient.save("subTask", gsonSubTaskList);
     }
 
     @Override
-    public void getTaskById(String id) {
+    public void getTaskById(String id) { // Проверен
         super.getTaskById(id);
+        Gson gson = new GsonBuilder().
+                registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
+        ArrayList<String> ids = new ArrayList<>();
+        for (Task task : history()) {
+            ids.add(task.getId());
+        }
+        String gsonHistory = gson.toJson(ids);
+        kvTaskClient.save("history", gsonHistory);
     }
 
     @Override
     public void renewTaskById(String oldId, Task task) {
         super.renewTaskById(oldId, task);
+        Gson gson = new GsonBuilder().
+                registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
+        String gsonTaskList = gson.toJson(getAllTasks());
+        kvTaskClient.save("task", gsonTaskList);
+        String gsonEpicList = gson.toJson(getAllEpics());
+        kvTaskClient.save("epic", gsonEpicList);
+        String gsonSubTaskList = gson.toJson(getAllSubtasks());
+        kvTaskClient.save("subTask", gsonSubTaskList);
     }
 
     @Override
     public void deleteAllTasks() {
         super.deleteAllTasks();
+        Gson gson = new GsonBuilder().
+                registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
+        String gsonTaskList = gson.toJson(getAllTasks());
+        kvTaskClient.save("task", gsonTaskList);
+        String gsonEpicList = gson.toJson(getAllEpics());
+        kvTaskClient.save("epic", gsonEpicList);
+        String gsonSubTaskList = gson.toJson(getAllSubtasks());
+        kvTaskClient.save("subTask", gsonSubTaskList);
     }
 
     @Override
     public Boolean deleteTaskById(String id) {
-        return super.deleteTaskById(id);
+        boolean isDelete = super.deleteTaskById(id);
+        Gson gson = new GsonBuilder().
+                registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
+        String gsonTaskList = gson.toJson(getAllTasks());
+        kvTaskClient.save("task", gsonTaskList);
+        String gsonEpicList = gson.toJson(getAllEpics());
+        kvTaskClient.save("epic", gsonEpicList);
+        String gsonSubTaskList = gson.toJson(getAllSubtasks());
+        kvTaskClient.save("subTask", gsonSubTaskList);
+        return isDelete;
     }
 
-//    public void taskHashMap() {
-//        for (Task)
-//    }
+   private void saveManagerStatus() {
+       Gson gson = new GsonBuilder().
+               registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
+       String gsonTaskList = gson.toJson(getAllTasks());
+       kvTaskClient.save("task", gsonTaskList);
+       String gsonEpicList = gson.toJson(getAllEpics());
+       kvTaskClient.save("epic", gsonEpicList);
+       String gsonSubTaskList = gson.toJson(getAllSubtasks());
+       kvTaskClient.save("subTask", gsonSubTaskList);
+   }
 
+    public void loadFromServer() {
+        Gson gson = new GsonBuilder().
+                registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
+        String jsonTasks = kvTaskClient.load("task");
+        ArrayList<Task> tasks = gson.fromJson(jsonTasks, new TypeToken<ArrayList<Task>>() {
+        }.getType());
+        for (Task task : tasks) {
+            addTask(task);
+        }
+        String jsonEpics = kvTaskClient.load("epic");
+        ArrayList<Epic> epics = gson.fromJson(jsonEpics, new TypeToken<ArrayList<Epic>>() {
+        }.getType());
+        for (Epic epic : epics) {
+            addEpic(epic);
+        }
+        String jsonSubTasks = kvTaskClient.load("subTask");
+        ArrayList<SubTask> subTasks = gson.fromJson(jsonSubTasks, new TypeToken<ArrayList<SubTask>>() {
+        }.getType());
+        for (SubTask subTask : subTasks)
+            addSubTaskIntoEpic(subTask);
+
+        String jsonHistory= kvTaskClient.load("history");
+        if (!jsonHistory.isEmpty()) {
+            ArrayList<String> history = gson.fromJson(jsonHistory, new TypeToken<ArrayList<String>>() {
+            }.getType());
+            System.out.println("ИСТОРИЯ С СЕРВЕРА");
+            System.out.println(history);
+            for (int i = history.size() - 1; i >= 0; i--) {
+                getTaskById(history.get(i));
+            }
+        }
+    }
 }
+
+
