@@ -9,16 +9,14 @@ import tasks.Epic;
 import tasks.SubTask;
 import tasks.Task;
 
-import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-public class HTTPTaskManager extends FileBackedManager {
+public class HTTPTaskManager extends InMemoryManager {
     public KVTaskClient kvTaskClient;
 
-    public HTTPTaskManager(URI url) {
-        super(null);
-        kvTaskClient = new KVTaskClient(url);
+    public HTTPTaskManager() {
+        kvTaskClient = new KVTaskClient();
     }
 
     @Override
@@ -118,21 +116,27 @@ public class HTTPTaskManager extends FileBackedManager {
         String jsonTasks = kvTaskClient.load("task");
         ArrayList<Task> tasks = gson.fromJson(jsonTasks, new TypeToken<ArrayList<Task>>() {
         }.getType());
-        for (Task task : tasks) {
-            addTask(task);
+        if (!jsonTasks.isEmpty()) {
+            for (Task task : tasks) {
+                addTask(task);
+            }
         }
         String jsonEpics = kvTaskClient.load("epic");
         ArrayList<Epic> epics = gson.fromJson(jsonEpics, new TypeToken<ArrayList<Epic>>() {
         }.getType());
-        for (Epic epic : epics) {
-            addEpic(epic);
+        if (!jsonEpics.isEmpty()) {
+            for (Epic epic : epics) {
+                addEpic(epic);
+            }
         }
         String jsonSubTasks = kvTaskClient.load("subTask");
         ArrayList<SubTask> subTasks = gson.fromJson(jsonSubTasks, new TypeToken<ArrayList<SubTask>>() {
         }.getType());
-        for (SubTask subTask : subTasks)
-            addSubTaskIntoEpic(subTask);
-
+        if (!jsonSubTasks.isEmpty()) {
+            for (SubTask subTask : subTasks) {
+                addSubTaskIntoEpic(subTask);
+            }
+        }
         String jsonHistory= kvTaskClient.load("history");
         if (!jsonHistory.isEmpty()) {
             ArrayList<String> history = gson.fromJson(jsonHistory, new TypeToken<ArrayList<String>>() {

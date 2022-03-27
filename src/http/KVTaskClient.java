@@ -8,11 +8,9 @@ import java.net.http.HttpResponse;
 
 public class KVTaskClient {
     static String keyNumber;
-    URI url;
 
-    public KVTaskClient(URI url) { // Передать url в конструктор
+    public KVTaskClient() { // Передать url в конструктор
         keyNumber = getKey();
-        this.url = url;
     }
 
     private String getKey() {
@@ -25,7 +23,7 @@ public class KVTaskClient {
             answer = response.body();
             System.out.println(answer); // отладка
         } catch (IOException | InterruptedException e) {
-            System.out.println("Во время выполнения запроса ресурса по url-адресу: '" + url + "', возникла ошибка.\n" +
+            System.out.println("Во время выполнения запроса ресурса по url-адресу: '" + registerUrl + "', возникла ошибка.\n" +
                     "Проверьте, пожалуйста, адрес и повторите попытку.");
         }
         return answer;
@@ -39,7 +37,7 @@ public class KVTaskClient {
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {
-            System.out.println("Во время выполнения запроса ресурса по url-адресу: '" + url + "', возникла ошибка.\n" +
+            System.out.println("Во время выполнения запроса ресурса по url-адресу: '" + saverUrl + "', возникла ошибка.\n" +
                     "Проверьте, пожалуйста, адрес и повторите попытку.");
         }
     }
@@ -54,7 +52,7 @@ public class KVTaskClient {
             answer = response.body();
             System.out.println(answer); // отладка
         } catch (IOException | InterruptedException e) {
-            System.out.println("Во время выполнения запроса ресурса по url-адресу: '" + url + "', возникла ошибка.\n" +
+            System.out.println("Во время выполнения запроса ресурса по url-адресу: '" + loadUrl + "', возникла ошибка.\n" +
                     "Проверьте, пожалуйста, адрес и повторите попытку.");
         }
         return answer;

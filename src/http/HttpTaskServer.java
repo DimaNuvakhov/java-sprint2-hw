@@ -2,7 +2,6 @@ package http;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -19,16 +18,19 @@ import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.List;
 
 public class HttpTaskServer {
     private static final int PORT = 8008;
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
-    private static Manager fileManager = Managers.getDefaultFileManager();
+    private static Manager httpManager = Managers.getDefaultHttpManager();
+    private static HttpServer httpServer;
 
-    public static void main(String[] args) throws IOException {
-        HttpServer httpServer = HttpServer.create();
-        httpServer.bind(new InetSocketAddress(PORT), 0);
+    public HttpTaskServer() throws IOException {
+        httpServer = HttpServer.create(new InetSocketAddress(PORT), 0);
+    }
+
+    public void start() {
+        httpServer.start();
         httpServer.createContext("/tasks/task", new TaskHandler());
         httpServer.createContext("/tasks/epic", new EpicHandler());
         httpServer.createContext("/tasks/subTask", new SubTaskHandler());
@@ -36,7 +38,6 @@ public class HttpTaskServer {
         httpServer.createContext("/tasks/deleteAll", new DeleteAllTaskHandler());
         httpServer.createContext("/tasks/getPrioritized", new GetPrioritizedTasksHandler());
         httpServer.createContext("/tasks/history", new HistoryHandler());
-        httpServer.start();
         System.out.println("HTTP-сервер запущен на " + PORT + " порту!");
     }
 
@@ -55,21 +56,21 @@ public class HttpTaskServer {
             switch (method) {
                 case "POST":
                     if (query == null) {
-                        fileManager.addTask(task);
+                        httpManager.addTask(task);
                         answer = gson.toJson(task.getId());
                     } else {
                         String id = query.split("=")[1];
-                        fileManager.renewTaskById(id, task);
+                        httpManager.renewTaskById(id, task);
                         answer = gson.toJson(task.getId());
                     }
                     break;
                 case "GET":
-                    answer = gson.toJson(fileManager.getAllTasks());
+                    answer = gson.toJson(httpManager.getAllTasks());
                     break;
                 case "DELETE":
                     if (query != null) {
                         String id = query.split("=")[1];
-                        answer = gson.toJson(fileManager.deleteTaskById(id));
+                        answer = gson.toJson(httpManager.deleteTaskById(id));
                     }
                     break;
                 default:
@@ -97,26 +98,26 @@ public class HttpTaskServer {
             switch (method) {
                 case "POST":
                     if (query == null) {
-                        fileManager.addEpic(epic);
+                        httpManager.addEpic(epic);
                         answer = gson.toJson(epic.getId());
                     } else {
                         String id = query.split("=")[1];
-                        fileManager.renewTaskById(id, epic);
+                        httpManager.renewTaskById(id, epic);
                         answer = gson.toJson(epic.getId());
                     }
                     break;
                 case "GET":
                     if (query == null) {
-                        answer = gson.toJson(fileManager.getAllEpics());
+                        answer = gson.toJson(httpManager.getAllEpics());
                     } else {
                         String id = query.split("=")[1];
-                        answer = gson.toJson(fileManager.getSubTaskListFromEpicById(id));
+                        answer = gson.toJson(httpManager.getSubTaskListFromEpicById(id));
                     }
                     break;
                 case "DELETE":
                     if (query != null) {
                         String id = query.split("=")[1];
-                        answer = gson.toJson(fileManager.deleteTaskById(id));
+                        answer = gson.toJson(httpManager.deleteTaskById(id));
                     }
                     break;
                 default:
@@ -144,21 +145,21 @@ public class HttpTaskServer {
             switch (method) {
                 case "POST":
                     if (query == null) {
-                        fileManager.addSubTaskIntoEpic(subTask);
+                        httpManager.addSubTaskIntoEpic(subTask);
                         answer = gson.toJson(subTask.getId());
                     } else {
                         String id = query.split("=")[1];
-                        fileManager.renewTaskById(id, subTask);
+                        httpManager.renewTaskById(id, subTask);
                         answer = gson.toJson(subTask.getId());
                     }
                     break;
                 case "GET":
-                    answer = gson.toJson(fileManager.getAllSubtasks());
+                    answer = gson.toJson(httpManager.getAllSubtasks());
                     break;
                 case "DELETE":
                     if (query != null) {
                         String id = query.split("=")[1];
-                        answer = gson.toJson(fileManager.deleteTaskById(id));
+                        answer = gson.toJson(httpManager.deleteTaskById(id));
                     }
                     break;
                 default:
@@ -181,7 +182,7 @@ public class HttpTaskServer {
                     .setPrettyPrinting()
                     .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
             if (method.equals("GET")) {
-                answer = gson.toJson(fileManager.getAllItems());
+                answer = gson.toJson(httpManager.getAllItems());
             } else {
                 answer = gson.toJson("Вы использовали неизвестный метод!");
             }
@@ -202,7 +203,7 @@ public class HttpTaskServer {
                     .setPrettyPrinting()
                     .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
             if (method.equals("DELETE")) {
-                fileManager.deleteAllTasks();
+                httpManager.deleteAllTasks();
                 answer = gson.toJson("Все задачи удалены");
             } else {
                 answer = gson.toJson("Вы использовали неизвестный метод!");
@@ -224,7 +225,7 @@ public class HttpTaskServer {
                     .setPrettyPrinting()
                     .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
             if (method.equals("GET")) {
-                answer = gson.toJson(fileManager.getPrioritizedTasks());
+                answer = gson.toJson(httpManager.getPrioritizedTasks());
             } else {
                 answer = gson.toJson("Вы использовали неизвестный метод!");
             }
@@ -248,8 +249,8 @@ public class HttpTaskServer {
             if (method.equals("GET")) {
                 if (query != null) {
                     String id = query.split("=")[1];
-                    fileManager.getTaskById(id);
-                    answer = gson.toJson(fileManager.history());
+                    httpManager.getTaskById(id);
+                    answer = gson.toJson(httpManager.history());
                 }
             } else {
                 answer = gson.toJson("Вы использовали неизвестный метод!");
