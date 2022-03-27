@@ -26,7 +26,7 @@ public class FileBackedManager extends InMemoryManager {
     public void addTask(Task task) {
         super.addTask(task);
         if (managerStatus) {
-            save();
+//            save();
         }
     }
 
@@ -42,7 +42,7 @@ public class FileBackedManager extends InMemoryManager {
     public void addEpic(Epic epic) {
         super.addEpic(epic);
         if (managerStatus) {
-            save();
+//            save();
         }
     }
 
@@ -50,7 +50,7 @@ public class FileBackedManager extends InMemoryManager {
     public void addSubTaskIntoEpic(SubTask subTask) {
         super.addSubTaskIntoEpic(subTask);
         if (managerStatus) {
-            save();
+//            save();
         }
     }
 
