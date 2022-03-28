@@ -83,6 +83,14 @@ public class HTTPTaskManager extends InMemoryManager {
         kvTaskClient.save("epic", gsonEpicList);
         String gsonSubTaskList = gson.toJson(getAllSubtasks());
         kvTaskClient.save("subTask", gsonSubTaskList);
+        String jsonHistory = kvTaskClient.load("history");
+        if (!jsonHistory.isEmpty()) {
+            ArrayList<String> history = gson.fromJson(jsonHistory, new TypeToken<ArrayList<String>>() {
+            }.getType());
+            history.clear();
+            String newGsonHistory = gson.toJson(history);
+            kvTaskClient.save("history", newGsonHistory);
+        }
     }
 
     @Override
