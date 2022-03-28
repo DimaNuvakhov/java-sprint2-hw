@@ -141,8 +141,6 @@ public class HTTPTaskManager extends InMemoryManager {
         if (!jsonHistory.isEmpty()) {
             ArrayList<String> history = gson.fromJson(jsonHistory, new TypeToken<ArrayList<String>>() {
             }.getType());
-            System.out.println("ИСТОРИЯ С СЕРВЕРА");
-            System.out.println(history);
             for (int i = history.size() - 1; i >= 0; i--) {
                 getTaskById(history.get(i));
             }
