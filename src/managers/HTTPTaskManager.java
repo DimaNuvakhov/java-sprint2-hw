@@ -62,33 +62,24 @@ public class HTTPTaskManager extends InMemoryManager {
     @Override
     public void renewTaskById(String oldId, Task task) {
         super.renewTaskById(oldId, task);
-        Gson gson = new GsonBuilder().
-                registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
-        String gsonTaskList = gson.toJson(getAllTasks());
-        kvTaskClient.save("task", gsonTaskList);
-        String gsonEpicList = gson.toJson(getAllEpics());
-        kvTaskClient.save("epic", gsonEpicList);
-        String gsonSubTaskList = gson.toJson(getAllSubtasks());
-        kvTaskClient.save("subTask", gsonSubTaskList);
+        saveManagerStatus();
     }
 
     @Override
     public void deleteAllTasks() {
         super.deleteAllTasks();
+        saveManagerStatus();
+        clearHistory();
+    }
+
+    public void clearHistory() {
         Gson gson = new GsonBuilder().
                 registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
-        String gsonTaskList = gson.toJson(getAllTasks());
-        kvTaskClient.save("task", gsonTaskList);
-        String gsonEpicList = gson.toJson(getAllEpics());
-        kvTaskClient.save("epic", gsonEpicList);
-        String gsonSubTaskList = gson.toJson(getAllSubtasks());
-        kvTaskClient.save("subTask", gsonSubTaskList);
         String jsonHistory = kvTaskClient.load("history");
         if (!jsonHistory.isEmpty()) {
-            ArrayList<String> history = gson.fromJson(jsonHistory, new TypeToken<ArrayList<String>>() {
-            }.getType());
-            history.clear();
+            ArrayList<String> history = new ArrayList<>();
             String newGsonHistory = gson.toJson(history);
+            System.out.println("УДАЛЯЮ!!!!!!!!!!!!!!");
             kvTaskClient.save("history", newGsonHistory);
         }
     }
@@ -96,14 +87,7 @@ public class HTTPTaskManager extends InMemoryManager {
     @Override
     public Boolean deleteTaskById(String id) {
         boolean isDelete = super.deleteTaskById(id);
-        Gson gson = new GsonBuilder().
-                registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
-        String gsonTaskList = gson.toJson(getAllTasks());
-        kvTaskClient.save("task", gsonTaskList);
-        String gsonEpicList = gson.toJson(getAllEpics());
-        kvTaskClient.save("epic", gsonEpicList);
-        String gsonSubTaskList = gson.toJson(getAllSubtasks());
-        kvTaskClient.save("subTask", gsonSubTaskList);
+        saveManagerStatus();
         return isDelete;
     }
 

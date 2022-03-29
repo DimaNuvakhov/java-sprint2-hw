@@ -39,7 +39,7 @@ class HTTPTaskManagerTest {
     // Проверка метода addTask, добавление задачи, восстановление менеджера из сервера
     @Test
     public void shouldAddTaskAndLoad() {
-        // Очистка хранилища данных для тестов
+        // Очистка хранилища данных  для тестов
         URI deleteAllUrl = URI.create("http://localhost:8008/tasks/deleteAll");
         requestDelete(deleteAllUrl);
         URI url = URI.create("http://localhost:8008/tasks/task");
