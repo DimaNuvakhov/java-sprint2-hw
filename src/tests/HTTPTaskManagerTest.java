@@ -33,12 +33,13 @@ class HTTPTaskManagerTest {
     @BeforeAll
     static void beforeAll() throws IOException {
         new KVServer().start();
-        new HttpTaskServer().start();
     }
 
     // Проверка метода addTask, добавление задачи, восстановление менеджера из сервера
     @Test
-    public void shouldAddTaskAndLoad() {
+    public void shouldAddTaskAndLoad() throws IOException {
+        HttpTaskServer httpTaskServer = new HttpTaskServer();
+        httpTaskServer.start();
         // Очистка хранилища данных  для тестов
         URI deleteAllUrl = URI.create("http://localhost:8008/tasks/deleteAll");
         requestDelete(deleteAllUrl);
@@ -49,19 +50,25 @@ class HTTPTaskManagerTest {
                 registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
         String gsonTask = gson.toJson(firstTask);
         requestToFindIdGet(url, gsonTask);
-        HTTPTaskManager httpTaskManager = new HTTPTaskManager();
-        httpTaskManager.loadFromServer();
-        Task sameTask = getTaskByName(httpTaskManager, "Помыть посуду");
+        httpTaskServer.stop();
+        httpTaskServer = null;
+        HttpTaskServer newHttpTaskServer = new HttpTaskServer();
+        newHttpTaskServer.start();
+        newHttpTaskServer.getHttpManager().loadFromServer();
+        Task sameTask = getTaskByName(newHttpTaskServer, "Помыть посуду");
         assertNotNull(sameTask);
         assertEquals("Помыть тарелки и вилки", sameTask.getDescription());
         assertEquals(TaskStatus.NEW, sameTask.getStatus());
         assertEquals("2022-03-15T10:00", sameTask.getStartTime().toString());
         assertEquals(3, sameTask.getDuration());
+        newHttpTaskServer.stop();
     }
 
     // Проверка метода renewTaskById, обновление задачи, восстановление менеджера из сервера
     @Test
-    public void shouldRenewTaskByIdAndLoad() {
+    public void shouldRenewTaskByIdAndLoad() throws IOException {
+        HttpTaskServer httpTaskServer = new HttpTaskServer();
+        httpTaskServer.start();
         // Очистка хранилища данных для тестов
         URI deleteAllUrl = URI.create("http://localhost:8008/tasks/deleteAll");
         requestDelete(deleteAllUrl);
@@ -77,21 +84,27 @@ class HTTPTaskManagerTest {
         URI newUrl = URI.create("http://localhost:8008/tasks/task/?id=" + id);
         String gsonSecondTask = gson.toJson(secondTask);
         requestToFindIdGet(newUrl, gsonSecondTask);
-        HTTPTaskManager httpTaskManager = new HTTPTaskManager();
-        httpTaskManager.loadFromServer();
-        Task oldTask = getTaskByName(httpTaskManager, "Помыть посуду");
+        httpTaskServer.stop();
+        httpTaskServer = null;
+        HttpTaskServer newHttpTaskServer = new HttpTaskServer();
+        newHttpTaskServer.start();
+        newHttpTaskServer.getHttpManager().loadFromServer();
+        Task oldTask = getTaskByName(newHttpTaskServer, "Помыть посуду");
         assertNull(oldTask);
-        Task renewedTask = getTaskByName(httpTaskManager, "Купить хлеб");
+        Task renewedTask = getTaskByName(newHttpTaskServer, "Купить хлеб");
         assertNotNull(renewedTask);
         assertEquals("Нужен хлеб \"Литовский\"", renewedTask.getDescription());
         assertEquals(TaskStatus.DONE, renewedTask.getStatus());
         assertEquals("2022-03-20T11:00", renewedTask.getStartTime().toString());
         assertEquals(3, renewedTask.getDuration());
+        newHttpTaskServer.stop();
     }
 
     // Проверка метода deleteTaskById, удаление задачи, восстановление менеджера из сервера
     @Test
-    public void shouldDeleteTaskByIdAndLoad() {
+    public void shouldDeleteTaskByIdAndLoad() throws IOException {
+        HttpTaskServer httpTaskServer = new HttpTaskServer();
+        httpTaskServer.start();
         // Очистка хранилища данных для тестов
         URI deleteAllUrl = URI.create("http://localhost:8008/tasks/deleteAll");
         requestDelete(deleteAllUrl);
@@ -104,11 +117,14 @@ class HTTPTaskManagerTest {
         String id = requestToFindIdGet(url, gsonFirstTask);
         URI newUrl = URI.create("http://localhost:8008/tasks/task/?id=" + id);
         assertTrue(requestDelete(newUrl));
+        httpTaskServer.stop();
     }
 
     // Проверка метода addEpic, добавлние эпика, восстановление менеджера из сервера
     @Test
-    public void shouldAddEpicAndLoad() {
+    public void shouldAddEpicAndLoad() throws IOException {
+        HttpTaskServer httpTaskServer = new HttpTaskServer();
+        httpTaskServer.start();
         // Очистка хранилища данных для тестов
         URI deleteAllUrl = URI.create("http://localhost:8008/tasks/deleteAll");
         requestDelete(deleteAllUrl);
@@ -118,17 +134,23 @@ class HTTPTaskManagerTest {
                 registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
         String gsonEpic = gson.toJson(firstEpic);
         requestToFindIdGet(url, gsonEpic);
-        HTTPTaskManager httpTaskManager = new HTTPTaskManager();
-        httpTaskManager.loadFromServer();
-        assertEquals(1, httpTaskManager.getAllItems().size());
-        Epic sameEpic = (Epic) getTaskByName(httpTaskManager, "Сходить в спортзал");
+        httpTaskServer.stop();
+        httpTaskServer = null;
+        HttpTaskServer newHttpTaskServer = new HttpTaskServer();
+        newHttpTaskServer.start();
+        newHttpTaskServer.getHttpManager().loadFromServer();
+        assertEquals(1, newHttpTaskServer.getHttpManager().getAllItems().size());
+        Epic sameEpic = (Epic) getTaskByName(newHttpTaskServer, "Сходить в спортзал");
         assertNotNull(sameEpic);
         assertEquals("Прокачать 3 группы мышц", sameEpic.getDescription());
+        newHttpTaskServer.stop();
     }
 
     // Проверка метода renewTaskById, обновление эпика, восстановление менеджера из файла
     @Test
-    public void shouldRenewEpicByIdAndLoad() {
+    public void shouldRenewEpicByIdAndLoad() throws IOException {
+        HttpTaskServer httpTaskServer = new HttpTaskServer();
+        httpTaskServer.start();
         // Очистка хранилища данных для тестов
         URI deleteAllUrl = URI.create("http://localhost:8008/tasks/deleteAll");
         requestDelete(deleteAllUrl);
@@ -142,18 +164,24 @@ class HTTPTaskManagerTest {
         URI newUrl = URI.create("http://localhost:8008/tasks/epic/?id=" + id);
         String gsonSecondTask = gson.toJson(secondEpic);
         requestToFindIdGet(newUrl, gsonSecondTask);
-        HTTPTaskManager httpTaskManager = new HTTPTaskManager();
-        httpTaskManager.loadFromServer();
-        Epic oldEpic = (Epic) getTaskByName(httpTaskManager, "Сходить в спортзал");
+        httpTaskServer.stop();
+        httpTaskServer = null;
+        HttpTaskServer newHttpTaskServer = new HttpTaskServer();
+        newHttpTaskServer.start();
+        newHttpTaskServer.getHttpManager().loadFromServer();
+        Epic oldEpic = (Epic) getTaskByName(newHttpTaskServer, "Сходить в спортзал");
         assertNull(oldEpic);
-        Epic renewedEpic = (Epic) getTaskByName(httpTaskManager, "Изучение Java");
+        Epic renewedEpic = (Epic) getTaskByName(newHttpTaskServer, "Изучение Java");
         assertNotNull(renewedEpic);
         assertEquals("Изучить язык программирования Java", renewedEpic.getDescription());
+        newHttpTaskServer.stop();
     }
 
     // Проверка метода deleteTaskById, удаление эпика, восстановление менеджера из сервера
     @Test
-    public void shouldDeleteEpicByIdAndLoad() {
+    public void shouldDeleteEpicByIdAndLoad() throws IOException {
+        HttpTaskServer httpTaskServer = new HttpTaskServer();
+        httpTaskServer.start();
         // Очистка хранилища данных для тестов
         URI deleteAllUrl = URI.create("http://localhost:8008/tasks/deleteAll");
         requestDelete(deleteAllUrl);
@@ -165,11 +193,15 @@ class HTTPTaskManagerTest {
         String id = requestToFindIdGet(url, gsonFirstEpic);
         URI newUrl = URI.create("http://localhost:8008/tasks/epic/?id=" + id);
         assertTrue(requestDelete(newUrl));
+        httpTaskServer.stop();
+
     }
 
     // Проверка метода addSubTaskIntoEpic, добавление подзадачи, восстановление менеджера из файла
     @Test
-    public void shouldAddSubTaskIntoEpicAndLoad() {
+    public void shouldAddSubTaskIntoEpicAndLoad() throws IOException {
+        HttpTaskServer httpTaskServer = new HttpTaskServer();
+        httpTaskServer.start();
         // Очистка хранилища данных для тестов
         URI deleteAllUrl = URI.create("http://localhost:8008/tasks/deleteAll");
         requestDelete(deleteAllUrl);
@@ -185,19 +217,25 @@ class HTTPTaskManagerTest {
                 LocalDateTime.of(2022, 3, 15, 10, 0), 4);
         String gsonFirstSubTask = gson.toJson(firstSubTask);
         requestToFindIdGet(newUrl, gsonFirstSubTask);
-        HTTPTaskManager httpTaskManager = new HTTPTaskManager();
-        httpTaskManager.loadFromServer();
-        SubTask sameSubTask = (SubTask) getTaskByName(httpTaskManager, "Изучить Дженерики");
+        httpTaskServer.stop();
+        httpTaskServer = null;
+        HttpTaskServer newHttpTaskServer = new HttpTaskServer();
+        newHttpTaskServer.start();
+        newHttpTaskServer.getHttpManager().loadFromServer();
+        SubTask sameSubTask = (SubTask) getTaskByName(newHttpTaskServer, "Изучить Дженерики");
         assertNotNull(sameSubTask);
         assertEquals("Изучить случаи применения дженериков", sameSubTask.getDescription());
         assertEquals(TaskStatus.NEW, sameSubTask.getStatus());
         assertEquals("2022-03-15T10:00", sameSubTask.getStartTime().toString());
         assertEquals(4, sameSubTask.getDuration());
+        newHttpTaskServer.stop();
     }
 
     // Проверка метода renewTaskById, обновление подзадачи, восстановление менеджера из файла
     @Test
-    public void shouldRenewSubTaskByIdAndLoad() {
+    public void shouldRenewSubTaskByIdAndLoad() throws IOException {
+        HttpTaskServer httpTaskServer = new HttpTaskServer();
+        httpTaskServer.start();
         // Очистка хранилища данных для тестов
         URI deleteAllUrl = URI.create("http://localhost:8008/tasks/deleteAll");
         requestDelete(deleteAllUrl);
@@ -219,21 +257,27 @@ class HTTPTaskManagerTest {
         URI secondUrl = URI.create("http://localhost:8008/tasks/subTask/?id=" + subTaskId);
         String gsonSecondSubTask = gson.toJson(secondSubTask);
         requestToFindIdGet(secondUrl, gsonSecondSubTask);
-        HTTPTaskManager httpTaskManager = new HTTPTaskManager();
-        httpTaskManager.loadFromServer();
-        SubTask oldTask = (SubTask) getTaskByName(httpTaskManager, "Изучить Дженерики");
+        httpTaskServer.stop();
+        httpTaskServer = null;
+        HttpTaskServer newHttpTaskServer = new HttpTaskServer();
+        newHttpTaskServer.start();
+        newHttpTaskServer.getHttpManager().loadFromServer();
+        SubTask oldTask = (SubTask) getTaskByName(newHttpTaskServer, "Изучить Дженерики");
         assertNull(oldTask);
-        SubTask renewedSubTask = (SubTask) getTaskByName(httpTaskManager, "Изучить полиморфизм");
+        SubTask renewedSubTask = (SubTask) getTaskByName(newHttpTaskServer, "Изучить полиморфизм");
         assertNotNull(renewedSubTask);
         assertEquals("Изучить перегрузку методов", renewedSubTask.getDescription());
         assertEquals(TaskStatus.NEW, renewedSubTask.getStatus());
         assertEquals("2022-03-16T10:00", renewedSubTask.getStartTime().toString());
         assertEquals(3, renewedSubTask.getDuration());
+        newHttpTaskServer.stop();
     }
 
     // Проверка метода deleteTaskById, удаление подзадачи, восстановление менеджера из сервера
     @Test
-    public void shouldDeleteSubTaskByIdAndLoad() {
+    public void shouldDeleteSubTaskByIdAndLoad() throws IOException {
+        HttpTaskServer httpTaskServer = new HttpTaskServer();
+        httpTaskServer.start();
         // Очистка хранилища данных для тестов
         URI deleteAllUrl = URI.create("http://localhost:8008/tasks/deleteAll");
         requestDelete(deleteAllUrl);
@@ -251,11 +295,14 @@ class HTTPTaskManagerTest {
         String subTaskId = requestToFindIdGet(firstUrl, gsonFirstSubTask);
         URI secondUrl = URI.create("http://localhost:8008/tasks/subTask/?id=" + subTaskId);
         assertTrue(requestDelete(secondUrl));
+        httpTaskServer.stop();
     }
 
     // Проверка метода getAllTasks, восстановление менеджера из сервера
     @Test
-    public void shouldReturnTaskListAndLoad() {
+    public void shouldReturnTaskListAndLoad() throws IOException {
+        HttpTaskServer httpTaskServer = new HttpTaskServer();
+        httpTaskServer.start();
         // Очистка хранилища данных для тестов
         URI deleteAllUrl = URI.create("http://localhost:8008/tasks/deleteAll");
         requestDelete(deleteAllUrl);
@@ -288,11 +335,14 @@ class HTTPTaskManagerTest {
                 assertEquals(3, task.getDuration());
             }
         }
+        httpTaskServer.stop();
     }
 
     // Проверка метода getAllEpics, восстановление менеджера из сервера
     @Test
-    public void shouldReturnEpicListAndLoad() {
+    public void shouldReturnEpicListAndLoad() throws IOException {
+        HttpTaskServer httpTaskServer = new HttpTaskServer();
+        httpTaskServer.start();
         // Очистка хранилища данных для тестов
         URI deleteAllUrl = URI.create("http://localhost:8008/tasks/deleteAll");
         requestDelete(deleteAllUrl);
@@ -317,11 +367,14 @@ class HTTPTaskManagerTest {
                 assertEquals("Изучить язык программирования Java", epic.getDescription());
             }
         }
+        httpTaskServer.stop();
     }
 
     // Проверка метода getSubTaskListFromEpicById, восстановление менеджера из сервера
     @Test
-    public void shouldReturnSubTaskListByEpicIdAndLoad() {
+    public void shouldReturnSubTaskListByEpicIdAndLoad() throws IOException {
+        HttpTaskServer httpTaskServer = new HttpTaskServer();
+        httpTaskServer.start();
         // Очистка хранилища данных для тестов
         URI deleteAllUrl = URI.create("http://localhost:8008/tasks/deleteAll");
         requestDelete(deleteAllUrl);
@@ -371,11 +424,14 @@ class HTTPTaskManagerTest {
                 assertEquals(4, subTask.getDuration());
             }
         }
+        httpTaskServer.stop();
     }
 
     // Проверка метода getAllSubTasks, восстановление менеджера из сервера
     @Test
-    public void shouldReturnSubTaskListAndLoad() {
+    public void shouldReturnSubTaskListAndLoad() throws IOException {
+        HttpTaskServer httpTaskServer = new HttpTaskServer();
+        httpTaskServer.start();
         // Очистка хранилища данных для тестов
         URI deleteAllUrl = URI.create("http://localhost:8008/tasks/deleteAll");
         requestDelete(deleteAllUrl);
@@ -431,11 +487,14 @@ class HTTPTaskManagerTest {
                 assertEquals(4, subTask.getDuration());
             }
         }
+        httpTaskServer.stop();
     }
 
     // Проверка методов history и getTaskById. Проверка истории, 2 задачи в истории, восстановление менеджера из сервера
     @Test
-    public void shouldReturnHistoryAndLoad() {
+    public void shouldReturnHistoryAndLoad() throws IOException {
+        HttpTaskServer httpTaskServer = new HttpTaskServer();
+        httpTaskServer.start();
         // Очистка хранилища данных для тестов
         URI deleteAllUrl = URI.create("http://localhost:8008/tasks/deleteAll");
         requestDelete(deleteAllUrl);
@@ -454,9 +513,13 @@ class HTTPTaskManagerTest {
         URI getSecondTaskByIdUrl = URI.create("http://localhost:8008/tasks/history/?id=" + secondTaskId);
         getHistoryRequest(getFirstTaskByIdUrl);
         getHistoryRequest(getSecondTaskByIdUrl);
-        HTTPTaskManager httpTaskManager = new HTTPTaskManager();
-        httpTaskManager.loadFromServer();
-        List<Task> history = httpTaskManager.history();
+        httpTaskServer.stop();
+        httpTaskServer = null;
+        HttpTaskServer newHttpTaskServer = new HttpTaskServer();
+        newHttpTaskServer.start();
+        newHttpTaskServer.getHttpManager().loadFromServer();
+        List<Task> history = newHttpTaskServer.getHttpManager().history();
+        newHttpTaskServer.getHttpManager().loadFromServer();
         for (int i = history.size(); i >= 0; i--) {
             if (i == 0) {
                 assertEquals("Купить хлеб", history.get(i).getName());
@@ -472,11 +535,14 @@ class HTTPTaskManagerTest {
                 assertEquals(4, history.get(i).getDuration());
             }
         }
+        newHttpTaskServer.stop();
     }
 
     // Проверка метода history и getTaskById. Проверка истории, дублирование, восстановление менеджера из сервера
     @Test
-    public void shouldReturnHistoryWhenDuplicationAndLoad() {
+    public void shouldReturnHistoryWhenDuplicationAndLoad() throws IOException {
+        HttpTaskServer httpTaskServer = new HttpTaskServer();
+        httpTaskServer.start();
         // Очистка хранилища данных для тестов
         URI deleteAllUrl = URI.create("http://localhost:8008/tasks/deleteAll");
         requestDelete(deleteAllUrl);
@@ -496,9 +562,12 @@ class HTTPTaskManagerTest {
         getHistoryRequest(getFirstTaskByIdUrl);
         getHistoryRequest(getSecondTaskByIdUrl);
         getHistoryRequest(getFirstTaskByIdUrl);
-        HTTPTaskManager httpTaskManager = new HTTPTaskManager();
-        httpTaskManager.loadFromServer();
-        List<Task> history = httpTaskManager.history();
+        httpTaskServer.stop();
+        httpTaskServer = null;
+        HttpTaskServer newHttpTaskServer = new HttpTaskServer();
+        newHttpTaskServer.start();
+        newHttpTaskServer.getHttpManager().loadFromServer();
+        List<Task> history = newHttpTaskServer.getHttpManager().history();
         for (int i = history.size(); i >= 0; i--) {
             if (i == 0) {
                 assertEquals("Помыть посуду", history.get(i).getName());
@@ -514,11 +583,14 @@ class HTTPTaskManagerTest {
                 assertEquals(4, history.get(i).getDuration());
             }
         }
+        newHttpTaskServer.stop();
     }
 
     // Проверка правильности работы
     @Test
-    public void shouldReloadManager() {
+    public void shouldReloadManager() throws IOException {
+        HttpTaskServer firstHttpTaskServer = new HttpTaskServer();
+        firstHttpTaskServer.start();
         // Очистка хранилища данных для тестов
         URI deleteAllUrl = URI.create("http://localhost:8008/tasks/deleteAll");
         requestDelete(deleteAllUrl);
@@ -533,15 +605,23 @@ class HTTPTaskManagerTest {
         Epic firstEpic = new Epic("Изучение Java", "Изучить язык программирования Java");
         String gsonEpic = gson.toJson(firstEpic);
         String epicId = requestToFindIdGet(epicUrl, gsonEpic);
+        firstHttpTaskServer.stop();
+        firstHttpTaskServer = null;
+        HttpTaskServer secondHttpTaskServer = new HttpTaskServer();
+        secondHttpTaskServer.start();
+        secondHttpTaskServer.getHttpManager().loadFromServer();
         URI subTaskUrl = URI.create("http://localhost:8008/tasks/subTask");
         SubTask firstSubTask = new SubTask("Изучить Дженерики",
                 "Изучить случаи применения дженериков", TaskStatus.NEW, epicId,
                 LocalDateTime.of(2022, 3, 15, 10, 0), 4);
         String gsonFirstSubTask = gson.toJson(firstSubTask);
         requestToFindIdGet(subTaskUrl, gsonFirstSubTask);
-        HTTPTaskManager httpTaskManager = new HTTPTaskManager();
-        httpTaskManager.loadFromServer();
-        for (Task task : httpTaskManager.getAllItems().values()) {
+        secondHttpTaskServer.stop();
+        secondHttpTaskServer = null;
+        HttpTaskServer thirdHttpTaskServer = new HttpTaskServer();
+        thirdHttpTaskServer.start();
+        thirdHttpTaskServer.getHttpManager().loadFromServer();
+        for (Task task : thirdHttpTaskServer.getHttpManager().getAllItems().values()) {
             if (task.getClass().getName().equals("tasks.Task")) {
                 assertEquals("Помыть посуду", task.getName());
                 assertEquals("Помыть тарелки и вилки", task.getDescription());
@@ -561,39 +641,49 @@ class HTTPTaskManagerTest {
                 assertEquals(4, subTask.getDuration());
             }
         }
+        thirdHttpTaskServer.stop();
     }
 
     // Проверка метода getAllTasks, пустой список задач
     @Test
-    public void shouldReturnZeroWhenTaskListIsEmpty() {
+    public void shouldReturnZeroWhenTaskListIsEmpty() throws IOException {
+        HttpTaskServer httpTaskServer = new HttpTaskServer();
+        httpTaskServer.start();
         // Очистка хранилища данных для тестов
         URI deleteAllUrl = URI.create("http://localhost:8008/tasks/deleteAll");
         requestDelete(deleteAllUrl);
         URI url = URI.create("http://localhost:8008/tasks/task");
         ArrayList<Task> tasks = returnTaskList(url);
         assertEquals(0, tasks.size());
+        httpTaskServer.stop();
     }
 
     // Проверка метода getAllSubTasks, пустой список задач
     @Test
-    public void shouldReturnZeroWhenSubTaskListIsEmpty() {
+    public void shouldReturnZeroWhenSubTaskListIsEmpty() throws IOException {
+        HttpTaskServer httpTaskServer = new HttpTaskServer();
+        httpTaskServer.start();
         // Очистка хранилища данных для тестов
         URI deleteAllUrl = URI.create("http://localhost:8008/tasks/deleteAll");
         requestDelete(deleteAllUrl);
         URI url = URI.create("http://localhost:8008/tasks/epic");
         ArrayList<Epic> epics = returnEpicList(url);
         assertEquals(0, epics.size());
+        httpTaskServer.stop();
     }
 
     // Проверка метода history. Проверка истории просмотра задач, пустая история
     @Test
-    public void shouldReturnZeroIfZeroTasksInHistory() {
+    public void shouldReturnZeroIfZeroTasksInHistory() throws IOException {
+        HttpTaskServer httpTaskServer = new HttpTaskServer();
+        httpTaskServer.start();
         // Очистка хранилища данных для тестов
         URI deleteAllUrl = URI.create("http://localhost:8008/tasks/deleteAll");
         requestDelete(deleteAllUrl);
         URI url = URI.create("http://localhost:8008/tasks/subTask");
         ArrayList<SubTask> subTasks  = returnSubTaskList(url);
         assertEquals(0, subTasks.size());
+        httpTaskServer.stop();
     }
 
     private void getHistoryRequest(URI url) {
@@ -696,8 +786,8 @@ class HTTPTaskManagerTest {
         return isDelete;
     }
 
-    private Task getTaskByName(Manager inMemoryManager, String name) {
-        for (Task task : inMemoryManager.getAllItems().values()) {
+    private Task getTaskByName(HttpTaskServer httpTaskServer, String name) {
+        for (Task task : httpTaskServer.getHttpManager().getAllItems().values()) {
             if (task.getName().equals(name)) {
                 return task;
             }

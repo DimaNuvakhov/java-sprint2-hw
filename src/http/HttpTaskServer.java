@@ -6,6 +6,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import imanagers.Manager;
+import managers.HTTPTaskManager;
 import managers.Managers;
 import tasks.Epic;
 import tasks.SubTask;
@@ -22,11 +23,19 @@ import java.time.LocalDateTime;
 public class HttpTaskServer {
     private static final int PORT = 8008;
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
-    private static Manager httpManager = Managers.getDefaultHttpManager();
-    private static HttpServer httpServer;
+    private HTTPTaskManager httpManager = new HTTPTaskManager();
+    private HttpServer httpServer;
 
     public HttpTaskServer() throws IOException {
         httpServer = HttpServer.create(new InetSocketAddress(PORT), 0);
+    }
+
+    public HTTPTaskManager getHttpManager() {
+        return httpManager;
+    }
+
+    public void stop() {
+        httpServer.stop(0);
     }
 
     public void start() {
@@ -41,7 +50,7 @@ public class HttpTaskServer {
         System.out.println("HTTP-сервер запущен на " + PORT + " порту!");
     }
 
-    static class TaskHandler implements HttpHandler {
+     class TaskHandler implements HttpHandler {
 
         @Override
         public void handle(HttpExchange httpExchange) throws IOException {
@@ -83,7 +92,7 @@ public class HttpTaskServer {
         }
     }
 
-    static class EpicHandler implements HttpHandler {
+     class EpicHandler implements HttpHandler {
 
         @Override
         public void handle(HttpExchange httpExchange) throws IOException {
@@ -130,7 +139,7 @@ public class HttpTaskServer {
         }
     }
 
-    static class SubTaskHandler implements HttpHandler {
+     class SubTaskHandler implements HttpHandler {
 
         @Override
         public void handle(HttpExchange httpExchange) throws IOException {
@@ -172,7 +181,7 @@ public class HttpTaskServer {
         }
     }
 
-    static class GetAllItemsHandler implements HttpHandler {
+     class GetAllItemsHandler implements HttpHandler {
 
         @Override
         public void handle(HttpExchange httpExchange) throws IOException {
@@ -193,7 +202,7 @@ public class HttpTaskServer {
         }
     }
 
-    static class DeleteAllTaskHandler implements HttpHandler {
+     class DeleteAllTaskHandler implements HttpHandler {
 
         @Override
         public void handle(HttpExchange httpExchange) throws IOException {
@@ -215,7 +224,7 @@ public class HttpTaskServer {
         }
     }
 
-    static class GetPrioritizedTasksHandler implements HttpHandler {
+     class GetPrioritizedTasksHandler implements HttpHandler {
 
         @Override
         public void handle(HttpExchange httpExchange) throws IOException {
@@ -236,7 +245,7 @@ public class HttpTaskServer {
         }
     }
 
-    static class HistoryHandler implements HttpHandler {
+     class HistoryHandler implements HttpHandler {
 
         @Override
         public void handle(HttpExchange httpExchange) throws IOException {
