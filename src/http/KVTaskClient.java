@@ -21,7 +21,6 @@ public class KVTaskClient {
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             answer = response.body();
-            System.out.println(answer); // отладка
         } catch (IOException | InterruptedException e) {
             System.out.println("Во время выполнения запроса ресурса по url-адресу: '" + registerUrl + "', возникла ошибка.\n" +
                     "Проверьте, пожалуйста, адрес и повторите попытку.");
@@ -50,7 +49,6 @@ public class KVTaskClient {
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             answer = response.body();
-            System.out.println(answer); // отладка
         } catch (IOException | InterruptedException e) {
             System.out.println("Во время выполнения запроса ресурса по url-адресу: '" + loadUrl + "', возникла ошибка.\n" +
                     "Проверьте, пожалуйста, адрес и повторите попытку.");

@@ -79,7 +79,6 @@ public class HTTPTaskManager extends InMemoryManager {
         if (!jsonHistory.isEmpty()) {
             ArrayList<String> history = new ArrayList<>();
             String newGsonHistory = gson.toJson(history);
-            System.out.println("УДАЛЯЮ!!!!!!!!!!!!!!");
             kvTaskClient.save("history", newGsonHistory);
         }
     }
