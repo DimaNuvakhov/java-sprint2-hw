@@ -20,7 +20,7 @@ public class HTTPTaskManager extends InMemoryManager {
     }
 
     @Override
-    public void addTask(Task task) { // Проверен
+    public void addTask(Task task) {
         super.addTask(task);
         Gson gson = new GsonBuilder().
                 registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
@@ -29,7 +29,7 @@ public class HTTPTaskManager extends InMemoryManager {
     }
 
     @Override
-    public void addEpic(Epic epic) { // Проверен
+    public void addEpic(Epic epic) {
         super.addEpic(epic);
         Gson gson = new GsonBuilder().
                 registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
@@ -38,7 +38,7 @@ public class HTTPTaskManager extends InMemoryManager {
     }
 
     @Override
-    public void addSubTaskIntoEpic(SubTask subTask) { // Проверен
+    public void addSubTaskIntoEpic(SubTask subTask) {
         super.addSubTaskIntoEpic(subTask);
         Gson gson = new GsonBuilder().
                 registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
@@ -47,7 +47,7 @@ public class HTTPTaskManager extends InMemoryManager {
     }
 
     @Override
-    public void getTaskById(String id) { // Проверен
+    public void getTaskById(String id) {
         super.getTaskById(id);
         Gson gson = new GsonBuilder().
                 registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();

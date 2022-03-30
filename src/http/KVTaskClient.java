@@ -9,7 +9,7 @@ import java.net.http.HttpResponse;
 public class KVTaskClient {
     static String keyNumber;
 
-    public KVTaskClient() { // Передать url в конструктор
+    public KVTaskClient() {
         keyNumber = getKey();
     }
 

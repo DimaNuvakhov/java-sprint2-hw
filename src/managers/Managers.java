@@ -20,8 +20,4 @@ public class Managers {
         boolean isDelete = file.delete();
         return new FileBackedManager(file);
     }
-
-    public static Manager getDefaultHttpManager() {
-        return new HTTPTaskManager();
-    }
 }
